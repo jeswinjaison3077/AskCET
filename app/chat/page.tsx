@@ -527,11 +527,11 @@ export default function ChatPage() {
                 >
                   {/* Interactive Floating Siri-Style AI Assistant Orb with Deep Zoom & Reactive Hovering */}
                   <div className="relative group cursor-pointer flex items-center justify-center">
-                    {/* Subtle Reduced Intensity Radial Glow Aura */}
+                    {/* Soft Radiant Light Glow Aura */}
                     <div
-                      className="absolute -inset-5 rounded-full pointer-events-none transition-all duration-500 opacity-40 group-hover:opacity-75 group-hover:scale-125"
+                      className="absolute -inset-5 rounded-full pointer-events-none transition-all duration-500 opacity-55 group-hover:opacity-85 group-hover:scale-125"
                       style={{
-                        background: 'radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.35) 0%, rgba(59, 130, 246, 0.2) 40%, rgba(168, 85, 247, 0.08) 60%, transparent 75%)',
+                        background: 'radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.5) 0%, rgba(59, 130, 246, 0.3) 45%, rgba(168, 85, 247, 0.15) 65%, transparent 75%)',
                       }}
                     />
 
@@ -552,7 +552,7 @@ export default function ChatPage() {
                         transition: { duration: 0.3, ease: 'backOut' },
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_15px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all duration-300"
+                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_20px_rgba(6,182,212,0.45)] group-hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] transition-all duration-300"
                     >
                       {/* Inner Smooth Circle Sphere */}
                       <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950 relative">
