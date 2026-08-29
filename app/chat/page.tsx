@@ -492,40 +492,21 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero 3D Ultra-Feathered Sphere Logo */}
+                  {/* Organic Ultra-Feathered Floating Logo Emblem (No Circle Rim) */}
                   <div className="relative group cursor-pointer">
-                    {/* Ambient Neon Backlight Sphere Glow */}
-                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+                    {/* Ambient Volumetric Backlight Aura */}
+                    <div className="absolute -inset-6 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-50 group-hover:opacity-85 transition-opacity duration-500" />
 
-                    {/* Feathered 3D Sphere Wrapper */}
-                    <div
-                      className="relative w-40 h-40 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
-                      style={{
-                        maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
-                        WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
-                      }}
-                    >
-                      {/* Base Logo Image */}
+                    {/* Feathered Logo Image (Soft Elliptical/Radial Edge Fade out to 0% opacity - No Circle Rim) */}
+                    <div className="relative w-44 h-44 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                       <img
                         src="/logo.jpg"
-                        alt="AskCET 3D Feathered Sphere Logo"
-                        className="absolute inset-0 w-full h-full object-cover rounded-full mix-blend-multiply dark:mix-blend-lighten"
-                      />
-
-                      {/* 3D Specular Curvature Gradient (creates volumetric 3D spherical depth) */}
-                      <div
-                        className="absolute inset-0 rounded-full pointer-events-none"
+                        alt="AskCET Feathered Logo Emblem"
+                        className="w-full h-full object-cover opacity-90"
                         style={{
-                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.35) 65%, rgba(0, 0, 0, 0.9) 100%)',
-                          mixBlendMode: 'overlay',
-                        }}
-                      />
-
-                      {/* Soft Spherical Inner Shadow Vignette */}
-                      <div
-                        className="absolute inset-0 rounded-full pointer-events-none"
-                        style={{
-                          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.95) 100%)',
+                          maskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)',
+                          WebkitMaskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)',
+                          filter: 'brightness(1.15) contrast(1.1)',
                         }}
                       />
                     </div>
@@ -533,7 +514,7 @@ export default function ChatPage() {
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
+                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_16px_rgba(6,182,212,0.95)] transition-transform duration-75 z-20"
                     >
                       <Sparkles className="w-8 h-8 text-cyan-400" />
                     </div>
