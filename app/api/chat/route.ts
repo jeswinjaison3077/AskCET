@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     // 2. High-speed stream generation inside ReadableStream.start()
     const stream = new ReadableStream({
       async start(controller) {
-        // Fast vector retrieval
+        // Fast vector & hybrid retrieval (threshold 0.01 for maximum recall across all documents)
         let relevantChunks: Array<{
           documentTitle: string;
           category: string;
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
 
         try {
           const queryEmbedding = await generateEmbedding(userQuery);
-          const searchResults = await searchSimilarChunks(queryEmbedding, 4, 0.35, userQuery);
+          const searchResults = await searchSimilarChunks(queryEmbedding, 5, 0.01, userQuery);
           relevantChunks = searchResults.map(r => ({
             documentTitle: r.documentTitle,
             category: r.category,
@@ -106,8 +106,8 @@ export async function POST(request: Request) {
             pageNumber: r.pageNumber,
             content: r.content,
           }));
-        } catch {
-          // Proceed without vector chunks if vector search delayed
+        } catch (err) {
+          console.warn('Vector search warning:', err);
         }
 
         const systemPrompt = buildRAGSystemPrompt(relevantChunks, userQuery, preferredLanguage) + attachmentTextContext;
@@ -167,9 +167,9 @@ export async function POST(request: Request) {
 
           let fallbackResponse = '';
           if (relevantChunks.length > 0) {
-            fallbackResponse = `### AskCET Official Response\n\n` +
-              `According to official college documentation:\n\n` +
-              relevantChunks.map((c, i) => `**Information from ${c.documentTitle}**:\n${c.content}`).join('\n\n');
+            fallbackResponse = `### AskCET Official Answer\n\n` +
+              `Based on **${relevantChunks[0].documentTitle}**:\n\n` +
+              relevantChunks.map((c, i) => `> **[Source: ${c.documentTitle}]**\n> ${c.content}`).join('\n\n');
           } else {
             fallbackResponse = `### College Information System\n\nNo specific document matches found for "${userQuery}". You can ask about BTech CSE curriculum, academic calendar, hostel regulations, examination guidelines, or placement statistics.`;
           }
