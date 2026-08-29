@@ -86,8 +86,7 @@ export default function ChatPage() {
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
-  const [isPointerInside, setIsPointerInside] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 500, y: 300 });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
@@ -318,13 +317,13 @@ export default function ChatPage() {
   const heroScale = Math.max(0.9, 1 - scrollTop / 1200);
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] overflow-hidden transition-colors duration-500">
+    <div className="h-screen flex flex-col bg-[#060810] overflow-hidden transition-colors duration-500">
       <Navbar />
 
       <div className="flex-1 flex overflow-hidden relative">
         {/* Ambient Glows */}
-        <div className="absolute top-1/4 left-1/3 w-[450px] h-[450px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
-        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute top-1/4 left-1/3 w-[450px] h-[450px] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-indigo-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
 
         {/* Chat History Sidebar */}
         <ChatSidebar
@@ -348,39 +347,37 @@ export default function ChatPage() {
         <main
           ref={mainStreamRef}
           onPointerMove={handlePointerMove}
-          onPointerEnter={() => setIsPointerInside(true)}
-          onPointerLeave={() => setIsPointerInside(false)}
-          className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
+          className="flex-1 flex flex-col h-full overflow-hidden relative"
         >
-          {/* Custom Line Art Background Image Layer */}
+          {/* Custom Line Art Background Image Layer revealed by Torch Pointer */}
           <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
+            className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0"
             style={{
-              opacity: isPointerInside ? 0.18 : 0,
+              opacity: 0.35,
               backgroundImage: `url('/bg.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'sepia(100%) hue-rotate(165deg) saturate(220%) brightness(0.85)',
-              WebkitMaskImage: `radial-gradient(circle 150px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 150px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 100%)`,
+              filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
+              WebkitMaskImage: `radial-gradient(circle 220px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 220px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Soft Cyan/Indigo Torch Light Beam Circle */}
+          {/* Soft Cyan/Indigo Torch Light Beam Spotlight Circle */}
           <div
-            className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-2xl -z-10"
+            className="absolute pointer-events-none transition-all duration-75 rounded-full blur-2xl z-0"
             style={{
-              opacity: isPointerInside ? 0.18 : 0,
-              left: `${mousePos.x - 95}px`,
-              top: `${mousePos.y - 95}px`,
-              width: '190px',
-              height: '190px',
-              background: 'radial-gradient(circle, rgba(6,182,212,0.35) 0%, rgba(99,102,241,0.18) 50%, transparent 100%)',
+              opacity: 0.45,
+              left: `${mousePos.x - 125}px`,
+              top: `${mousePos.y - 125}px`,
+              width: '250px',
+              height: '250px',
+              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 100%)',
             }}
           />
 
           {/* iOS Header Control Sub-bar */}
-          <div className="px-5 py-3 bg-white/70 dark:bg-[#080c16]/75 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 flex items-center justify-between z-20 transition-all">
+          <div className="px-5 py-3 bg-[#080c16]/80 backdrop-blur-2xl border-b border-slate-800/70 flex items-center justify-between z-20 transition-all">
             <div className="flex items-center gap-2">
               {/* Symbol-Only History Toggle Specular Button */}
               <SpecularButton
@@ -389,10 +386,10 @@ export default function ChatPage() {
                 baseColor="#1e293b"
                 intensity={0.6}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs"
+                className="p-2.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 text-slate-300 hover:text-white transition-all shadow-xs"
                 title="Toggle Chat History Sidebar"
               >
-                <History className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <History className="w-4 h-4 text-cyan-400" />
               </SpecularButton>
 
               {/* Pure '+' Symbol-Only New Chat Specular Button */}
@@ -402,15 +399,15 @@ export default function ChatPage() {
                 baseColor="#0284c7"
                 intensity={1}
                 onClick={handleNewChat}
-                className="p-2.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 font-black transition-all shadow-xs"
+                className="p-2.5 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-black transition-all shadow-xs"
                 title="Start a new conversation"
               >
                 <Plus className="w-4 h-4" />
               </SpecularButton>
 
-              <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
+              <span className="text-xs font-black tracking-tight text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
                 {isTemporaryChat ? (
-                  <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 font-black bg-amber-50/80 dark:bg-amber-950/60 px-3 py-1 rounded-full border border-amber-200/80 dark:border-amber-800/60">
+                  <span className="text-amber-400 flex items-center gap-1.5 font-black bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800/60">
                     <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
                     Incognito Mode
                   </span>
@@ -431,7 +428,7 @@ export default function ChatPage() {
                 baseColor="#78350f"
                 intensity={0.8}
                 onClick={() => setIsNoticeDrawerOpen(!isNoticeDrawerOpen)}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-50/90 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 text-xs font-extrabold transition-all shadow-xs relative"
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold transition-all shadow-xs relative"
                 title="Open Campus Deadlines & Notices Panel"
               >
                 <BellRing className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
@@ -446,10 +443,10 @@ export default function ChatPage() {
                   baseColor="#1e293b"
                   intensity={0.6}
                   onClick={exportConversationMarkdown}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold transition-all shadow-xs"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800/80 text-xs font-bold transition-all shadow-xs"
                   title="Export chat transcript as Markdown report"
                 >
-                  <Download className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                  <Download className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="hidden sm:inline">Export</span>
                 </SpecularButton>
               )}
@@ -463,8 +460,8 @@ export default function ChatPage() {
                 onClick={toggleTemporaryChat}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black transition-all border shadow-xs ${
                   isTemporaryChat
-                    ? 'bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-amber-500/10'
-                    : 'bg-slate-100/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400 border-slate-200/80 dark:border-slate-800/80 hover:text-amber-500'
+                    ? 'bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-300 border-amber-500/40 shadow-amber-500/10'
+                    : 'bg-slate-900/80 text-slate-400 border-slate-800/80 hover:text-amber-500'
                 }`}
                 title={isTemporaryChat ? 'Click to turn off Incognito Mode' : 'Enable Incognito Temporary Chat'}
               >
@@ -478,7 +475,7 @@ export default function ChatPage() {
           <div
             ref={chatScrollContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12 scroll-smooth"
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12 scroll-smooth z-10"
           >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
@@ -492,64 +489,40 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Smaller & Brighter Feathered 3D Sphere Logo */}
+                  {/* Hero 3D Ultra-Feathered Sphere Logo */}
                   <div className="relative group cursor-pointer">
-                    {/* Vibrant Grounding 3D Sphere Elliptical Drop Shadow & Bright Backlight Glow */}
-                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-5 rounded-[100%] bg-cyan-400/50 blur-lg group-hover:bg-cyan-300/70 transition-all duration-500" />
-                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Ambient Neon Backlight Sphere Glow */}
+                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
 
-                    {/* Compact 3D Sphere Orb Body (104px w-26 h-26) */}
+                    {/* Feathered 3D Sphere Wrapper */}
                     <div
-                      className="relative w-26 h-26 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500"
+                      className="relative w-40 h-40 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
                       style={{
-                        background: 'radial-gradient(circle at 35% 25%, #1e293b 0%, #060810 100%)',
-                        boxShadow: `
-                          inset 0 0 18px rgba(255, 255, 255, 0.6),
-                          inset -8px -8px 18px rgba(0, 0, 0, 0.7),
-                          inset 8px 8px 16px rgba(56, 189, 248, 0.55),
-                          0 20px 40px -6px rgba(6, 182, 212, 0.6)
-                        `,
+                        maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
+                        WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
                       }}
                     >
-                      {/* Bright Base Logo Image with 3D Spherical Scale & Soft Edge Feather */}
+                      {/* Base Logo Image */}
                       <img
                         src="/logo.jpg"
-                        alt="AskCET Bright 3D Feathered Sphere Logo"
-                        className="absolute inset-0 w-full h-full object-cover rounded-full scale-120"
-                        style={{
-                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 75%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0) 100%)',
-                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 75%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0) 100%)',
-                          filter: 'contrast(1.15) brightness(1.2)',
-                        }}
+                        alt="AskCET 3D Feathered Sphere Logo"
+                        className="absolute inset-0 w-full h-full object-cover rounded-full mix-blend-lighten"
                       />
 
-                      {/* Bright 3D Spherical Volume Shading */}
+                      {/* 3D Specular Curvature Gradient (creates volumetric 3D spherical depth) */}
                       <div
                         className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
-                          background: `
-                            radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 55%),
-                            radial-gradient(circle at 75% 80%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 45%, rgba(0, 0, 0, 0) 80%),
-                            radial-gradient(circle at center, rgba(0, 0, 0, 0) 50%, rgba(56, 189, 248, 0.35) 85%, rgba(0, 0, 0, 0.6) 100%)
-                          `,
+                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.35) 65%, rgba(0, 0, 0, 0.9) 100%)',
+                          mixBlendMode: 'overlay',
                         }}
                       />
 
-                      {/* Bright Specular Glass Highlight Spot (Top-Left Light Source) */}
+                      {/* Soft Spherical Inner Shadow Vignette */}
                       <div
-                        className="absolute top-2 left-2.5 w-10 h-6 rounded-full pointer-events-none -rotate-12"
+                        className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
-                          background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%)',
-                          filter: 'blur(0.8px)',
-                        }}
-                      />
-
-                      {/* Bright Bottom Fresnel Rim Reflection */}
-                      <div
-                        className="absolute bottom-1 left-3 right-3 h-3.5 rounded-b-full pointer-events-none"
-                        style={{
-                          background: 'linear-gradient(to top, rgba(56, 189, 248, 0.75), rgba(56, 189, 248, 0))',
-                          filter: 'blur(1px)',
+                          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.95) 100%)',
                         }}
                       />
                     </div>
@@ -557,17 +530,17 @@ export default function ChatPage() {
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_16px_rgba(6,182,212,1)] transition-transform duration-75 z-20"
+                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
                     >
-                      <Sparkles className="w-6.5 h-6.5 text-cyan-400" />
+                      <Sparkles className="w-8 h-8 text-cyan-400" />
                     </div>
                   </div>
 
                   <div className="space-y-3 max-w-xl">
-                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h1 className="text-4xl font-black text-white tracking-tight">
                       Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
                     </h1>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                    <p className="text-sm text-slate-300 leading-relaxed font-medium">
                       Your source-grounded AI assistant for CET College of Engineering. Ask anything about academic regulations, exam timetables, hostel curfews, or fee schedules.
                     </p>
                   </div>
@@ -576,7 +549,7 @@ export default function ChatPage() {
                   <motion.div
                     animate={{ y: [0, 6, 0] }}
                     transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                    className="pt-6 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    className="pt-6 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={() => {
                       chatScrollContainerRef.current?.scrollTo({ top: 380, behavior: 'smooth' });
                     }}
@@ -589,7 +562,7 @@ export default function ChatPage() {
                 {/* 6 Campus FAQ Tiles - Wrapped in React Bits BorderGlow */}
                 <div className="w-full pt-8 pb-24">
                   <div className="text-center mb-8">
-                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-500">
                       Explore Popular Campus Topics & FAQs
                     </span>
                   </div>
@@ -639,15 +612,15 @@ export default function ChatPage() {
                                   scrollEnd="top 75%"
                                   stagger={0.02}
                                   containerClassName="mb-1.5"
-                                  textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                                  textClassName="font-extrabold text-base text-white group-hover:text-cyan-400 transition-colors"
                                 >
                                   {card.title}
                                 </ScrollFloat>
 
-                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
+                                <p className="text-xs text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
                               </div>
 
-                              <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                              <div className="text-xs font-extrabold text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-800/80">
                                 <span>Try Asking This</span>
                                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
                               </div>
@@ -667,9 +640,9 @@ export default function ChatPage() {
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-3 text-xs text-cyan-700 dark:text-cyan-300 font-bold py-3 px-5 bg-white/90 dark:bg-slate-900/90 rounded-2xl max-w-sm border border-cyan-200 dark:border-cyan-500/30 shadow-xl backdrop-blur-xl"
+                className="flex items-center gap-3 text-xs text-cyan-300 font-bold py-3 px-5 bg-slate-900/90 rounded-2xl max-w-sm border border-cyan-500/30 shadow-xl backdrop-blur-xl"
               >
-                <Loader2 className="w-4 h-4 animate-spin text-cyan-600 dark:text-cyan-400" />
+                <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
                 <span>Searching CET vector database & generating grounded answer...</span>
               </motion.div>
             )}
@@ -677,7 +650,7 @@ export default function ChatPage() {
           </div>
 
           {/* Bottom Floating iOS Input Box */}
-          <div className="p-4 sm:p-5 bg-white/70 dark:bg-[#080c16]/75 backdrop-blur-2xl border-t border-slate-200/80 dark:border-slate-800/70 shadow-2xl">
+          <div className="p-4 sm:p-5 bg-[#080c16]/80 backdrop-blur-2xl border-t border-slate-800/70 shadow-2xl z-20">
             <ChatBox onSendMessage={handleSendMessage} isLoading={isLoading} />
           </div>
         </main>
