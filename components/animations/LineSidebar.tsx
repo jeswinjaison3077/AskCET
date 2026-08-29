@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect, PointerEvent } from 'react';
+import { motion } from 'framer-motion';
 import './LineSidebar.css';
 
 const FALLOFF_CURVES: Record<string, (p: number) => number> = {
@@ -65,12 +66,19 @@ const LineSidebar = ({
   const currentRef = useRef<number[]>([]);
   const rafRef = useRef<number | null>(null);
   const lastRef = useRef<number>(0);
-  const activeRef = useRef<number | null>(defaultActive);
-  const smoothingRef = useRef<number>(smoothing);
   const [activeIndex, setActiveIndex] = useState<number | null>(defaultActive);
+  const activeRef = useRef<number | null>(activeIndex);
+  const smoothingRef = useRef<number>(smoothing);
 
   activeRef.current = activeIndex;
   smoothingRef.current = smoothing;
+
+  // Synchronize defaultActive prop changes from parent scroll observer
+  useEffect(() => {
+    if (defaultActive !== undefined && defaultActive !== null) {
+      setActiveIndex(defaultActive);
+    }
+  }, [defaultActive]);
 
   const runFrame = useCallback((now: number) => {
     const dt = Math.min((now - lastRef.current) / 1000, 0.05);
@@ -167,23 +175,33 @@ const LineSidebar = ({
       } as any}
     >
       <ul ref={listRef} className="line-sidebar__list" onPointerMove={handlePointerMove as any} onPointerLeave={handlePointerLeave}>
-        {items.map((label, index) => (
-          <li
-            key={`${label}-${index}`}
-            ref={el => {
-              itemRefs.current[index] = el;
-            }}
-            className="line-sidebar__item"
-            aria-current={activeIndex === index ? 'true' : undefined}
-            onClick={() => handleClick(index, label)}
-          >
-            {showMarker && <span className="line-sidebar__marker" aria-hidden="true" />}
-            <span className="line-sidebar__label">
-              {showIndex && <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>}
-              <span className="line-sidebar__text">{label}</span>
-            </span>
-          </li>
-        ))}
+        {items.map((label, index) => {
+          const isActive = activeIndex === index;
+          return (
+            <li
+              key={`${label}-${index}`}
+              ref={el => {
+                itemRefs.current[index] = el;
+              }}
+              className="line-sidebar__item"
+              aria-current={isActive ? 'true' : undefined}
+              onClick={() => handleClick(index, label)}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="lineSidebarFlowingHighlight"
+                  className="line-sidebar__flowing-highlight"
+                  transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+                />
+              )}
+              {showMarker && <span className="line-sidebar__marker" aria-hidden="true" />}
+              <span className="line-sidebar__label">
+                {showIndex && <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>}
+                <span className="line-sidebar__text">{label}</span>
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
