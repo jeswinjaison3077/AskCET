@@ -131,10 +131,10 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
           className={`px-5 py-4 rounded-[26px] text-sm leading-relaxed ${
             isUser
               ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-medium'
-              : 'bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-xl'
+              : 'bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-xl font-jakarta text-[14.5px] font-normal leading-relaxed tracking-tight'
           }`}
         >
-          <div className="whitespace-pre-wrap">{cleanContent}</div>
+          <div className="whitespace-pre-wrap font-jakarta leading-relaxed">{cleanContent}</div>
         </div>
 
         {/* Verified Sources Collapsible Box */}
@@ -168,7 +168,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
                         </span>
                       </div>
                       {c.snippet && (
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60 font-jakarta">
                           "{c.snippet}"
                         </p>
                       )}
