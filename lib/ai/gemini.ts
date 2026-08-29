@@ -41,7 +41,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance (gemini-3.5-flash-lite for 3x lower latency)
+ * Get configured Gemini Generative Model instance (gemini-3.5-flash-lite with low temperature to prevent hallucinating CET rules)
  */
 export function getChatModel() {
   const apiKey = getApiKey();
@@ -50,7 +50,7 @@ export function getChatModel() {
   return genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
-      temperature: 0.2,
+      temperature: 0.1, // Set to 0.1 to force strict factual adherence and prevent hallucination
       topP: 0.8,
       topK: 40,
       maxOutputTokens: 1024,
