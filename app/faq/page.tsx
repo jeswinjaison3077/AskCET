@@ -203,6 +203,7 @@ const FAQ_CATEGORIES = [
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number>(0);
+  const [activeYOffset, setActiveYOffset] = useState<number>(0);
 
   const toggleItem = (key: string) => {
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -217,7 +218,7 @@ export default function FAQPage() {
     }
   };
 
-  // Real-Time Scroll Observer - Transitions Active Topic Name as soon as heading reaches threshold
+  // Real-Time Scroll Observer - Translates active Topic Tile vertically to line up side-by-side with active heading
   useEffect(() => {
     const handleScrollObserver = () => {
       let currentIdx = 0;
@@ -234,6 +235,15 @@ export default function FAQPage() {
       });
 
       setActiveCategoryIndex(currentIdx);
+
+      const activeHeadingEl = document.getElementById(`faq-cat-${currentIdx}`);
+      const gridEl = document.getElementById('faq-grid-container');
+      if (activeHeadingEl && gridEl) {
+        const gridRect = gridEl.getBoundingClientRect();
+        const activeRect = activeHeadingEl.getBoundingClientRect();
+        const relativeY = Math.max(0, activeRect.top - gridRect.top);
+        setActiveYOffset(relativeY);
+      }
     };
 
     window.addEventListener('scroll', handleScrollObserver, { passive: true });
@@ -242,6 +252,8 @@ export default function FAQPage() {
   }, []);
 
   const sidebarCategoryTitles = FAQ_CATEGORIES.map((c) => c.category);
+  const activeCategoryObj = FAQ_CATEGORIES[activeCategoryIndex] || FAQ_CATEGORIES[0];
+  const ActiveIcon = activeCategoryObj.icon;
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] transition-colors duration-500 relative">
@@ -271,32 +283,44 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
-        {/* Desktop 2-Column Layout with Smoothly Moving Sticky Topic Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start relative">
-          {/* Sticky Left LineSidebar Navigation synchronized with heading scroll position */}
-          <aside className="hidden lg:block lg:col-span-1 sticky top-24 self-start bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl z-20">
-            <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
-              Topic Sections
-            </div>
-            <LineSidebar
-              items={sidebarCategoryTitles}
-              accentColor="#06b6d4"
-              textColor="#94a3b8"
-              showIndex={false}
-              showMarker={false}
-              proximityRadius={140}
-              maxShift={24}
-              falloff="smooth"
-              itemGap={18}
-              fontSize={0.85}
-              smoothing={100}
-              defaultActive={activeCategoryIndex}
-              onItemClick={(index) => handleSidebarItemClick(index)}
-            />
-          </aside>
+        {/* Desktop 2-Column Layout with Vertically Sliding Active Topic Section Tile */}
+        <div id="faq-grid-container" className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start relative min-h-[800px]">
+          {/* Vertically Sliding Left Sidebar Container that physically moves down to match active heading Y-offset */}
+          <div className="hidden lg:block lg:col-span-1 relative h-full">
+            <motion.aside
+              animate={{ y: activeYOffset }}
+              transition={{ type: 'spring', stiffness: 240, damping: 28 }}
+              className="bg-white/80 dark:bg-slate-900/80 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-2xl z-20 w-full space-y-4"
+            >
+              <div className="flex items-center gap-2 px-1">
+                <div className={`w-7 h-7 rounded-xl bg-gradient-to-tr ${activeCategoryObj.color} text-white flex items-center justify-center shadow-md`}>
+                  <ActiveIcon className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                  Topic Sections
+                </div>
+              </div>
+
+              <LineSidebar
+                items={sidebarCategoryTitles}
+                accentColor="#06b6d4"
+                textColor="#94a3b8"
+                showIndex={false}
+                showMarker={false}
+                proximityRadius={140}
+                maxShift={24}
+                falloff="smooth"
+                itemGap={16}
+                fontSize={0.85}
+                smoothing={100}
+                defaultActive={activeCategoryIndex}
+                onItemClick={(index) => handleSidebarItemClick(index)}
+              />
+            </motion.aside>
+          </div>
 
           {/* Accordion Categories Content Stream */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-12">
             {FAQ_CATEGORIES.map((cat, catIdx) => {
               const Icon = cat.icon;
               return (
