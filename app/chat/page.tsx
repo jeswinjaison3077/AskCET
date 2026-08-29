@@ -436,7 +436,7 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero iOS Squircle Logo */}
+                  {/* Hero iOS Squircle Logo with Pure Diamond Symbol Rotating on Scroll */}
                   <div className="relative group cursor-pointer">
                     <div className="absolute inset-0 rounded-[32px] bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
                     <img
@@ -444,8 +444,12 @@ export default function ChatPage() {
                       alt="AskCET Logo"
                       className="relative w-24 h-24 rounded-[32px] object-cover shadow-2xl border-2 border-white/20 dark:border-slate-700/80 group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute -bottom-1 -right-1 p-1.5 rounded-2xl bg-cyan-500 text-white shadow-lg">
-                      <Sparkles className="w-4 h-4 animate-spin" />
+                    {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
+                    <div
+                      style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
+                      className="absolute -bottom-2 -right-2 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] transition-transform duration-75"
+                    >
+                      <Sparkles className="w-6 h-6 text-cyan-400" />
                     </div>
                   </div>
 
@@ -472,7 +476,7 @@ export default function ChatPage() {
                   </motion.div>
                 </div>
 
-                {/* 6 Campus FAQ Tiles - Scroll Float Character Animation */}
+                {/* 6 Campus FAQ Tiles - Appears EVERY TIME on Scroll Down */}
                 <div className="w-full pt-8 pb-24">
                   <div className="text-center mb-8">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
@@ -488,7 +492,7 @@ export default function ChatPage() {
                           key={i}
                           initial={{ opacity: 0, y: 50, scale: 0.92 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                          viewport={{ once: true, amount: 0.05 }}
+                          viewport={{ once: false, amount: 0.05 }}
                           transition={{
                             duration: 0.45,
                             ease: [0.22, 1, 0.36, 1],
