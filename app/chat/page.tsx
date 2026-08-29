@@ -6,7 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
-import { Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download, BellRing, Sparkles } from 'lucide-react';
+import { Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download, BellRing, Sparkles, History } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
@@ -52,7 +52,7 @@ export default function ChatPage() {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -250,7 +250,7 @@ export default function ChatPage() {
         <div className="absolute top-1/4 left-1/3 w-[450px] h-[450px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
         <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-        {/* Chat History Sidebar */}
+        {/* Chat History Sidebar (Collapsed by default) */}
         <ChatSidebar
           conversations={conversations}
           activeId={activeConversationId}
@@ -277,10 +277,11 @@ export default function ChatPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs"
-                title="Toggle Sidebar"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs text-xs font-bold"
+                title="Toggle History Sidebar"
               >
-                <Menu className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <History className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <span className="hidden sm:inline">History</span>
               </motion.button>
 
               <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate flex items-center gap-2">
@@ -362,7 +363,7 @@ export default function ChatPage() {
             </div>
           )}
 
-          {/* Chat Messages Stream & Award-Winning Hero Screen */}
+          {/* Chat Messages Stream & Hero Screen */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {messages.length === 0 ? (
               <motion.div
@@ -393,7 +394,7 @@ export default function ChatPage() {
                   </p>
                 </div>
 
-                {/* Interactive Apple-Style Feature Cards */}
+                {/* Interactive Feature Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full text-left mt-2">
                   {FEATURE_CARDS.map((card, i) => {
                     const Icon = card.icon;
