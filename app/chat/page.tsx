@@ -444,8 +444,9 @@ export default function ChatPage() {
 
               <span className="text-xs font-black tracking-tight text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
                 {isTemporaryChat ? (
-                  <span className="text-amber-400 flex items-center gap-1.5 font-black">
+                  <span className="text-amber-400 flex items-center gap-1.5 font-black bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800/60 shadow-inner">
                     <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                    Incognito
                   </span>
                 ) : activeConversationId ? (
                   conversations.find((c) => c.id === activeConversationId)?.title || 'Current Chat'
