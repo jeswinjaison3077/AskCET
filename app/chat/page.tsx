@@ -549,14 +549,8 @@ export default function ChatPage() {
                       whileTap={{ scale: 0.95 }}
                       className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-xl shadow-cyan-500/40 group-hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all duration-300"
                     >
-                      {/* Inner Feathered Sphere */}
-                      <div
-                        className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950"
-                        style={{
-                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 70%, rgba(0, 0, 0, 0) 100%)',
-                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 70%, rgba(0, 0, 0, 0) 100%)',
-                        }}
-                      >
+                      {/* Inner Smooth Circle Sphere */}
+                      <div className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950">
                         {/* Base Logo Image */}
                         <img
                           src="/logo.jpg"
