@@ -515,7 +515,7 @@ export default function ChatPage() {
           >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Compact Minimalist Siri Assistant Orb Display */}
+                {/* HERO SCREEN - Interactive Siri Assistant Orb Display */}
                 <div
                   style={{
                     opacity: heroOpacity,
@@ -525,23 +525,29 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-260px)] pb-4 w-full flex flex-col items-center justify-center text-center space-y-5 pointer-events-auto"
                 >
-                  {/* Compact Minimalist Siri-Style AI Assistant Orb */}
+                  {/* Interactive Floating Siri-Style AI Assistant Orb with Deep Zoom & Reactive Hovering */}
                   <div className="relative group cursor-pointer flex items-center justify-center">
-                    {/* Soft Ambient Neon Cyan/Indigo Glow */}
-                    <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                    {/* Reactive Ambient Neon Cyan/Indigo/Purple Backlight Glow */}
+                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 blur-xl opacity-60 group-hover:opacity-100 group-hover:blur-2xl group-hover:scale-125 transition-all duration-500" />
 
-                    {/* Compact Siri Orb Body (w-24 h-24) - Pure Floating & Slow Zoom In/Out, No Rotation */}
+                    {/* Siri Orb Container - Continuous Deep Float & Zoom + Interactive Spring Hover */}
                     <motion.div
                       animate={{
-                        y: [0, -6, 0],
-                        scale: [1, 1.06, 1],
+                        y: [0, -10, 0],
+                        scale: [1, 1.15, 1],
                       }}
                       transition={{
                         repeat: Infinity,
-                        duration: 4,
+                        duration: 3.5,
                         ease: 'easeInOut',
                       }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-lg shadow-cyan-500/30 transition-transform duration-300"
+                      whileHover={{
+                        scale: 1.25,
+                        y: -12,
+                        transition: { duration: 0.3, ease: 'backOut' },
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-xl shadow-cyan-500/40 group-hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all duration-300"
                     >
                       {/* Inner Feathered Sphere */}
                       <div
@@ -554,22 +560,22 @@ export default function ChatPage() {
                         {/* Base Logo Image */}
                         <img
                           src="/logo.jpg"
-                          alt="AskCET Compact Siri Assistant Orb"
-                          className="w-full h-full object-cover rounded-full mix-blend-lighten"
+                          alt="AskCET Interactive Siri Assistant Orb"
+                          className="w-full h-full object-cover rounded-full mix-blend-lighten group-hover:scale-110 transition-transform duration-500"
                         />
 
-                        {/* Subtle Volumetric Curved Reflection */}
+                        {/* Volumetric Specular Curved Glass Reflection */}
                         <div
                           className="absolute inset-0 rounded-full pointer-events-none"
                           style={{
-                            background: 'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 35%, transparent 70%)',
+                            background: 'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 35%, transparent 70%)',
                             mixBlendMode: 'overlay',
                           }}
                         />
                       </div>
 
-                      {/* Small Sparkle Symbol - Upright, Pulsing */}
-                      <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] z-20">
+                      {/* Sparkle Symbol Badge - Reactive Hover Highlight */}
+                      <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,1)] group-hover:scale-125 group-hover:text-cyan-300 transition-transform duration-300 z-20">
                         <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
                       </div>
                     </motion.div>
