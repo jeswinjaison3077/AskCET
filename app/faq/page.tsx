@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import LineSidebar from '@/components/animations/LineSidebar';
+import SpecularButton from '@/components/animations/SpecularButton';
 import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -204,6 +205,23 @@ export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number>(0);
 
+  // Dynamic Scroll Observer: Automatically update active category index as user scrolls!
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 200;
+      for (let i = FAQ_CATEGORIES.length - 1; i >= 0; i--) {
+        const element = document.getElementById(`faq-cat-${i}`);
+        if (element && element.offsetTop <= scrollPosition) {
+          setActiveCategoryIndex(i);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const toggleItem = (key: string) => {
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -225,6 +243,37 @@ export default function FAQPage() {
       <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <Navbar />
+
+      {/* Sticky Top Category Navigation Bar (Syncs smoothly with current scroll section) */}
+      <div className="sticky top-16 z-30 bg-white/80 dark:bg-[#080c16]/85 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 py-2.5 px-4 shadow-sm transition-all">
+        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-bold">
+          <span className="text-slate-400 dark:text-slate-500 shrink-0 uppercase tracking-widest text-[10px] font-black mr-1 hidden sm:inline">
+            Active Topic:
+          </span>
+          {FAQ_CATEGORIES.map((cat, i) => {
+            const Icon = cat.icon;
+            const isSelected = activeCategoryIndex === i;
+            return (
+              <SpecularButton
+                key={i}
+                radius={999}
+                lineColor={isSelected ? '#38bdf8' : '#64748b'}
+                baseColor={isSelected ? '#0284c7' : '#1e293b'}
+                intensity={isSelected ? 1.2 : 0.4}
+                onClick={() => handleSidebarItemClick(i)}
+                className={`shrink-0 px-3.5 py-1.5 font-bold transition-all flex items-center gap-2 text-xs rounded-full ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
+                    : 'bg-slate-100/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{cat.category}</span>
+              </SpecularButton>
+            );
+          })}
+        </div>
+      </div>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Page Header */}
@@ -248,8 +297,8 @@ export default function FAQPage() {
 
         {/* Desktop 2-Column Layout with Clean Proximity LineSidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* Sticky Left LineSidebar Navigation (Clean text proximity shift, no markers or numbers) */}
-          <div className="hidden lg:block lg:col-span-1 sticky top-24 bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl">
+          {/* Sticky Left LineSidebar Navigation (Clean text proximity shift, synced with active scroll section) */}
+          <div className="hidden lg:block lg:col-span-1 sticky top-36 bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl">
             <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
               Topic Sections
             </div>
@@ -281,7 +330,7 @@ export default function FAQPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: catIdx * 0.08 }}
-                  className="space-y-3 scroll-mt-24"
+                  className="space-y-3 scroll-mt-36"
                 >
                   <div className="flex items-center gap-2.5 font-black text-lg text-slate-900 dark:text-white px-1">
                     <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-lg shadow-cyan-500/20`}>
