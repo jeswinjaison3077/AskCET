@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
 import { Sparkles, Lock, Mail, User as UserIcon, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 function AuthForm() {
   const router = useRouter();
@@ -58,22 +59,27 @@ function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl">
-      {/* Title */}
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="w-full max-w-md glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl shadow-black/80"
+    >
+      {/* Header */}
       <div className="text-center mb-6">
-        <div className="w-12 h-12 rounded-2xl bg-brand-600/20 border border-brand-500/30 text-brand-400 flex items-center justify-center mx-auto mb-3">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-3 shadow-lg shadow-cyan-500/20">
           <Sparkles className="w-6 h-6" />
         </div>
-        <h2 className="text-2xl font-bold text-white">
+        <h2 className="text-2xl font-extrabold text-white">
           {isSignUp ? 'Create AskCET Account' : 'Sign in to AskCET'}
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
-          {isSignUp ? 'Join the college RAG information platform' : 'Enter your credentials to continue'}
+        <p className="text-xs text-slate-400 mt-1 font-medium">
+          {isSignUp ? 'Join the college RAG knowledge platform' : 'Enter your student or admin credentials to continue'}
         </p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-xl bg-rose-950/60 border border-rose-800/80 text-rose-300 text-xs text-center font-medium">
+        <div className="mb-4 p-3 rounded-xl bg-rose-950/80 border border-rose-800 text-rose-300 text-xs text-center font-semibold">
           {error}
         </div>
       )}
@@ -81,62 +87,62 @@ function AuthForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {isSignUp && (
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Full Name</label>
             <div className="relative">
-              <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+              <UserIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Alex Johnson"
                 required
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500"
+                className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
               />
             </div>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+          <label className="block text-xs font-bold text-slate-300 mb-1">Email Address</label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="student@college.edu"
               required
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500"
+              className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+          <label className="block text-xs font-bold text-slate-300 mb-1">Password</label>
           <div className="relative">
-            <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500"
+              className="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-colors"
             />
           </div>
         </div>
 
         {isSignUp && (
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Account Role</label>
+            <label className="block text-xs font-bold text-slate-300 mb-1">Account Role</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setRole('STUDENT')}
-                className={`py-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   role === 'STUDENT'
-                    ? 'bg-brand-600/20 border-brand-500 text-brand-300'
-                    : 'bg-slate-900 border-slate-700 text-slate-400'
+                    ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-xs'
+                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:bg-slate-800'
                 }`}
               >
                 <UserIcon className="w-3.5 h-3.5" /> Student
@@ -144,10 +150,10 @@ function AuthForm() {
               <button
                 type="button"
                 onClick={() => setRole('ADMIN')}
-                className={`py-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   role === 'ADMIN'
-                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
-                    : 'bg-slate-900 border-slate-700 text-slate-400'
+                    ? 'bg-indigo-500/20 border-indigo-500 text-indigo-300 shadow-xs'
+                    : 'bg-slate-900 border-slate-700 text-slate-400 hover:bg-slate-800'
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5" /> Admin
@@ -159,7 +165,7 @@ function AuthForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-600/20 transition-all"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.01]"
         >
           {loading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -172,41 +178,41 @@ function AuthForm() {
         </button>
       </form>
 
-      {/* Switch Mode Toggle */}
-      <div className="mt-6 text-center text-xs text-slate-400">
+      {/* Toggle Auth Mode */}
+      <div className="mt-6 text-center text-xs text-slate-400 font-medium">
         {isSignUp ? (
           <>
             Already have an account?{' '}
-            <button onClick={() => setIsSignUp(false)} className="text-brand-400 font-semibold hover:underline">
+            <button onClick={() => setIsSignUp(false)} className="text-cyan-400 font-bold hover:underline">
               Sign In
             </button>
           </>
         ) : (
           <>
             Don't have an account?{' '}
-            <button onClick={() => setIsSignUp(true)} className="text-brand-400 font-semibold hover:underline">
+            <button onClick={() => setIsSignUp(true)} className="text-cyan-400 font-bold hover:underline">
               Sign Up
             </button>
           </>
         )}
       </div>
 
-      {/* Demo Credentials Note */}
-      <div className="mt-6 pt-4 border-t border-slate-800/80 text-[11px] text-slate-400">
-        <p className="font-semibold text-slate-300 mb-1">Demo Quick Accounts:</p>
-        <div>Student: <code className="text-brand-300">student@college.edu</code> / <code className="text-brand-300">student123</code></div>
-        <div>Admin: <code className="text-indigo-300">admin@college.edu</code> / <code className="text-indigo-300">admin123</code></div>
+      {/* Quick Demo Credentials */}
+      <div className="mt-6 pt-4 border-t border-slate-800/80 text-[11px] text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800/60">
+        <p className="font-bold text-slate-300 mb-1">Demo Credentials:</p>
+        <div>Student: <code className="text-cyan-300 font-bold">student@college.edu</code> / <code className="text-cyan-300 font-bold">student123</code></div>
+        <div>Admin: <code className="text-indigo-300 font-bold">admin@college.edu</code> / <code className="text-indigo-300 font-bold">admin123</code></div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950">
+    <div className="min-h-screen flex flex-col bg-[#070a12]">
       <Navbar />
       <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-brand-400" />}>
+        <Suspense fallback={<Loader2 className="w-8 h-8 animate-spin text-cyan-400" />}>
           <AuthForm />
         </Suspense>
       </div>

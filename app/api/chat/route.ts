@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { generateEmbedding, getChatModel } from '@/lib/ai/gemini';
+import { generateEmbedding, getChatModel, isValidApiKey, getApiKey } from '@/lib/ai/gemini';
 import { searchSimilarChunks } from '@/lib/rag/vector-store';
 import { buildRAGSystemPrompt } from '@/lib/ai/prompts';
+import { extractDocumentText } from '@/lib/rag/extractor';
 
 export async function POST(request: Request) {
   try {
@@ -12,109 +13,190 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { message, conversationId } = await request.json();
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json({ error: 'Message content is required.' }, { status: 400 });
+    const { message, conversationId, isTemporary, attachment } = await request.json();
+    if (!message && !attachment) {
+      return NextResponse.json({ error: 'Message content or attachment is required.' }, { status: 400 });
     }
 
-    // 1. Get or create conversation
-    let targetConversationId = conversationId;
-    if (!targetConversationId) {
-      const titleSnippet = message.slice(0, 30) + (message.length > 30 ? '...' : '');
-      const newConv = await prisma.conversation.create({
+    const userQuery = message || `Please analyze this attached ${attachment?.type || 'file'}: ${attachment?.name}`;
+
+    // Process document attachment text if uploaded
+    let attachmentTextContext = '';
+    let imagePart: { inlineData: { mimeType: string; data: string } } | null = null;
+
+    if (attachment && attachment.data) {
+      if (attachment.type === 'image' || attachment.mimeType?.startsWith('image/')) {
+        imagePart = {
+          inlineData: {
+            mimeType: attachment.mimeType || 'image/png',
+            data: attachment.data,
+          },
+        };
+      } else {
+        try {
+          const fileBuffer = Buffer.from(attachment.data, 'base64');
+          const ext = attachment.name?.split('.').pop() || 'pdf';
+          const extracted = await extractDocumentText(fileBuffer, ext);
+          attachmentTextContext = `\n\n[USER ATTACHED DOCUMENT: ${attachment.name}]\n${extracted.text.slice(0, 4000)}`;
+        } catch (extractErr) {
+          console.warn('Error extracting attached document text:', extractErr);
+        }
+      }
+    }
+
+    // 1. Get or create conversation (only if NOT temporary mode)
+    let targetConversationId: string | null = null;
+    if (!isTemporary) {
+      targetConversationId = conversationId;
+      if (!targetConversationId) {
+        const titleSnippet = userQuery.slice(0, 30) + (userQuery.length > 30 ? '...' : '');
+        const newConv = await prisma.conversation.create({
+          data: {
+            title: titleSnippet,
+            userId: session.userId,
+          },
+        });
+        targetConversationId = newConv.id;
+      }
+
+      // Save user message to DB in background
+      prisma.message.create({
         data: {
-          title: titleSnippet,
-          userId: session.userId,
+          conversationId: targetConversationId,
+          role: 'user',
+          content: attachment ? `${userQuery}\n📎 Attached: ${attachment.name}` : userQuery,
         },
-      });
-      targetConversationId = newConv.id;
+      }).catch(() => {});
     }
-
-    // Save user message to DB
-    await prisma.message.create({
-      data: {
-        conversationId: targetConversationId,
-        role: 'user',
-        content: message,
-      },
-    });
-
-    // 2. Generate embedding & vector search
-    let relevantChunks: Array<{
-      documentTitle: string;
-      category: string;
-      department: string;
-      pageNumber: number;
-      content: string;
-    }> = [];
-
-    try {
-      const queryEmbedding = await generateEmbedding(message);
-      const searchResults = await searchSimilarChunks(queryEmbedding, 5, 0.4);
-      
-      relevantChunks = searchResults.map(r => ({
-        documentTitle: r.documentTitle,
-        category: r.category,
-        department: r.department,
-        pageNumber: r.pageNumber,
-        content: r.content,
-      }));
-    } catch (embeddingError) {
-      console.warn('Embedding search error, proceeding with direct prompt:', embeddingError);
-    }
-
-    // 3. Construct System Prompt & Citations list
-    const systemPrompt = buildRAGSystemPrompt(relevantChunks, message);
-    const citations = relevantChunks.map(c => ({
-      documentTitle: c.documentTitle,
-      category: c.category,
-      department: c.department,
-      pageNumber: c.pageNumber,
-      snippet: c.content.slice(0, 150) + '...',
-    }));
-
-    // 4. Stream response from Gemini
-    const model = getChatModel();
-    const result = await model.generateContentStream(systemPrompt);
 
     const encoder = new TextEncoder();
-    let accumulatedText = '';
 
+    // Verify API Key
+    const apiKey = getApiKey();
+    if (!isValidApiKey(apiKey)) {
+      const warningMessage = `⚠️ **Invalid Gemini API Key Format Detected**\n\nPlease check your \`GEMINI_API_KEY\` in your \`.env\` file.`;
+
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: 'metadata',
+                conversationId: targetConversationId,
+                citations: [],
+                isTemporary: !!isTemporary,
+              })}\n\n`
+            )
+          );
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ type: 'content', delta: warningMessage })}\n\n`
+            )
+          );
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        },
+      });
+
+      return new NextResponse(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
+    }
+
+    // 2. High-speed stream generation inside ReadableStream.start()
     const stream = new ReadableStream({
       async start(controller) {
-        // Send initial metadata chunk with conversationId and citations
+        // Fast vector retrieval
+        let relevantChunks: Array<{
+          documentTitle: string;
+          category: string;
+          department: string;
+          pageNumber: number;
+          content: string;
+        }> = [];
+
+        try {
+          const queryEmbedding = await generateEmbedding(userQuery);
+          const searchResults = await searchSimilarChunks(queryEmbedding, 4, 0.35);
+          relevantChunks = searchResults.map(r => ({
+            documentTitle: r.documentTitle,
+            category: r.category,
+            department: r.department,
+            pageNumber: r.pageNumber,
+            content: r.content,
+          }));
+        } catch {
+          // Proceed without vector chunks if vector search delayed
+        }
+
+        const systemPrompt = buildRAGSystemPrompt(relevantChunks, userQuery) + attachmentTextContext;
+        const citations = relevantChunks.map(c => ({
+          documentTitle: c.documentTitle,
+          category: c.category,
+          department: c.department,
+          pageNumber: c.pageNumber,
+          snippet: c.content.slice(0, 150) + '...',
+        }));
+
+        // Send metadata immediately
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({
               type: 'metadata',
               conversationId: targetConversationId,
               citations: citations,
+              isTemporary: !!isTemporary,
             })}\n\n`
           )
         );
 
-        for await (const chunk of result.stream) {
-          const chunkText = chunk.text();
-          accumulatedText += chunkText;
+        // Stream Gemini output with low latency
+        const model = getChatModel();
+        const promptContents: any = imagePart ? [systemPrompt, imagePart] : systemPrompt;
+
+        try {
+          const result = await model.generateContentStream(promptContents);
+          let accumulatedText = '';
+
+          for await (const chunk of result.stream) {
+            const chunkText = chunk.text();
+            accumulatedText += chunkText;
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ type: 'content', delta: chunkText })}\n\n`
+              )
+            );
+          }
+
+          // Save complete assistant response in background
+          if (!isTemporary && targetConversationId) {
+            prisma.message.create({
+              data: {
+                conversationId: targetConversationId,
+                role: 'assistant',
+                content: accumulatedText,
+                sources: JSON.stringify(citations),
+              },
+            }).catch(() => {});
+          }
+
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        } catch (genErr: any) {
+          console.error('Streaming error:', genErr);
+          const errText = `\n⚠️ Error streaming response: ${genErr?.message || 'Connection lost'}`;
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ type: 'content', delta: chunkText })}\n\n`
+              `data: ${JSON.stringify({ type: 'content', delta: errText })}\n\n`
             )
           );
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
         }
-
-        // Save complete assistant message to database
-        await prisma.message.create({
-          data: {
-            conversationId: targetConversationId,
-            role: 'assistant',
-            content: accumulatedText,
-            sources: JSON.stringify(citations),
-          },
-        });
-
-        controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-        controller.close();
       },
     });
 
