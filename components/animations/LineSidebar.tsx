@@ -69,12 +69,6 @@ const LineSidebar = ({
   const smoothingRef = useRef<number>(smoothing);
   const [activeIndex, setActiveIndex] = useState<number | null>(defaultActive);
 
-  useEffect(() => {
-    if (defaultActive !== undefined && defaultActive !== null) {
-      setActiveIndex(defaultActive);
-    }
-  }, [defaultActive]);
-
   activeRef.current = activeIndex;
   smoothingRef.current = smoothing;
 

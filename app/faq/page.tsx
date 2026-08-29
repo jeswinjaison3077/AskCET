@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import LineSidebar from '@/components/animations/LineSidebar';
-import SpecularButton from '@/components/animations/SpecularButton';
 import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -213,28 +212,27 @@ export default function FAQPage() {
     setActiveCategoryIndex(index);
     const element = document.getElementById(`faq-cat-${index}`);
     if (element) {
-      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 120;
-      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+      const topOffset = element.getBoundingClientRect().top + window.scrollY - 110;
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
     }
   };
 
+  // Scroll Position Observer to automatically highlight active category as user scrolls up/down
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPos = window.scrollY + 180;
+    const handleScrollObserver = () => {
       FAQ_CATEGORIES.forEach((_, idx) => {
         const el = document.getElementById(`faq-cat-${idx}`);
         if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPos >= top && scrollPos < top + height) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 160 && rect.bottom >= 160) {
             setActiveCategoryIndex(idx);
           }
         }
       });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScrollObserver, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollObserver);
   }, []);
 
   const sidebarCategoryTitles = FAQ_CATEGORIES.map((c) => c.category);
@@ -246,37 +244,6 @@ export default function FAQPage() {
       <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <Navbar />
-
-      {/* Sticky Top Interactive Section Tile Bar */}
-      <div className="sticky top-16 z-30 bg-white/80 dark:bg-[#080c16]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 py-2.5 px-4 sm:px-8 shadow-md">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
-          <span className="text-slate-400 dark:text-slate-500 text-[11px] font-black uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> Active Section:
-          </span>
-          {FAQ_CATEGORIES.map((cat, i) => {
-            const Icon = cat.icon;
-            const isSelected = activeCategoryIndex === i;
-            return (
-              <SpecularButton
-                key={i}
-                radius={999}
-                lineColor={isSelected ? '#38bdf8' : '#64748b'}
-                baseColor={isSelected ? '#0284c7' : '#1e293b'}
-                intensity={isSelected ? 1.2 : 0.4}
-                onClick={() => handleSidebarItemClick(i)}
-                className={`shrink-0 px-3.5 py-1.5 font-bold transition-all flex items-center gap-2 text-xs rounded-full ${
-                  isSelected
-                    ? 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40 scale-105'
-                    : 'bg-slate-100/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800/80'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{cat.category}</span>
-              </SpecularButton>
-            );
-          })}
-        </div>
-      </div>
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Page Header */}
@@ -298,10 +265,10 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
-        {/* Desktop 2-Column Layout with Clean Proximity LineSidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* Sticky Left LineSidebar Navigation (Clean text proximity shift, synced with active scroll section) */}
-          <div className="hidden lg:block lg:col-span-1 sticky top-36 bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl">
+        {/* Desktop 2-Column Layout with Locked-in-Place Sticky Topic Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start relative">
+          {/* Locked Sticky Left LineSidebar Navigation */}
+          <div className="hidden lg:block lg:col-span-1 sticky top-28 self-start bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl z-20">
             <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
               Topic Sections
             </div>
