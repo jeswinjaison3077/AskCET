@@ -491,19 +491,19 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Pure Boundary Logo Emblem (No white bg box, no square border) */}
+                  {/* Hero Pure Boundary Logo Emblem (Heavily feathered, seamless boundary) */}
                   <div className="relative group cursor-pointer">
                     {/* Ambient Neon Backlight Glow */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
                     
-                    {/* Pure Transparent Logo Boundary Image */}
+                    {/* Pure Transparent Heavily Feathered Logo Boundary Image */}
                     <img
                       src="/logo.jpg"
                       alt="AskCET Pure Emblem Logo"
                       className="relative w-28 h-28 object-cover rounded-full border-none shadow-none drop-shadow-[0_0_25px_rgba(6,182,212,0.8)] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
                       style={{
-                        maskImage: 'radial-gradient(circle 52px at center, black 65%, transparent 100%)',
-                        WebkitMaskImage: 'radial-gradient(circle 52px at center, black 65%, transparent 100%)',
+                        maskImage: 'radial-gradient(circle 54px at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, transparent 100%)',
+                        WebkitMaskImage: 'radial-gradient(circle 54px at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, transparent 100%)',
                       }}
                     />
                     
