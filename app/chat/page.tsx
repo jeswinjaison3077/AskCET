@@ -352,7 +352,7 @@ export default function ChatPage() {
           onPointerLeave={() => setIsPointerInside(false)}
           className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
         >
-          {/* Custom Line Art Background Image Layer with Website Color Tint (#060810 / Cyan) & Low Opacity */}
+          {/* Custom Line Art Background Image Layer */}
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
             style={{
@@ -492,28 +492,49 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Pure Circular Boundary Logo Emblem (Larger radius, ultra-feathered round shape) */}
+                  {/* Hero 3D Glass Sphere Logo Orb */}
                   <div className="relative group cursor-pointer">
-                    {/* Ambient Neon Backlight Glow */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                    {/* Ambient Neon Backlight Sphere Aura */}
+                    <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
                     
-                    {/* Pure Transparent Heavily Feathered Circular Emblem Logo */}
-                    <img
-                      src="/logo.jpg"
-                      alt="AskCET Pure Emblem Logo"
-                      className="relative w-36 h-36 object-cover rounded-full border-none shadow-none drop-shadow-[0_0_30px_rgba(6,182,212,0.85)] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
+                    {/* 3D Sphere Container */}
+                    <div
+                      className="relative w-36 h-36 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500 shadow-2xl"
                       style={{
-                        maskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
-                        WebkitMaskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
+                        boxShadow: 'inset -12px -12px 28px rgba(0, 0, 0, 0.8), inset 8px 8px 18px rgba(255, 255, 255, 0.45), 0 20px 40px rgba(6, 182, 212, 0.45)',
                       }}
-                    />
+                    >
+                      {/* Base Logo Image */}
+                      <img
+                        src="/logo.jpg"
+                        alt="AskCET 3D Sphere Logo"
+                        className="absolute inset-0 w-full h-full object-cover rounded-full"
+                      />
+
+                      {/* 3D Specular Lighting Gradient Overlay (creates realistic 3D sphere curvature) */}
+                      <div
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{
+                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.85) 100%)',
+                          mixBlendMode: 'overlay',
+                        }}
+                      />
+
+                      {/* Glossy Top Specular Arc */}
+                      <div
+                        className="absolute top-1 left-3 right-3 h-12 rounded-t-full pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0))',
+                        }}
+                      />
+                    </div>
                     
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-2 -right-2 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.9)] transition-transform duration-75"
+                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
                     >
-                      <Sparkles className="w-7 h-7 text-cyan-400" />
+                      <Sparkles className="w-8 h-8 text-cyan-400" />
                     </div>
                   </div>
 
