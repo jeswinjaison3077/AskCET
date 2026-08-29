@@ -35,16 +35,16 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
     };
   }, []);
 
-  const cleanContent = content ? content.replace(/\*\*/g, '') : '';
+  const plainText = content ? content.replace(/\*\*/g, '') : '';
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(cleanContent);
+    navigator.clipboard.writeText(plainText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShare = async () => {
-    const shareText = `🎓 *AskCET Verified Answer*:\n\n${cleanContent.slice(0, 300)}...\n\n🔗 Verified via AskCET College Intelligence Assistant`;
+    const shareText = `🎓 *AskCET Verified Answer*:\n\n${plainText.slice(0, 300)}...\n\n🔗 Verified via AskCET College Intelligence Assistant`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -73,7 +73,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
       setIsSpeaking(false);
     } else {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(cleanContent.replace(/[*#]/g, ''));
+      const utterance = new SpeechSynthesisUtterance(plainText.replace(/[*#]/g, ''));
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
       window.speechSynthesis.speak(utterance);
@@ -98,6 +98,22 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   const isUser = role === 'user';
   const hasCitations = !isUser && citations && citations.length > 0;
 
+  // Helper to format bold markdown segments cleanly
+  const renderFormattedText = (raw: string) => {
+    if (!raw) return null;
+    const parts = raw.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return (
+          <strong key={index} className="font-extrabold text-cyan-600 dark:text-cyan-400 bg-cyan-50/60 dark:bg-cyan-500/10 px-1.5 py-0.5 rounded-md border border-cyan-200/50 dark:border-cyan-500/20 inline-block my-0.5">
+            {part.slice(2, -2)}
+          </strong>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -117,24 +133,26 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
       </div>
 
       {/* Content Bubble Container */}
-      <div className={`max-w-[85%] sm:max-w-[78%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`max-w-[85%] sm:max-w-[80%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
         {/* Grounded Confidence Indicator */}
         {hasCitations && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 text-[11px] font-extrabold shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 text-[11px] font-extrabold shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Grounded Answer • High Relevance Match</span>
+            <span>Grounded Answer • Verified Match</span>
           </div>
         )}
 
         {/* Message Bubble */}
         <div
-          className={`px-5 py-4 rounded-[26px] text-sm leading-relaxed ${
+          className={`px-6 py-5 rounded-[28px] text-[15px] leading-[1.85] tracking-wide ${
             isUser
-              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-medium'
-              : 'bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-xl font-jakarta text-[14.5px] font-normal leading-relaxed tracking-tight'
+              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-semibold'
+              : 'bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800/90 shadow-2xl backdrop-blur-2xl font-outfit font-medium'
           }`}
         >
-          <div className="whitespace-pre-wrap font-jakarta leading-relaxed">{cleanContent}</div>
+          <div className="whitespace-pre-wrap space-y-2">
+            {isUser ? content : renderFormattedText(content)}
+          </div>
         </div>
 
         {/* Verified Sources Collapsible Box */}
@@ -168,7 +186,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
                         </span>
                       </div>
                       {c.snippet && (
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60 font-jakarta">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60 font-outfit">
                           "{c.snippet}"
                         </p>
                       )}
