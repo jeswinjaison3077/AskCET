@@ -5,7 +5,7 @@ export function getApiKey(): string {
 }
 
 export function isValidApiKey(key: string): boolean {
-  return typeof key === 'string' && key.trim().startsWith('AIzaSy') && key.trim().length > 20;
+  return typeof key === 'string' && key.trim().length > 5;
 }
 
 /**
