@@ -167,16 +167,16 @@ export async function POST(request: Request) {
           }
         }
 
-        // Direct Synthesized RAG Mode (Guaranteed 100% working response without external API dependencies)
+        // Clean Synthesized RAG Output
         let synthesizedAnswer = '';
         if (relevantChunks.length > 0) {
-          const primaryChunk = relevantChunks[0];
+          const topChunk = relevantChunks[0];
           synthesizedAnswer = `### AskCET Knowledge Assistant\n\n` +
-            `Based on **${primaryChunk.documentTitle}** (${primaryChunk.category}):\n\n` +
-            `> ${primaryChunk.content}\n\n` +
+            `Based on **${topChunk.documentTitle}**:\n\n` +
+            `${topChunk.content.trim()}\n\n` +
             (relevantChunks.length > 1
-              ? `**Additional Relevant Excerpts:**\n` +
-                relevantChunks.slice(1, 3).map((c) => `- **${c.documentTitle}**: ${c.content.slice(0, 200)}...`).join('\n')
+              ? `**Related Document Notes:**\n` +
+                relevantChunks.slice(1, 3).map((c) => `- **${c.documentTitle}**: ${c.content.slice(0, 180).trim()}...`).join('\n')
               : '');
         } else {
           synthesizedAnswer = `### AskCET Knowledge Assistant\n\n` +
