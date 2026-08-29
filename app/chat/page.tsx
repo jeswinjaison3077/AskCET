@@ -86,8 +86,12 @@ export default function ChatPage() {
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+  const [isPointerInside, setIsPointerInside] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
+  const mainStreamRef = useRef<HTMLElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -115,6 +119,15 @@ export default function ChatPage() {
     if (chatScrollContainerRef.current) {
       setScrollTop(chatScrollContainerRef.current.scrollTop);
     }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (!mainStreamRef.current) return;
+    const rect = mainStreamRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
   };
 
   const fetchConversations = async () => {
@@ -331,8 +344,40 @@ export default function ChatPage() {
           onSelectPrompt={handleSendMessage}
         />
 
-        {/* Main Conversation Stream */}
-        <main className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl">
+        {/* Main Conversation Stream with Torch Spotlight Effect */}
+        <main
+          ref={mainStreamRef}
+          onPointerMove={handlePointerMove}
+          onPointerEnter={() => setIsPointerInside(true)}
+          onPointerLeave={() => setIsPointerInside(false)}
+          className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
+        >
+          {/* Torch Spotlight Background Image Layer (reveals background image only around pointer) */}
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
+            style={{
+              opacity: isPointerInside ? 0.45 : 0,
+              backgroundImage: `url('/logo.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              WebkitMaskImage: `radial-gradient(circle 240px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 240px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)`,
+            }}
+          />
+
+          {/* Torch Beam Light Aura Circle */}
+          <div
+            className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-xl -z-10"
+            style={{
+              opacity: isPointerInside ? 0.35 : 0,
+              left: `${mousePos.x - 140}px`,
+              top: `${mousePos.y - 140}px`,
+              width: '280px',
+              height: '280px',
+              background: 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, rgba(99,102,241,0.2) 60%, transparent 100%)',
+            }}
+          />
+
           {/* iOS Header Control Sub-bar */}
           <div className="px-5 py-3 bg-white/70 dark:bg-[#080c16]/75 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 flex items-center justify-between z-20 transition-all">
             <div className="flex items-center gap-2">
