@@ -444,9 +444,8 @@ export default function ChatPage() {
 
               <span className="text-xs font-black tracking-tight text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
                 {isTemporaryChat ? (
-                  <span className="text-amber-400 flex items-center gap-1.5 font-black bg-amber-950/70 px-3 py-1 rounded-full border border-amber-700/60 shadow-inner">
+                  <span className="text-amber-400 flex items-center gap-1.5 font-black">
                     <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                    Incognito Mode
                   </span>
                 ) : activeConversationId ? (
                   conversations.find((c) => c.id === activeConversationId)?.title || 'Current Chat'
@@ -488,22 +487,21 @@ export default function ChatPage() {
                 </SpecularButton>
               )}
 
-              {/* Sleek Incognito / Temporary Chat Specular Toggle Pill */}
+              {/* Pure Symbol-Only Incognito Flame Specular Button */}
               <SpecularButton
                 radius={16}
                 lineColor={isTemporaryChat ? '#f59e0b' : '#38bdf8'}
                 baseColor={isTemporaryChat ? '#78350f' : '#0f172a'}
                 intensity={isTemporaryChat ? 1.2 : 0.8}
                 onClick={toggleTemporaryChat}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black transition-all border shadow-md ${
+                className={`p-2.5 rounded-2xl transition-all border shadow-md ${
                   isTemporaryChat
-                    ? 'bg-gradient-to-r from-amber-500/25 to-purple-500/25 text-amber-300 border-amber-500/50 shadow-amber-500/15'
-                    : 'bg-slate-900/90 text-slate-400 border-slate-700/80 hover:text-amber-400'
+                    ? 'bg-gradient-to-r from-amber-500/25 to-purple-500/25 border-amber-500/50 shadow-amber-500/15'
+                    : 'bg-slate-900/90 border-slate-700/80 hover:border-amber-500/40'
                 }`}
                 title={isTemporaryChat ? 'Click to turn off Incognito Mode' : 'Enable Incognito Temporary Chat'}
               >
-                <Flame className={`w-3.5 h-3.5 ${isTemporaryChat ? 'text-amber-400 animate-pulse' : 'text-slate-400'}`} />
-                <span className="hidden sm:inline">{isTemporaryChat ? 'Incognito On' : 'Incognito'}</span>
+                <Flame className={`w-4 h-4 ${isTemporaryChat ? 'text-amber-400 animate-pulse' : 'text-slate-400 hover:text-amber-400'}`} />
               </SpecularButton>
             </div>
           </div>
