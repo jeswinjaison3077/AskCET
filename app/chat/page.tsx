@@ -413,8 +413,8 @@ export default function ChatPage() {
             }}
           />
 
-          {/* iOS Header Control Sub-bar */}
-          <div className="px-5 py-3 bg-[#080c16]/80 backdrop-blur-2xl border-b border-slate-800/70 flex items-center justify-between z-20 transition-all">
+          {/* Transparent Header Control Sub-bar */}
+          <div className="px-5 py-3 bg-transparent border-b border-white/5 flex items-center justify-between z-20 transition-all">
             <div className="flex items-center gap-2">
               {/* Symbol-Only History Toggle Specular Button */}
               <SpecularButton
@@ -423,7 +423,7 @@ export default function ChatPage() {
                 baseColor="#1e293b"
                 intensity={0.6}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="p-2.5 rounded-2xl bg-slate-900/80 border border-slate-800/80 text-slate-300 hover:text-white transition-all shadow-xs"
+                className="p-2.5 rounded-2xl bg-slate-900/60 backdrop-blur-md border border-slate-800/80 text-slate-300 hover:text-white transition-all shadow-xs"
                 title="Toggle Chat History Sidebar"
               >
                 <History className="w-4 h-4 text-cyan-400" />
@@ -436,7 +436,7 @@ export default function ChatPage() {
                 baseColor="#0284c7"
                 intensity={1}
                 onClick={handleNewChat}
-                className="p-2.5 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-black transition-all shadow-xs"
+                className="p-2.5 rounded-2xl bg-cyan-500/10 backdrop-blur-md hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-black transition-all shadow-xs"
                 title="Start a new conversation"
               >
                 <Plus className="w-4 h-4" />
@@ -444,7 +444,7 @@ export default function ChatPage() {
 
               <span className="text-xs font-black tracking-tight text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
                 {isTemporaryChat ? (
-                  <span className="text-amber-400 flex items-center gap-1.5 font-black bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800/60">
+                  <span className="text-amber-400 flex items-center gap-1.5 font-black bg-amber-950/60 backdrop-blur-md px-3 py-1 rounded-full border border-amber-800/60">
                     <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
                     Incognito Mode
                   </span>
@@ -465,7 +465,7 @@ export default function ChatPage() {
                 baseColor="#78350f"
                 intensity={0.8}
                 onClick={() => setIsNoticeDrawerOpen(!isNoticeDrawerOpen)}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold transition-all shadow-xs relative"
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 backdrop-blur-md hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-extrabold transition-all shadow-xs relative"
                 title="Open Campus Deadlines & Notices Panel"
               >
                 <BellRing className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
@@ -480,7 +480,7 @@ export default function ChatPage() {
                   baseColor="#1e293b"
                   intensity={0.6}
                   onClick={exportConversationMarkdown}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800/80 text-xs font-bold transition-all shadow-xs"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 text-slate-300 border border-slate-800/80 text-xs font-bold transition-all shadow-xs"
                   title="Export chat transcript as Markdown report"
                 >
                   <Download className="w-3.5 h-3.5 text-cyan-400" />
@@ -497,8 +497,8 @@ export default function ChatPage() {
                 onClick={toggleTemporaryChat}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black transition-all border shadow-xs ${
                   isTemporaryChat
-                    ? 'bg-gradient-to-r from-amber-500/20 to-purple-500/20 text-amber-300 border-amber-500/40 shadow-amber-500/10'
-                    : 'bg-slate-900/80 text-slate-400 border-slate-800/80 hover:text-amber-500'
+                    ? 'bg-gradient-to-r from-amber-500/20 to-purple-500/20 backdrop-blur-md text-amber-300 border-amber-500/40 shadow-amber-500/10'
+                    : 'bg-slate-900/60 backdrop-blur-md text-slate-400 border-slate-800/80 hover:text-amber-500'
                 }`}
                 title={isTemporaryChat ? 'Click to turn off Incognito Mode' : 'Enable Incognito Temporary Chat'}
               >
