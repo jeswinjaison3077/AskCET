@@ -392,7 +392,7 @@ export default function ChatPage() {
               opacity: 0.35,
               backgroundImage: `url('/bg.jpg')`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center 75%',
+              backgroundPosition: 'center 95%',
               filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
               WebkitMaskImage: `radial-gradient(circle 260px at 500px 300px, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 100%)`,
               maskImage: `radial-gradient(circle 260px at 500px 300px, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 100%)`,
