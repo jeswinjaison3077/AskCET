@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
+import LineSidebar from '@/components/animations/LineSidebar';
 import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -70,10 +71,21 @@ const FAQ_CATEGORIES = [
 
 export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState<number>(0);
 
   const toggleItem = (key: string) => {
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const handleSidebarItemClick = (index: number) => {
+    setActiveCategoryIndex(index);
+    const element = document.getElementById(`faq-cat-${index}`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const sidebarCategoryTitles = FAQ_CATEGORIES.map((c) => c.category);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] transition-colors duration-500 relative overflow-hidden">
@@ -83,7 +95,7 @@ export default function FAQPage() {
 
       <Navbar />
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Page Header */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -103,69 +115,100 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
-        {/* Accordion Categories */}
-        <div className="space-y-8">
-          {FAQ_CATEGORIES.map((cat, catIdx) => {
-            const Icon = cat.icon;
-            return (
-              <motion.div
-                key={catIdx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: catIdx * 0.08 }}
-                className="space-y-3"
-              >
-                <div className="flex items-center gap-2.5 font-black text-lg text-slate-900 dark:text-white px-1">
-                  <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-lg shadow-cyan-500/20`}>
-                    <Icon className="w-4 h-4" />
+        {/* Desktop 2-Column Layout with Sticky React Bits LineSidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+          {/* Sticky Left LineSidebar Navigation */}
+          <div className="hidden lg:block lg:col-span-1 sticky top-24 bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl">
+            <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
+              Topic Sections
+            </div>
+            <LineSidebar
+              items={sidebarCategoryTitles}
+              accentColor="#06b6d4"
+              textColor="#94a3b8"
+              markerColor="#475569"
+              showIndex
+              showMarker
+              proximityRadius={120}
+              maxShift={18}
+              falloff="smooth"
+              markerLength={32}
+              markerGap={6}
+              tickScale={0.5}
+              scaleTick
+              itemGap={18}
+              fontSize={0.82}
+              smoothing={100}
+              defaultActive={activeCategoryIndex}
+              onItemClick={(index) => handleSidebarItemClick(index)}
+            />
+          </div>
+
+          {/* Accordion Categories Content Stream */}
+          <div className="lg:col-span-3 space-y-8">
+            {FAQ_CATEGORIES.map((cat, catIdx) => {
+              const Icon = cat.icon;
+              return (
+                <motion.div
+                  id={`faq-cat-${catIdx}`}
+                  key={catIdx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: catIdx * 0.08 }}
+                  className="space-y-3 scroll-mt-24"
+                >
+                  <div className="flex items-center gap-2.5 font-black text-lg text-slate-900 dark:text-white px-1">
+                    <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-lg shadow-cyan-500/20`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span>{cat.category}</span>
                   </div>
-                  <span>{cat.category}</span>
-                </div>
 
-                <div className="space-y-3">
-                  {cat.questions.map((q, qIdx) => {
-                    const itemKey = `${catIdx}-${qIdx}`;
-                    const isOpen = !!openItems[itemKey];
-                    return (
-                      <motion.div
-                        key={qIdx}
-                        whileHover={{ scale: 1.008 }}
-                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                        className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[24px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl overflow-hidden transition-all duration-300 hover:border-cyan-500/40"
-                      >
-                        <button
-                          onClick={() => toggleItem(itemKey)}
-                          className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                  <div className="space-y-3">
+                    {cat.questions.map((q, qIdx) => {
+                      const itemKey = `${catIdx}-${qIdx}`;
+                      const isOpen = !!openItems[itemKey];
+                      return (
+                        <motion.div
+                          key={qIdx}
+                          whileHover={{ scale: 1.008 }}
+                          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[24px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl overflow-hidden transition-all duration-300 hover:border-cyan-500/40"
                         >
-                          <span className="flex items-start gap-3">
-                            <Sparkles className="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" />
-                            {q.q}
-                          </span>
-                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-cyan-500' : ''}`} />
-                        </button>
+                          <button
+                            onClick={() => toggleItem(itemKey)}
+                            className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                          >
+                            <span className="flex items-start gap-3">
+                              <Sparkles className="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" />
+                              {q.q}
+                            </span>
+                            <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-cyan-500' : ''}`} />
+                          </button>
 
-                        <AnimatePresence>
-                          {isOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.3 }}
-                              className="px-5 pb-5 pt-1 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/80 leading-relaxed font-medium"
-                            >
-                              <div className="bg-slate-50/80 dark:bg-slate-950/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-inner">
-                                {q.a}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.div>
-            );
-          })}
+                          <AnimatePresence>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="px-5 pb-5 pt-1 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/80 leading-relaxed font-medium"
+                              >
+                                <div className="bg-slate-50/80 dark:bg-slate-950/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-inner">
+                                  {q.a}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </main>
     </div>
