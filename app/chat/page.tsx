@@ -527,11 +527,11 @@ export default function ChatPage() {
                 >
                   {/* Interactive Floating Siri-Style AI Assistant Orb with Deep Zoom & Reactive Hovering */}
                   <div className="relative group cursor-pointer flex items-center justify-center">
-                    {/* Pure GPU Radial Circle Ambient Glow (No square texture boundary clipping) */}
+                    {/* Subtle Reduced Intensity Radial Glow Aura */}
                     <div
-                      className="absolute -inset-6 rounded-full pointer-events-none transition-all duration-500 opacity-70 group-hover:opacity-100 group-hover:scale-125"
+                      className="absolute -inset-5 rounded-full pointer-events-none transition-all duration-500 opacity-40 group-hover:opacity-75 group-hover:scale-125"
                       style={{
-                        background: 'radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.7) 0%, rgba(59, 130, 246, 0.4) 45%, rgba(168, 85, 247, 0.2) 65%, transparent 75%)',
+                        background: 'radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.35) 0%, rgba(59, 130, 246, 0.2) 40%, rgba(168, 85, 247, 0.08) 60%, transparent 75%)',
                       }}
                     />
 
@@ -552,7 +552,7 @@ export default function ChatPage() {
                         transition: { duration: 0.3, ease: 'backOut' },
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_30px_rgba(6,182,212,0.6)] group-hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all duration-300 overflow-hidden"
+                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_15px_rgba(6,182,212,0.3)] group-hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] transition-all duration-300"
                     >
                       {/* Inner Smooth Circle Sphere */}
                       <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950 relative">
@@ -573,8 +573,8 @@ export default function ChatPage() {
                         />
                       </div>
 
-                      {/* Sparkle Symbol Badge - Reactive Hover Highlight */}
-                      <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,1)] group-hover:scale-125 group-hover:text-cyan-300 transition-transform duration-300 z-20">
+                      {/* Sparkle Symbol Badge - Unclipped, Always Visible */}
+                      <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] group-hover:scale-125 group-hover:text-cyan-300 transition-transform duration-300 z-30">
                         <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
                       </div>
                     </motion.div>
