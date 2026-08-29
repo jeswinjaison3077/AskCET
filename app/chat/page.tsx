@@ -86,11 +86,17 @@ export default function ChatPage() {
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const [scrollTop, setScrollTop] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 500, y: 300 });
+
+  // High-Performance GPU Torch Spotlight Pointer Refs
+  const mainStreamRef = useRef<HTMLElement>(null);
+  const torchBgRef = useRef<HTMLDivElement>(null);
+  const torchBeamRef = useRef<HTMLDivElement>(null);
+  const targetPosRef = useRef({ x: 500, y: 300 });
+  const currentPosRef = useRef({ x: 500, y: 300 });
+  const animFrameRef = useRef<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
-  const mainStreamRef = useRef<HTMLElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -114,6 +120,35 @@ export default function ChatPage() {
     setScrollTop(0);
   }, [isTemporaryChat, activeConversationId]);
 
+  // Direct rAF GPU animation loop for zero-lag pointer tracking
+  useEffect(() => {
+    const updateTorchPosition = () => {
+      const target = targetPosRef.current;
+      const current = currentPosRef.current;
+
+      const nextX = current.x + (target.x - current.x) * 0.35;
+      const nextY = current.y + (target.y - current.y) * 0.35;
+      currentPosRef.current = { x: nextX, y: nextY };
+
+      if (torchBgRef.current) {
+        const maskStr = `radial-gradient(circle 220px at ${nextX.toFixed(1)}px ${nextY.toFixed(1)}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`;
+        torchBgRef.current.style.maskImage = maskStr;
+        torchBgRef.current.style.webkitMaskImage = maskStr;
+      }
+
+      if (torchBeamRef.current) {
+        torchBeamRef.current.style.transform = `translate3d(${(nextX - 125).toFixed(1)}px, ${(nextY - 125).toFixed(1)}px, 0)`;
+      }
+
+      animFrameRef.current = requestAnimationFrame(updateTorchPosition);
+    };
+
+    animFrameRef.current = requestAnimationFrame(updateTorchPosition);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, []);
+
   const handleScroll = () => {
     if (chatScrollContainerRef.current) {
       setScrollTop(chatScrollContainerRef.current.scrollTop);
@@ -123,10 +158,10 @@ export default function ChatPage() {
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (!mainStreamRef.current) return;
     const rect = mainStreamRef.current.getBoundingClientRect();
-    setMousePos({
+    targetPosRef.current = {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
-    });
+    };
   };
 
   const fetchConversations = async () => {
@@ -343,36 +378,38 @@ export default function ChatPage() {
           onSelectPrompt={handleSendMessage}
         />
 
-        {/* Main Conversation Stream with Custom Background Torch Spotlight Effect */}
+        {/* Main Conversation Stream with High-Performance GPU Torch Spotlight Pointer */}
         <main
           ref={mainStreamRef}
           onPointerMove={handlePointerMove}
           className="flex-1 flex flex-col h-full overflow-hidden relative"
         >
-          {/* Custom Line Art Background Image Layer revealed by Torch Pointer */}
+          {/* Custom Line Art Background Image Layer revealed by GPU Torch Pointer */}
           <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-300 z-0"
+            ref={torchBgRef}
+            className="absolute inset-0 pointer-events-none z-0"
             style={{
               opacity: 0.35,
               backgroundImage: `url('/bg.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
-              WebkitMaskImage: `radial-gradient(circle 220px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 220px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
+              WebkitMaskImage: `radial-gradient(circle 220px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 220px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Soft Cyan/Indigo Torch Light Beam Spotlight Circle */}
+          {/* Soft Cyan/Indigo GPU-Accelerated Torch Light Beam Spotlight */}
           <div
-            className="absolute pointer-events-none transition-all duration-75 rounded-full blur-2xl z-0"
+            ref={torchBeamRef}
+            className="absolute top-0 left-0 pointer-events-none rounded-full blur-2xl z-0"
             style={{
               opacity: 0.45,
-              left: `${mousePos.x - 125}px`,
-              top: `${mousePos.y - 125}px`,
               width: '250px',
               height: '250px',
+              transform: 'translate3d(375px, 175px, 0)',
               background: 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 100%)',
+              willChange: 'transform',
             }}
           />
 
