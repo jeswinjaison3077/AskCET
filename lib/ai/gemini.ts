@@ -1,11 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export function getApiKey(): string {
-  return process.env.GEMINI_API_KEY || '';
+  return (process.env.GEMINI_API_KEY || '').replace(/[\r\n\s]/g, '').trim();
 }
 
 export function isValidApiKey(key: string): boolean {
-  return typeof key === 'string' && key.trim().startsWith('AIzaSy') && key.trim().length > 20;
+  const cleaned = key.replace(/[\r\n\s]/g, '').trim();
+  return typeof cleaned === 'string' && cleaned.startsWith('AIzaSy') && cleaned.length > 20;
 }
 
 /**
