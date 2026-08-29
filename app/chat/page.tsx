@@ -530,11 +530,18 @@ export default function ChatPage() {
                     {/* Soft Ambient Neon Cyan/Indigo Glow */}
                     <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
 
-                    {/* Compact Siri Orb Body (w-24 h-24) */}
+                    {/* Compact Siri Orb Body (w-24 h-24) - Pure Floating & Slow Zoom In/Out, No Rotation */}
                     <motion.div
-                      animate={{ y: [0, -3, 0] }}
-                      transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-lg shadow-cyan-500/30 group-hover:scale-105 transition-transform duration-300"
+                      animate={{
+                        y: [0, -6, 0],
+                        scale: [1, 1.06, 1],
+                      }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 4,
+                        ease: 'easeInOut',
+                      }}
+                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-lg shadow-cyan-500/30 transition-transform duration-300"
                     >
                       {/* Inner Feathered Sphere */}
                       <div
@@ -561,12 +568,9 @@ export default function ChatPage() {
                         />
                       </div>
 
-                      {/* Small Sparkle Symbol */}
-                      <div
-                        style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                        className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
-                      >
-                        <Sparkles className="w-5 h-5 text-cyan-400" />
+                      {/* Small Sparkle Symbol - Upright, Pulsing */}
+                      <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] z-20">
+                        <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
                       </div>
                     </motion.div>
                   </div>
