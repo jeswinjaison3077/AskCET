@@ -515,7 +515,7 @@ export default function ChatPage() {
           >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Perfectly proportioned for clear Scroll for FAQs visibility */}
+                {/* HERO SCREEN - Positioned lower for comfortable floating above input capsule */}
                 <div
                   style={{
                     opacity: heroOpacity,
@@ -523,7 +523,7 @@ export default function ChatPage() {
                     transform: `scale(${heroScale})`,
                     transition: 'opacity 0.1s linear, filter 0.1s linear, transform 0.1s linear',
                   }}
-                  className="min-h-[calc(100vh-340px)] pb-12 w-full flex flex-col items-center justify-center text-center space-y-5 pointer-events-auto"
+                  className="min-h-[calc(100vh-260px)] pb-4 w-full flex flex-col items-center justify-center text-center space-y-5 pointer-events-auto"
                 >
                   {/* Hero 3D Ultra-Feathered Sphere Logo */}
                   <div className="relative group cursor-pointer">
@@ -581,11 +581,11 @@ export default function ChatPage() {
                     </p>
                   </div>
 
-                  {/* Clearly Visible Floating Scroll Hint */}
+                  {/* Clearly Visible Floating Scroll Hint Positioned Lower */}
                   <motion.div
                     animate={{ y: [0, 6, 0] }}
                     transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                    className="pt-4 flex flex-col items-center gap-1 text-xs font-black text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
+                    className="pt-10 flex flex-col items-center gap-1 text-xs font-black text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
                     onClick={() => {
                       chatScrollContainerRef.current?.scrollTo({ top: 380, behavior: 'smooth' });
                     }}
