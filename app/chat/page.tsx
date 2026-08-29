@@ -527,8 +527,13 @@ export default function ChatPage() {
                 >
                   {/* Interactive Floating Siri-Style AI Assistant Orb with Deep Zoom & Reactive Hovering */}
                   <div className="relative group cursor-pointer flex items-center justify-center">
-                    {/* Reactive Ambient Neon Cyan/Indigo/Purple Backlight Glow */}
-                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 blur-xl opacity-60 group-hover:opacity-100 group-hover:blur-2xl group-hover:scale-125 transition-all duration-500" />
+                    {/* Pure GPU Radial Circle Ambient Glow (No square texture boundary clipping) */}
+                    <div
+                      className="absolute -inset-6 rounded-full pointer-events-none transition-all duration-500 opacity-70 group-hover:opacity-100 group-hover:scale-125"
+                      style={{
+                        background: 'radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.7) 0%, rgba(59, 130, 246, 0.4) 45%, rgba(168, 85, 247, 0.2) 65%, transparent 75%)',
+                      }}
+                    />
 
                     {/* Siri Orb Container - Continuous Deep Float & Zoom + Interactive Spring Hover */}
                     <motion.div
@@ -547,10 +552,10 @@ export default function ChatPage() {
                         transition: { duration: 0.3, ease: 'backOut' },
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-xl shadow-cyan-500/40 group-hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all duration-300"
+                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_30px_rgba(6,182,212,0.6)] group-hover:shadow-[0_0_50px_rgba(6,182,212,0.9)] transition-all duration-300 overflow-hidden"
                     >
                       {/* Inner Smooth Circle Sphere */}
-                      <div className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950">
+                      <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950 relative">
                         {/* Base Logo Image */}
                         <img
                           src="/logo.jpg"
