@@ -39,6 +39,72 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData();
+    const isNotice = formData.get('isNotice') === 'true';
+
+    // Handle Direct Notice / Circular Submission
+    if (isNotice) {
+      const title = (formData.get('title') as string) || 'Campus Notice';
+      const noticeDate = (formData.get('noticeDate') as string) || new Date().toISOString().split('T')[0];
+      const department = (formData.get('department') as string) || 'Academic Office';
+      const category = (formData.get('category') as string) || 'Examinations';
+      const noticeContent = (formData.get('noticeContent') as string) || '';
+
+      if (!noticeContent.trim()) {
+        return NextResponse.json({ error: 'Notice content is required.' }, { status: 400 });
+      }
+
+      const fullNoticeText = `[OFFICIAL CAMPUS NOTICE]\nTitle: ${title}\nDate: ${noticeDate}\nDepartment: ${department}\nCategory: ${category}\n\nNotice Content:\n${noticeContent.trim()}`;
+
+      // Create Document record
+      const docRecord = await prisma.document.create({
+        data: {
+          title: `Notice: ${title}`,
+          fileName: `notice_${Date.now()}.txt`,
+          filePath: `notice://${title.replace(/[^a-zA-Z0-9]/g, '_')}`,
+          fileType: 'notice',
+          category,
+          department,
+          version: `Date: ${noticeDate}`,
+          status: 'PROCESSING',
+          uploadedById: session.userId,
+        },
+      });
+
+      try {
+        const chunks = chunkDocumentPages([{ pageNumber: 1, text: fullNoticeText }], { maxChunkSize: 800, overlap: 150 });
+
+        for (const chunk of chunks) {
+          const embedding = await generateEmbedding(chunk.content);
+          await storeChunkVector(
+            docRecord.id,
+            chunk.content,
+            chunk.pageNumber,
+            chunk.chunkIndex,
+            embedding
+          );
+        }
+
+        const updatedDoc = await prisma.document.update({
+          where: { id: docRecord.id },
+          data: { status: 'INDEXED' },
+        });
+
+        return NextResponse.json({
+          success: true,
+          document: updatedDoc,
+          chunkCount: chunks.length,
+        });
+      } catch (err) {
+        console.error('Notice indexing failure:', err);
+        await prisma.document.update({
+          where: { id: docRecord.id },
+          data: { status: 'FAILED' },
+        });
+        return NextResponse.json({ error: 'Failed to index campus notice.' }, { status: 500 });
+      }
+    }
+
+    // Handle File Upload (PDF, DOCX, TXT)
     const file = formData.get('file') as File | null;
     const title = (formData.get('title') as string) || file?.name || 'Untitled Document';
     const category = (formData.get('category') as string) || 'General';
