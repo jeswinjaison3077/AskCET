@@ -352,7 +352,7 @@ export default function ChatPage() {
           onPointerLeave={() => setIsPointerInside(false)}
           className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
         >
-          {/* Soft Torch Spotlight Background Image Layer (low opacity 0.22, smaller 140px radius, heavily feathered) */}
+          {/* Soft Torch Spotlight Background Image Layer */}
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
             style={{
@@ -491,20 +491,28 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero iOS Squircle Logo with Pure Diamond Symbol Rotating on Scroll */}
+                  {/* Hero Pure Boundary Logo Emblem (No white bg box, no square border) */}
                   <div className="relative group cursor-pointer">
-                    <div className="absolute inset-0 rounded-[32px] bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
+                    {/* Ambient Neon Backlight Glow */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
+                    
+                    {/* Pure Transparent Logo Boundary Image */}
                     <img
                       src="/logo.jpg"
-                      alt="AskCET Logo"
-                      className="relative w-24 h-24 rounded-[32px] object-cover shadow-2xl border-2 border-white/20 dark:border-slate-700/80 group-hover:scale-105 transition-transform duration-300"
+                      alt="AskCET Pure Emblem Logo"
+                      className="relative w-28 h-28 object-cover rounded-full border-none shadow-none drop-shadow-[0_0_25px_rgba(6,182,212,0.8)] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
+                      style={{
+                        maskImage: 'radial-gradient(circle 52px at center, black 65%, transparent 100%)',
+                        WebkitMaskImage: 'radial-gradient(circle 52px at center, black 65%, transparent 100%)',
+                      }}
                     />
+                    
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-2 -right-2 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] transition-transform duration-75"
+                      className="absolute -bottom-2 -right-2 text-cyan-400 drop-shadow-[0_0_12px_rgba(6,182,212,0.9)] transition-transform duration-75"
                     >
-                      <Sparkles className="w-6 h-6 text-cyan-400" />
+                      <Sparkles className="w-7 h-7 text-cyan-400" />
                     </div>
                   </div>
 
