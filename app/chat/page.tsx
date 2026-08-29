@@ -516,7 +516,7 @@ export default function ChatPage() {
           >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Stays EXACTLY Dead Center */}
+                {/* HERO SCREEN - Perfectly proportioned for clear Scroll for FAQs visibility */}
                 <div
                   style={{
                     opacity: heroOpacity,
@@ -524,7 +524,7 @@ export default function ChatPage() {
                     transform: `scale(${heroScale})`,
                     transition: 'opacity 0.1s linear, filter 0.1s linear, transform 0.1s linear',
                   }}
-                  className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
+                  className="min-h-[calc(100vh-340px)] pb-12 w-full flex flex-col items-center justify-center text-center space-y-5 pointer-events-auto"
                 >
                   {/* Hero 3D Ultra-Feathered Sphere Logo */}
                   <div className="relative group cursor-pointer">
@@ -533,7 +533,7 @@ export default function ChatPage() {
 
                     {/* Feathered 3D Sphere Wrapper */}
                     <div
-                      className="relative w-40 h-40 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
+                      className="relative w-36 h-36 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
                       style={{
                         maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
                         WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
@@ -569,11 +569,11 @@ export default function ChatPage() {
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
                       className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
                     >
-                      <Sparkles className="w-8 h-8 text-cyan-400" />
+                      <Sparkles className="w-7 h-7 text-cyan-400" />
                     </div>
                   </div>
 
-                  <div className="space-y-3 max-w-xl">
+                  <div className="space-y-2.5 max-w-xl">
                     <h1 className="text-4xl font-black text-white tracking-tight">
                       Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
                     </h1>
@@ -582,17 +582,17 @@ export default function ChatPage() {
                     </p>
                   </div>
 
-                  {/* Subtle Light Opacity Scroll Text Hint */}
+                  {/* Clearly Visible Floating Scroll Hint */}
                   <motion.div
                     animate={{ y: [0, 6, 0] }}
                     transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                    className="pt-6 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    className="pt-4 flex flex-col items-center gap-1 text-xs font-black text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
                     onClick={() => {
                       chatScrollContainerRef.current?.scrollTo({ top: 380, behavior: 'smooth' });
                     }}
                   >
                     <span>Scroll for FAQs</span>
-                    <ChevronDown className="w-4 h-4 text-cyan-500" />
+                    <ChevronDown className="w-4 h-4 text-cyan-400" />
                   </motion.div>
                 </div>
 
