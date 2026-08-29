@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import LineSidebar from '@/components/animations/LineSidebar';
+import AnimatedList from '@/components/animations/AnimatedList';
 import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -295,7 +296,7 @@ export default function FAQPage() {
             />
           </aside>
 
-          {/* Accordion Categories Content Stream */}
+          {/* Accordion Categories Content Stream with React Bits AnimatedList */}
           <div className="lg:col-span-3 space-y-8">
             {FAQ_CATEGORIES.map((cat, catIdx) => {
               const Icon = cat.icon;
@@ -315,17 +316,17 @@ export default function FAQPage() {
                     <span>{cat.category}</span>
                   </div>
 
-                  <div className="space-y-3">
-                    {cat.questions.map((q, qIdx) => {
+                  {/* React Bits AnimatedList for FAQ Questions */}
+                  <AnimatedList
+                    items={cat.questions}
+                    showGradients={false}
+                    enableArrowNavigation={false}
+                    displayScrollbar={true}
+                    renderItem={(q, qIdx) => {
                       const itemKey = `${catIdx}-${qIdx}`;
                       const isOpen = !!openItems[itemKey];
                       return (
-                        <motion.div
-                          key={qIdx}
-                          whileHover={{ scale: 1.008 }}
-                          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                          className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[24px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl overflow-hidden transition-all duration-300 hover:border-cyan-500/40"
-                        >
+                        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[24px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl overflow-hidden transition-all duration-300 hover:border-cyan-500/40">
                           <button
                             onClick={() => toggleItem(itemKey)}
                             className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
@@ -352,10 +353,10 @@ export default function FAQPage() {
                               </motion.div>
                             )}
                           </AnimatePresence>
-                        </motion.div>
+                        </div>
                       );
-                    })}
-                  </div>
+                    }}
+                  />
                 </motion.div>
               );
             })}
