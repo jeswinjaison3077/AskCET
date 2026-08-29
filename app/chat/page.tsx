@@ -342,18 +342,17 @@ export default function ChatPage() {
                 <History className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
               </SpecularButton>
 
-              {/* Start New Conversation Specular Button */}
+              {/* Pure '+' Symbol-Only New Chat Specular Button */}
               <SpecularButton
                 radius={16}
                 lineColor="#38bdf8"
                 baseColor="#0284c7"
                 intensity={1}
                 onClick={handleNewChat}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 text-xs font-black transition-all"
+                className="p-2.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 font-black transition-all shadow-xs"
                 title="Start a new conversation"
               >
                 <Plus className="w-4 h-4" />
-                <span>New Convo</span>
               </SpecularButton>
 
               <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
