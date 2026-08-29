@@ -6,6 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
+import ScrollFloat from '@/components/animations/ScrollFloat';
 import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -56,6 +57,7 @@ export default function ChatPage() {
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -372,7 +374,7 @@ export default function ChatPage() {
           </AnimatePresence>
 
           {/* Chat Messages Stream & Hero Screen */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {messages.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -402,7 +404,7 @@ export default function ChatPage() {
                   </p>
                 </div>
 
-                {/* Interactive Feature Cards */}
+                {/* Interactive React Bits ScrollFloat Animated Question Tiles */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full text-left mt-2">
                   {FEATURE_CARDS.map((card, i) => {
                     const Icon = card.icon;
@@ -421,9 +423,19 @@ export default function ChatPage() {
                           <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
                             <Icon className="w-6 h-6" />
                           </div>
-                          <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1.5 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+
+                          {/* React Bits ScrollFloat Animated Title */}
+                          <ScrollFloat
+                            scrollContainerRef={chatScrollContainerRef}
+                            animationDuration={0.8}
+                            ease="back.inOut(2)"
+                            stagger={0.02}
+                            containerClassName="mb-1.5"
+                            textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                          >
                             {card.title}
-                          </h3>
+                          </ScrollFloat>
+
                           <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{card.desc}</p>
                         </div>
 
