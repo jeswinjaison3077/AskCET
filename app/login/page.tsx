@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/shared/Navbar';
 import BorderGlow from '@/components/animations/BorderGlow';
-import SpecularButton from '@/components/animations/SpecularButton';
 import { Sparkles, Lock, Mail, User as UserIcon, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -183,13 +182,10 @@ function AuthForm() {
             )}
 
             <div className="pt-2">
-              <SpecularButton
-                radius={20}
-                lineColor="#38bdf8"
-                baseColor="#0284c7"
-                intensity={1.2}
-                onClick={() => {}}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/25 transition-all"
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin text-white" />
@@ -199,7 +195,7 @@ function AuthForm() {
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </SpecularButton>
+              </button>
             </div>
           </form>
 
