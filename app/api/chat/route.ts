@@ -48,7 +48,6 @@ export async function POST(request: Request) {
     // 1. Get or create conversation (only if NOT temporary mode)
     let targetConversationId: string | null = null;
     if (!isTemporary) {
-      // Ensure user ID exists in current database (prevents foreign key errors from stale session cookies)
       let dbUser = await prisma.user.findUnique({ where: { id: session.userId } });
       let validUserId = dbUser ? session.userId : null;
       
@@ -84,42 +83,6 @@ export async function POST(request: Request) {
     }
 
     const encoder = new TextEncoder();
-
-    // Verify API Key
-    const apiKey = getApiKey();
-    if (!isValidApiKey(apiKey)) {
-      const warningMessage = `⚠️ **Invalid Gemini API Key Format Detected**\n\nPlease check your \`GEMINI_API_KEY\` in your \`.env\` file.`;
-
-      const stream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({
-                type: 'metadata',
-                conversationId: targetConversationId,
-                citations: [],
-                isTemporary: !!isTemporary,
-              })}\n\n`
-            )
-          );
-          controller.enqueue(
-            encoder.encode(
-              `data: ${JSON.stringify({ type: 'content', delta: warningMessage })}\n\n`
-            )
-          );
-          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-          controller.close();
-        },
-      });
-
-      return new NextResponse(stream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
-    }
 
     // 2. High-speed stream generation inside ReadableStream.start()
     const stream = new ReadableStream({
@@ -200,13 +163,34 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (genErr: any) {
-          console.error('Streaming error:', genErr);
-          const errText = `\n⚠️ Error streaming response: ${genErr?.message || 'Connection lost'}`;
+          console.warn('Gemini API stream error, using grounded RAG context fallback:', genErr?.message || genErr);
+
+          let fallbackResponse = '';
+          if (relevantChunks.length > 0) {
+            fallbackResponse = `Based on the official **AskCET College Database**:\n\n` +
+              relevantChunks.map((c, i) => `**[Excerpt ${i + 1} from ${c.documentTitle}]**:\n> ${c.content}`).join('\n\n') +
+              `\n\n---\n*Note: To enable live conversational AI synthesis with Gemini, add a free API Key starting with \`AIzaSy...\` from [Google AI Studio](https://aistudio.google.com/app/apikey) to your \`.env\` file.*`;
+          } else {
+            fallbackResponse = `### College Knowledge Base Search Result\n\nNo exact documents matched your query. Please refine your query or ask about academic calendars, CSE curriculum, admissions, fees, hostel regulations, or placement statistics.\n\n---\n*Note: Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey) to your \`.env\` file to enable live AI responses.*`;
+          }
+
           controller.enqueue(
             encoder.encode(
-              `data: ${JSON.stringify({ type: 'content', delta: errText })}\n\n`
+              `data: ${JSON.stringify({ type: 'content', delta: fallbackResponse })}\n\n`
             )
           );
+
+          if (!isTemporary && targetConversationId) {
+            prisma.message.create({
+              data: {
+                conversationId: targetConversationId,
+                role: 'assistant',
+                content: fallbackResponse,
+                sources: JSON.stringify(citations),
+              },
+            }).catch(() => {});
+          }
+
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         }
