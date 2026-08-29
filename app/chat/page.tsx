@@ -7,6 +7,7 @@ import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
 import ScrollFloat from '@/components/animations/ScrollFloat';
+import SpecularButton from '@/components/animations/SpecularButton';
 import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -320,16 +321,18 @@ export default function ChatPage() {
           {/* iOS Header Control Sub-bar */}
           <div className="px-5 py-3 bg-white/70 dark:bg-[#080c16]/75 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 flex items-center justify-between z-20 transition-all">
             <div className="flex items-center gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <SpecularButton
+                radius={16}
+                lineColor="#38bdf8"
+                baseColor="#1e293b"
+                intensity={0.6}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs text-xs font-bold"
                 title="Toggle History Sidebar"
               >
                 <History className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                 <span className="hidden sm:inline">History</span>
-              </motion.button>
+              </SpecularButton>
 
               <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate flex items-center gap-2">
                 {isTemporaryChat ? (
@@ -347,37 +350,42 @@ export default function ChatPage() {
 
             {/* iOS Action Controls */}
             <div className="flex items-center gap-2">
-              {/* Notice & Deadline Side Panel Trigger */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+              {/* Notice & Deadline Specular Trigger */}
+              <SpecularButton
+                radius={16}
+                lineColor="#f59e0b"
+                baseColor="#78350f"
+                intensity={0.8}
                 onClick={() => setIsNoticeDrawerOpen(!isNoticeDrawerOpen)}
                 className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-50/90 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 text-xs font-extrabold transition-all shadow-xs relative"
                 title="Open Campus Deadlines & Notices Panel"
               >
                 <BellRing className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
                 <span className="hidden sm:inline">Deadlines & Notices</span>
-                <span className="w-2 h-2 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5 animate-ping" />
-              </motion.button>
+              </SpecularButton>
 
               {/* Export Chat Transcript Button */}
               {messages.length > 0 && (
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                <SpecularButton
+                  radius={16}
+                  lineColor="#38bdf8"
+                  baseColor="#1e293b"
+                  intensity={0.6}
                   onClick={exportConversationMarkdown}
                   className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800/80 text-xs font-bold transition-all shadow-xs"
                   title="Export chat transcript as Markdown report"
                 >
                   <Download className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                   <span className="hidden sm:inline">Export</span>
-                </motion.button>
+                </SpecularButton>
               )}
 
-              {/* Sleek Incognito / Temporary Chat Toggle Pill */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+              {/* Sleek Incognito / Temporary Chat Specular Toggle Pill */}
+              <SpecularButton
+                radius={16}
+                lineColor={isTemporaryChat ? '#f59e0b' : '#38bdf8'}
+                baseColor={isTemporaryChat ? '#78350f' : '#1e293b'}
+                intensity={isTemporaryChat ? 1.2 : 0.6}
                 onClick={toggleTemporaryChat}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-black transition-all border shadow-xs ${
                   isTemporaryChat
@@ -388,18 +396,20 @@ export default function ChatPage() {
               >
                 <Flame className={`w-3.5 h-3.5 ${isTemporaryChat ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`} />
                 <span className="hidden sm:inline">{isTemporaryChat ? 'Incognito On' : 'Incognito'}</span>
-              </motion.button>
+              </SpecularButton>
 
-              {/* New Chat Button */}
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+              {/* New Chat Specular Button */}
+              <SpecularButton
+                radius={16}
+                lineColor="#38bdf8"
+                baseColor="#0284c7"
+                intensity={1}
                 onClick={handleNewChat}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 text-xs font-black transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">New Chat</span>
-              </motion.button>
+              </SpecularButton>
             </div>
           </div>
 

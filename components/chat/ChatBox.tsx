@@ -3,6 +3,7 @@
 import { useState, useEffect, KeyboardEvent } from 'react';
 import { Send, Sparkles, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SpecularButton from '@/components/animations/SpecularButton';
 
 interface ChatBoxProps {
   onSendMessage: (message: string, language?: string) => void;
@@ -130,10 +131,14 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
             const Icon = cat.icon;
             const isSelected = activeCategory === i;
             return (
-              <button
+              <SpecularButton
                 key={i}
+                radius={999}
+                lineColor={isSelected ? '#38bdf8' : '#64748b'}
+                baseColor={isSelected ? '#0284c7' : '#1e293b'}
+                intensity={isSelected ? 1.2 : 0.4}
                 onClick={() => setActiveCategory(i)}
-                className={`shrink-0 px-3 py-1 rounded-full font-semibold transition-all flex items-center gap-1.5 text-xs ${
+                className={`shrink-0 px-3 py-1 font-semibold transition-all flex items-center gap-1.5 text-xs ${
                   isSelected
                     ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 border border-cyan-400/30'
                     : 'bg-white dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
@@ -141,23 +146,26 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{cat.category}</span>
-              </button>
+              </SpecularButton>
             );
           })}
         </div>
 
         {/* Globe Symbol Language Selector Button & Dropdown */}
         <div className="relative self-end sm:self-auto shrink-0 z-30">
-          <button
-            type="button"
+          <SpecularButton
+            radius={12}
+            lineColor="#38bdf8"
+            baseColor="#0f172a"
+            intensity={0.6}
             onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all text-xs font-bold shadow-xs"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all text-xs font-bold shadow-xs"
             title="Switch AI Language (English, Malayalam, Hindi)"
           >
             <Globe className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0" />
             <span className="text-[11px] font-extrabold">{activeLangObj.short}</span>
             <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isLangDropdownOpen ? 'rotate-180 text-cyan-500' : ''}`} />
-          </button>
+          </SpecularButton>
 
           <AnimatePresence>
             {isLangDropdownOpen && (
@@ -193,20 +201,22 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
       {/* Suggested Prompts for Active Category */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
         {CATEGORIZED_PROMPTS[activeCategory].prompts.map((prompt, idx) => (
-          <motion.button
+          <SpecularButton
             key={idx}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            radius={12}
+            lineColor="#38bdf8"
+            baseColor="#0f172a"
+            intensity={0.5}
             onClick={() => onSendMessage(prompt, selectedLanguage)}
             disabled={isLoading}
-            className="shrink-0 px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all text-xs font-medium"
+            className="shrink-0 px-3.5 py-1.5 bg-white dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 border border-slate-200 dark:border-slate-800 hover:border-cyan-500/40 shadow-xs transition-all text-xs font-medium"
           >
             "{prompt}"
-          </motion.button>
+          </SpecularButton>
         ))}
       </div>
 
-      {/* Main Input Box with Voice Mic Trigger */}
+      {/* Main Input Box with Voice Mic & Specular Send Button */}
       <div className="relative bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl p-2.5 focus-within:ring-2 focus-within:ring-cyan-500/40 border border-slate-200 dark:border-slate-800 flex items-end gap-2 shadow-2xl transition-colors duration-300">
         <textarea
           value={input}
@@ -222,12 +232,15 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           className="w-full bg-transparent resize-none px-3 py-1 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none max-h-32"
         />
 
-        {/* Speech-to-Text Voice Mic Button */}
-        <button
-          type="button"
+        {/* Speech-to-Text Voice Mic Specular Button */}
+        <SpecularButton
+          radius={12}
+          lineColor={isListening ? '#f43f5e' : '#38bdf8'}
+          baseColor={isListening ? '#be123c' : '#1e293b'}
+          intensity={isListening ? 1.5 : 0.6}
           onClick={toggleListening}
           disabled={isLoading}
-          className={`p-2.5 rounded-xl transition-all shrink-0 border ${
+          className={`p-2.5 transition-all shrink-0 border ${
             isListening
               ? 'bg-rose-500 text-white animate-pulse border-rose-400 shadow-md shadow-rose-500/30'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border-slate-200 dark:border-slate-700/60'
@@ -235,17 +248,20 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           title={isListening ? 'Stop recording voice' : 'Speak question using Voice Mic'}
         >
           {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-        </button>
+        </SpecularButton>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        {/* Send Specular Button */}
+        <SpecularButton
+          radius={12}
+          lineColor="#38bdf8"
+          baseColor="#0284c7"
+          intensity={1.2}
           onClick={handleSubmit}
           disabled={!input.trim() || isLoading}
-          className="shrink-0 w-11 h-11 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-500/20"
+          className="shrink-0 w-11 h-11 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-500/20"
         >
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4" />}
-        </motion.button>
+        </SpecularButton>
       </div>
     </div>
   );

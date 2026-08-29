@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { MessageSquare, Shield, LogOut, Sun, Moon, HelpCircle } from 'lucide-react';
 import { useTheme } from '@/components/shared/ThemeProvider';
-import { motion } from 'framer-motion';
+import SpecularButton from '@/components/animations/SpecularButton';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -72,11 +72,14 @@ export default function Navbar() {
               const Icon = link.icon;
               const isActive = pathname === link.href;
               return (
-                <button
+                <SpecularButton
                   key={link.href}
-                  type="button"
+                  radius={12}
+                  lineColor={isActive ? '#38bdf8' : '#64748b'}
+                  baseColor={isActive ? '#0284c7' : '#1e293b'}
+                  intensity={isActive ? 1.2 : 0.4}
                   onClick={() => handleNavClick(link.href)}
-                  className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                  className={`px-4 py-1.5 transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                     isActive
                       ? 'bg-white dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-extrabold shadow-sm border border-slate-200/80 dark:border-slate-700/80'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
@@ -84,15 +87,18 @@ export default function Navbar() {
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-500' : 'text-slate-400'}`} />
                   <span>{link.label}</span>
-                </button>
+                </SpecularButton>
               );
             })}
 
             {user?.role === 'ADMIN' && (
-              <button
-                type="button"
+              <SpecularButton
+                radius={12}
+                lineColor="#f59e0b"
+                baseColor="#b45309"
+                intensity={1}
                 onClick={() => handleNavClick('/admin')}
-                className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                className={`px-4 py-1.5 transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                   pathname === '/admin'
                     ? 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-extrabold shadow-sm border border-amber-200/80 dark:border-amber-700/80'
                     : 'text-amber-600 dark:text-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-500/10'
@@ -100,22 +106,24 @@ export default function Navbar() {
               >
                 <Shield className="w-4 h-4 text-amber-500" />
                 <span>Admin Portal</span>
-              </button>
+              </SpecularButton>
             )}
           </nav>
 
           {/* User Status & Controls */}
           <div className="flex items-center gap-2.5">
-            {/* Theme Toggle Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            {/* Specular Theme Toggle Button */}
+            <SpecularButton
+              radius={16}
+              lineColor="#fbbf24"
+              baseColor="#1e293b"
+              intensity={0.8}
               onClick={toggleTheme}
               className="p-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs backdrop-blur-md"
               title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-            </motion.button>
+            </SpecularButton>
 
             {user ? (
               <div className="flex items-center gap-2.5">
@@ -123,24 +131,29 @@ export default function Navbar() {
                   <span className="text-xs font-bold text-slate-900 dark:text-white">{user.name}</span>
                   <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{user.role}</span>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <SpecularButton
+                  radius={16}
+                  lineColor="#f43f5e"
+                  baseColor="#881337"
+                  intensity={0.8}
                   onClick={handleLogout}
                   className="p-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors shadow-xs"
                   title="Sign out"
                 >
                   <LogOut className="w-4 h-4" />
-                </motion.button>
+                </SpecularButton>
               </div>
             ) : (
-              <button
-                type="button"
+              <SpecularButton
+                radius={16}
+                lineColor="#38bdf8"
+                baseColor="#0284c7"
+                intensity={1.2}
                 onClick={() => handleNavClick('/login')}
                 className="px-4 py-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition-all duration-300"
               >
                 Sign In
-              </button>
+              </SpecularButton>
             )}
           </div>
         </div>
