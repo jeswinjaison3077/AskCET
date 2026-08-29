@@ -57,7 +57,7 @@ export async function storeChunkVector(
 export async function searchSimilarChunks(
   queryEmbedding: number[],
   topK: number = 5,
-  similarityThreshold: number = 0.3,
+  similarityThreshold: number = 0.01,
   queryText: string = ''
 ): Promise<SearchResultChunk[]> {
   try {
@@ -95,8 +95,8 @@ export async function searchSimilarChunks(
             keywordHits += 1;
           }
         }
-        const keywordScore = Math.min(keywordHits / keywords.length, 1.0) * 0.25;
-        similarity = (similarity * 0.75) + keywordScore;
+        const keywordScore = Math.min(keywordHits / keywords.length, 1.0) * 0.4;
+        similarity = (similarity * 0.6) + keywordScore;
       }
 
       return {
@@ -111,10 +111,13 @@ export async function searchSimilarChunks(
       };
     });
 
-    return scored
-      .filter((s) => s.similarity >= similarityThreshold)
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, topK);
+    const sorted = scored.sort((a, b) => b.similarity - a.similarity);
+    const filtered = sorted.filter((s) => s.similarity >= similarityThreshold);
+    if (filtered.length > 0) {
+      return filtered.slice(0, topK);
+    }
+
+    return sorted.slice(0, topK);
   } catch (error) {
     console.error('Vector similarity query failed:', error);
     return [];
