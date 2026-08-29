@@ -352,29 +352,30 @@ export default function ChatPage() {
           onPointerLeave={() => setIsPointerInside(false)}
           className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
         >
-          {/* Soft Torch Spotlight Background Image Layer */}
+          {/* Soft Torch Spotlight Background Image Layer (Matched with website dark theme & low opacity) */}
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
             style={{
-              opacity: isPointerInside ? 0.22 : 0,
-              backgroundImage: `url('/logo.jpg')`,
-              backgroundSize: 'cover',
+              opacity: isPointerInside ? 0.12 : 0,
+              backgroundImage: `url('/logo-transparent.png')`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
-              WebkitMaskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 100%)`,
+              WebkitMaskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Soft Torch Beam Light Aura Circle */}
+          {/* Soft Torch Beam Light Aura Circle Matched to Website Cyan Theme */}
           <div
             className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-2xl -z-10"
             style={{
-              opacity: isPointerInside ? 0.2 : 0,
-              left: `${mousePos.x - 90}px`,
-              top: `${mousePos.y - 90}px`,
-              width: '180px',
-              height: '180px',
-              background: 'radial-gradient(circle, rgba(6,182,212,0.3) 0%, rgba(99,102,241,0.15) 50%, transparent 100%)',
+              opacity: isPointerInside ? 0.15 : 0,
+              left: `${mousePos.x - 80}px`,
+              top: `${mousePos.y - 80}px`,
+              width: '160px',
+              height: '160px',
+              background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 100%)',
             }}
           />
 
@@ -491,20 +492,16 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Pure Circular Boundary Logo Emblem (Larger radius, ultra-feathered round shape) */}
+                  {/* Hero Pure Circular Boundary Logo Emblem */}
                   <div className="relative group cursor-pointer">
                     {/* Ambient Neon Backlight Glow */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
                     
-                    {/* Pure Transparent Heavily Feathered Circular Emblem Logo */}
+                    {/* Pure Transparent Emblem Logo */}
                     <img
-                      src="/logo.jpg"
+                      src="/logo-transparent.png"
                       alt="AskCET Pure Emblem Logo"
-                      className="relative w-36 h-36 object-cover rounded-full border-none shadow-none drop-shadow-[0_0_30px_rgba(6,182,212,0.85)] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
-                      style={{
-                        maskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
-                        WebkitMaskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
-                      }}
+                      className="relative w-36 h-36 object-contain border-none shadow-none drop-shadow-[0_0_30px_rgba(6,182,212,0.85)] group-hover:scale-105 transition-transform duration-300"
                     />
                     
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
