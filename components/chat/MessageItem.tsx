@@ -105,7 +105,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
     return parts.map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return (
-          <strong key={index} className="font-extrabold text-cyan-600 dark:text-cyan-400 bg-cyan-50/60 dark:bg-cyan-500/10 px-1.5 py-0.5 rounded-md border border-cyan-200/50 dark:border-cyan-500/20 inline-block my-0.5">
+          <strong key={index} className="font-bold text-slate-900 dark:text-white">
             {part.slice(2, -2)}
           </strong>
         );
@@ -115,136 +115,119 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.35, type: 'spring', stiffness: 300, damping: 24 }}
-      className={`flex gap-3.5 my-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
-    >
-      {/* iOS Avatar Badge */}
+    <div className={`flex gap-3 my-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+      {/* Avatar Badge */}
       <div
-        className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
+        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
           isUser
-            ? 'bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-cyan-500/25'
-            : 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 border border-slate-200/80 dark:border-slate-800 shadow-xl'
+            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-transparent font-bold'
+            : 'bg-white dark:bg-[#121824] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
         }`}
       >
-        {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+        {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
       </div>
 
       {/* Content Bubble Container */}
       <div className={`max-w-[85%] sm:max-w-[80%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
         {/* Grounded Confidence Indicator */}
         {hasCitations && (
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 text-[11px] font-extrabold shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/50 text-[11px] font-semibold">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span>Grounded Answer • Verified Match</span>
+            <span>Grounded Answer • Verified Sources</span>
           </div>
         )}
 
         {/* Message Bubble */}
         <div
-          className={`px-6 py-5 rounded-[28px] text-[15px] leading-[1.85] tracking-wide ${
+          className={`px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
             isUser
-              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-semibold'
-              : 'bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800/90 shadow-2xl backdrop-blur-2xl font-outfit font-medium'
+              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-tr-xs font-medium'
+              : 'bg-white dark:bg-[#121824] text-slate-800 dark:text-slate-200 rounded-tl-xs border border-slate-200 dark:border-slate-800/80 shadow-xs font-normal'
           }`}
         >
-          <div className="whitespace-pre-wrap space-y-2">
+          <div className="whitespace-pre-wrap leading-relaxed">
             {isUser ? content : renderFormattedText(content)}
           </div>
         </div>
 
         {/* Verified Sources Collapsible Box */}
         {hasCitations && (
-          <div className="mt-1 w-full bg-slate-50/80 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-700 dark:text-slate-300 shadow-xs backdrop-blur-md">
+          <div className="w-full bg-slate-50 dark:bg-[#0E131F] border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs text-slate-700 dark:text-slate-300">
             <button
               onClick={() => setShowSources(!showSources)}
-              className="w-full flex items-center justify-between font-bold text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
+              className="w-full flex items-center justify-between font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                <span>Verified Campus Sources ({citations.length})</span>
+              <div className="flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+                <span>Verified Sources ({citations.length})</span>
               </div>
-              {showSources ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+              {showSources ? <ChevronUp className="w-3.5 h-3.5 text-slate-400" /> : <ChevronDown className="w-3.5 h-3.5 text-slate-400" />}
             </button>
 
             {showSources && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="flex flex-col gap-2 mt-2.5 pt-2.5 border-t border-slate-200/80 dark:border-slate-800/80"
-              >
+              <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-slate-200 dark:border-slate-800">
                 {citations.map((c, i) => (
-                  <div key={i} className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-start gap-2 shadow-2xs">
-                    <FileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+                  <div key={i} className="bg-white dark:bg-[#121824] p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 flex items-start gap-2 text-xs">
+                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-extrabold text-slate-800 dark:text-slate-200 truncate">{c.documentTitle}</span>
-                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-500/20 shrink-0">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 truncate">{c.documentTitle}</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 shrink-0">
                           Page {c.pageNumber}
                         </span>
                       </div>
                       {c.snippet && (
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60 font-outfit">
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mt-1 italic leading-normal">
                           "{c.snippet}"
                         </p>
                       )}
                     </div>
                   </div>
                 ))}
-              </motion.div>
+              </div>
             )}
           </div>
         )}
 
         {/* Message Toolbar Controls */}
         {!isUser && (
-          <div className="flex items-center gap-2 px-1 text-slate-500 dark:text-slate-400 text-xs font-semibold">
-            {/* Read Aloud Voice Speaker */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="flex items-center gap-2 px-1 text-slate-500 dark:text-slate-400 text-xs font-medium">
+            <button
               onClick={toggleSpeak}
-              className={`flex items-center gap-1.5 transition-colors py-1 px-2.5 rounded-xl ${
+              className={`flex items-center gap-1 transition-colors py-1 px-2 rounded-md ${
                 isSpeaking
-                  ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/20 font-bold'
-                  : 'hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
+                  ? 'text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 font-bold'
+                  : 'hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
               title={isSpeaking ? 'Stop reading out loud' : 'Read answer out loud'}
             >
-              {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
-              <span>{isSpeaking ? 'Stop Speaking' : 'Read Aloud'}</span>
-            </motion.button>
+              {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-slate-900 dark:text-white" /> : <Volume2 className="w-3.5 h-3.5" />}
+              <span>{isSpeaking ? 'Stop' : 'Read Aloud'}</span>
+            </button>
 
-            {/* Quick Share Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleShare}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
-              title="Share verified answer via WhatsApp / Telegram"
+              className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+              title="Share answer"
             >
-              {shared ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
-              <span>{shared ? 'Copied Share Link' : 'Share'}</span>
-            </motion.button>
+              {shared ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{shared ? 'Copied Link' : 'Share'}</span>
+            </button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleCopy}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
+              className="flex items-center gap-1 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
-            </motion.button>
+            </button>
 
             {id && (
               <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-2">
                 <button
                   onClick={() => handleFeedback('UPVOTE')}
-                  className={`p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
-                    feedback === 'UPVOTE' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40' : 'hover:text-slate-900 dark:hover:text-white'
+                  className={`p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
+                    feedback === 'UPVOTE' ? 'text-emerald-600 dark:text-emerald-400' : 'hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title="Helpful response"
                 >
@@ -252,8 +235,8 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
                 </button>
                 <button
                   onClick={() => handleFeedback('DOWNVOTE')}
-                  className={`p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
-                    feedback === 'DOWNVOTE' ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40' : 'hover:text-slate-900 dark:hover:text-white'
+                  className={`p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
+                    feedback === 'DOWNVOTE' ? 'text-rose-600 dark:text-rose-400' : 'hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title="Inaccurate response"
                 >
@@ -264,6 +247,6 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
