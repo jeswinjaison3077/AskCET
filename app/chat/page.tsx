@@ -103,6 +103,13 @@ export default function ChatPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (chatScrollContainerRef.current) {
+      chatScrollContainerRef.current.scrollTop = 0;
+    }
+    setScrollTop(0);
+  }, [isTemporaryChat]);
+
   const handleScroll = () => {
     if (chatScrollContainerRef.current) {
       setScrollTop(chatScrollContainerRef.current.scrollTop);
@@ -154,9 +161,10 @@ export default function ChatPage() {
 
   const toggleTemporaryChat = () => {
     setIsTemporaryChat((prev) => !prev);
-    if (!isTemporaryChat) {
-      setActiveConversationId(null);
-      setMessages([]);
+    setActiveConversationId(null);
+    setMessages([]);
+    if (chatScrollContainerRef.current) {
+      chatScrollContainerRef.current.scrollTop = 0;
     }
   };
 
@@ -413,27 +421,27 @@ export default function ChatPage() {
             </div>
           </div>
 
-          {/* Floating Incognito Mode Status Glass Pill */}
-          <AnimatePresence>
-            {isTemporaryChat && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.96 }}
-                className="mx-auto mt-3 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-extrabold flex items-center justify-center gap-2 shadow-lg backdrop-blur-xl max-w-fit"
-              >
-                <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                <span>Incognito Mode Active • Messages will not be saved to your account history</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Chat Messages Stream & Hero Screen */}
           <div
             ref={chatScrollContainerRef}
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12 scroll-smooth"
           >
+            {/* Floating Incognito Mode Status Glass Pill Inside Scroll Container */}
+            <AnimatePresence>
+              {isTemporaryChat && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                  className="mx-auto mb-4 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-extrabold flex items-center justify-center gap-2 shadow-lg backdrop-blur-xl max-w-fit"
+                >
+                  <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                  <span>Incognito Mode Active • Messages will not be saved to your account history</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
                 {/* HERO SCREEN - Blurs and Fades Out on Scroll */}
