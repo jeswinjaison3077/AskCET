@@ -8,6 +8,7 @@ import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
 import ScrollFloat from '@/components/animations/ScrollFloat';
 import SpecularButton from '@/components/animations/SpecularButton';
+import BorderGlow from '@/components/animations/BorderGlow';
 import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -485,7 +486,7 @@ export default function ChatPage() {
                   </motion.div>
                 </div>
 
-                {/* 6 Campus FAQ Tiles - Fluid Re-Triggerable Scroll Entrance */}
+                {/* 6 Campus FAQ Tiles - Wrapped in React Bits BorderGlow */}
                 <div className="w-full pt-8 pb-24">
                   <div className="text-center mb-8">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
@@ -497,7 +498,7 @@ export default function ChatPage() {
                     {FEATURE_CARDS.map((card, i) => {
                       const Icon = card.icon;
                       return (
-                        <motion.button
+                        <motion.div
                           key={i}
                           initial={{ opacity: 0, y: 40, scale: 0.94 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
@@ -506,40 +507,53 @@ export default function ChatPage() {
                             duration: 0.45,
                             ease: [0.16, 1, 0.3, 1],
                           }}
-                          whileHover={{ y: -6, scale: 1.025 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() => handleSendMessage(card.question)}
-                          className={`bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
+                          className="h-full"
                         >
-                          <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                          
-                          <div>
-                            <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
-                              <Icon className="w-6 h-6" />
-                            </div>
-
-                            {/* React Bits ScrollFloat Animated Character Title */}
-                            <ScrollFloat
-                              scrollContainerRef={chatScrollContainerRef}
-                              animationDuration={0.7}
-                              ease="back.inOut(2)"
-                              scrollStart="top 98%"
-                              scrollEnd="top 75%"
-                              stagger={0.02}
-                              containerClassName="mb-1.5"
-                              textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                          <BorderGlow
+                            edgeSensitivity={30}
+                            glowColor="190 90 60"
+                            backgroundColor="rgba(15, 23, 42, 0.85)"
+                            borderRadius={28}
+                            glowRadius={35}
+                            glowIntensity={1.2}
+                            colors={['#38bdf8', '#818cf8', '#c084fc']}
+                            className="h-full"
+                          >
+                            <div
+                              onClick={() => handleSendMessage(card.question)}
+                              className="p-6 text-left group flex flex-col justify-between h-full cursor-pointer relative overflow-hidden"
                             >
-                              {card.title}
-                            </ScrollFloat>
+                              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                              
+                              <div>
+                                <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
+                                  <Icon className="w-6 h-6" />
+                                </div>
 
-                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
-                          </div>
+                                {/* React Bits ScrollFloat Animated Character Title */}
+                                <ScrollFloat
+                                  scrollContainerRef={chatScrollContainerRef}
+                                  animationDuration={0.7}
+                                  ease="back.inOut(2)"
+                                  scrollStart="top 98%"
+                                  scrollEnd="top 75%"
+                                  stagger={0.02}
+                                  containerClassName="mb-1.5"
+                                  textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                                >
+                                  {card.title}
+                                </ScrollFloat>
 
-                          <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                            <span>Try Asking This</span>
-                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                          </div>
-                        </motion.button>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
+                              </div>
+
+                              <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                                <span>Try Asking This</span>
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                              </div>
+                            </div>
+                          </BorderGlow>
+                        </motion.div>
                       );
                     })}
                   </div>
