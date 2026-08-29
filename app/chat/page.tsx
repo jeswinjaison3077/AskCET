@@ -492,43 +492,44 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero 3D Glass Sphere Logo Orb */}
+                  {/* Hero 3D Ultra-Feathered Sphere Logo */}
                   <div className="relative group cursor-pointer">
-                    {/* Ambient Neon Backlight Sphere Aura */}
-                    <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-                    
-                    {/* 3D Sphere Container */}
+                    {/* Ambient Neon Backlight Sphere Glow */}
+                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+
+                    {/* Feathered 3D Sphere Wrapper */}
                     <div
-                      className="relative w-36 h-36 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500 shadow-2xl"
+                      className="relative w-40 h-40 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
                       style={{
-                        boxShadow: 'inset -12px -12px 28px rgba(0, 0, 0, 0.8), inset 8px 8px 18px rgba(255, 255, 255, 0.45), 0 20px 40px rgba(6, 182, 212, 0.45)',
+                        maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
+                        WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
                       }}
                     >
                       {/* Base Logo Image */}
                       <img
                         src="/logo.jpg"
-                        alt="AskCET 3D Sphere Logo"
-                        className="absolute inset-0 w-full h-full object-cover rounded-full"
+                        alt="AskCET 3D Feathered Sphere Logo"
+                        className="absolute inset-0 w-full h-full object-cover rounded-full mix-blend-multiply dark:mix-blend-lighten"
                       />
 
-                      {/* 3D Specular Lighting Gradient Overlay (creates realistic 3D sphere curvature) */}
+                      {/* 3D Specular Curvature Gradient (creates volumetric 3D spherical depth) */}
                       <div
                         className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
-                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.4) 70%, rgba(0, 0, 0, 0.85) 100%)',
+                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.35) 65%, rgba(0, 0, 0, 0.9) 100%)',
                           mixBlendMode: 'overlay',
                         }}
                       />
 
-                      {/* Glossy Top Specular Arc */}
+                      {/* Soft Spherical Inner Shadow Vignette */}
                       <div
-                        className="absolute top-1 left-3 right-3 h-12 rounded-t-full pointer-events-none"
+                        className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
-                          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0))',
+                          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.95) 100%)',
                         }}
                       />
                     </div>
-                    
+
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
