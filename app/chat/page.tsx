@@ -7,7 +7,7 @@ import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
 import ScrollFloat from '@/components/animations/ScrollFloat';
-import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History } from 'lucide-react';
+import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
@@ -374,80 +374,110 @@ export default function ChatPage() {
           </AnimatePresence>
 
           {/* Chat Messages Stream & Hero Screen */}
-          <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12">
             {messages.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, type: 'spring', stiffness: 260, damping: 20 }}
-                className="h-full flex flex-col items-center justify-center text-center p-6 max-w-4xl mx-auto space-y-8"
-              >
-                {/* Hero iOS Squircle Logo with Pulse Glow */}
-                <div className="relative group cursor-pointer">
-                  <div className="absolute inset-0 rounded-[32px] bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
-                  <img
-                    src="/logo.jpg"
-                    alt="AskCET Logo"
-                    className="relative w-24 h-24 rounded-[32px] object-cover shadow-2xl border-2 border-white/20 dark:border-slate-700/80 group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute -bottom-1 -right-1 p-1.5 rounded-2xl bg-cyan-500 text-white shadow-lg">
-                    <Sparkles className="w-4 h-4 animate-spin" />
+              <div className="min-h-full flex flex-col items-center justify-between py-12 max-w-4xl mx-auto space-y-16">
+                {/* Hero View - Initially Visible */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, type: 'spring', stiffness: 260, damping: 20 }}
+                  className="flex flex-col items-center text-center space-y-6 max-w-xl my-auto pt-8"
+                >
+                  {/* Hero iOS Squircle Logo */}
+                  <div className="relative group cursor-pointer">
+                    <div className="absolute inset-0 rounded-[32px] bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
+                    <img
+                      src="/logo.jpg"
+                      alt="AskCET Logo"
+                      className="relative w-24 h-24 rounded-[32px] object-cover shadow-2xl border-2 border-white/20 dark:border-slate-700/80 group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute -bottom-1 -right-1 p-1.5 rounded-2xl bg-cyan-500 text-white shadow-lg">
+                      <Sparkles className="w-4 h-4 animate-spin" />
+                    </div>
                   </div>
-                </div>
 
-                <div className="space-y-3 max-w-xl">
-                  <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
-                  </h1>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                    Your source-grounded AI assistant for CET College of Engineering. Ask anything about academic regulations, exam timetables, hostel curfews, or fee schedules.
-                  </p>
-                </div>
+                  <div className="space-y-3">
+                    <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                      Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
+                    </h1>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                      Your source-grounded AI assistant for CET College of Engineering. Ask anything about academic regulations, exam timetables, hostel curfews, or fee schedules.
+                    </p>
+                  </div>
 
-                {/* Interactive React Bits ScrollFloat Animated Question Tiles */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full text-left mt-2">
-                  {FEATURE_CARDS.map((card, i) => {
-                    const Icon = card.icon;
-                    return (
-                      <motion.button
-                        key={i}
-                        whileHover={{ y: -6, scale: 1.025 }}
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                        onClick={() => handleSendMessage(card.question)}
-                        className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
-                      >
-                        <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                        
-                        <div>
-                          <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
-                            <Icon className="w-6 h-6" />
+                  {/* Light Opacity Scroll Text Hint */}
+                  <motion.div
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+                    className="pt-6 flex flex-col items-center gap-1.5 text-xs font-bold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    onClick={() => {
+                      chatScrollContainerRef.current?.scrollTo({ top: 350, behavior: 'smooth' });
+                    }}
+                  >
+                    <span>Scroll down for FAQs & Feature Topics</span>
+                    <ChevronDown className="w-4 h-4 text-cyan-500" />
+                  </motion.div>
+                </motion.div>
+
+                {/* Feature Question Tiles - Reveals upon scroll */}
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: '-50px' }}
+                  transition={{ duration: 0.6, type: 'spring', stiffness: 220, damping: 22 }}
+                  className="w-full pt-10"
+                >
+                  <div className="text-center mb-6">
+                    <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                      Explore Popular Campus Topics
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full text-left">
+                    {FEATURE_CARDS.map((card, i) => {
+                      const Icon = card.icon;
+                      return (
+                        <motion.button
+                          key={i}
+                          whileHover={{ y: -6, scale: 1.025 }}
+                          whileTap={{ scale: 0.97 }}
+                          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                          onClick={() => handleSendMessage(card.question)}
+                          className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
+                        >
+                          <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          
+                          <div>
+                            <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
+                              <Icon className="w-6 h-6" />
+                            </div>
+
+                            {/* React Bits ScrollFloat Animated Title */}
+                            <ScrollFloat
+                              scrollContainerRef={chatScrollContainerRef}
+                              animationDuration={0.8}
+                              ease="back.inOut(2)"
+                              stagger={0.02}
+                              containerClassName="mb-1.5"
+                              textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                            >
+                              {card.title}
+                            </ScrollFloat>
+
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{card.desc}</p>
                           </div>
 
-                          {/* React Bits ScrollFloat Animated Title */}
-                          <ScrollFloat
-                            scrollContainerRef={chatScrollContainerRef}
-                            animationDuration={0.8}
-                            ease="back.inOut(2)"
-                            stagger={0.02}
-                            containerClassName="mb-1.5"
-                            textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
-                          >
-                            {card.title}
-                          </ScrollFloat>
-
-                          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{card.desc}</p>
-                        </div>
-
-                        <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-                          <span>Try Asking This</span>
-                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-              </motion.div>
+                          <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                            <span>Try Asking This</span>
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </div>
             ) : (
               messages.map((msg, index) => <MessageItem key={index} {...msg} />)
             )}
