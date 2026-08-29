@@ -29,7 +29,7 @@ export default function ChatSidebar({
   onDelete,
 }: ChatSidebarProps) {
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {isOpen && (
         <>
           {/* Mobile Backdrop Overlay */}
@@ -37,17 +37,18 @@ export default function ChatSidebar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
             className="md:hidden fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-30"
           />
 
-          {/* iOS Spring Physics Slide-In Drawer */}
+          {/* Ultra-Smooth 60fps Drawer */}
           <motion.aside
             initial={{ x: '-100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '-100%', opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-            className="w-72 shrink-0 bg-white/90 dark:bg-[#080c16]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-slate-800/80 flex flex-col h-full shadow-2xl z-40 relative transition-colors duration-300"
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="w-72 shrink-0 bg-white/95 dark:bg-[#080c16]/95 backdrop-blur-2xl border-r border-slate-200/80 dark:border-slate-800/80 flex flex-col h-full shadow-2xl z-40 relative transition-colors duration-300"
           >
             {/* Sidebar Brand & Action Header */}
             <div className="p-4 border-b border-slate-200/80 dark:border-slate-800/80 space-y-4">

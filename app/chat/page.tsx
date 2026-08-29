@@ -328,25 +328,39 @@ export default function ChatPage() {
         <main className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl">
           {/* iOS Header Control Sub-bar */}
           <div className="px-5 py-3 bg-white/70 dark:bg-[#080c16]/75 backdrop-blur-2xl border-b border-slate-200/70 dark:border-slate-800/70 flex items-center justify-between z-20 transition-all">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {/* Symbol-Only History Toggle Specular Button */}
               <SpecularButton
                 radius={16}
                 lineColor="#38bdf8"
                 baseColor="#1e293b"
                 intensity={0.6}
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs text-xs font-bold"
-                title="Toggle History Sidebar"
+                className="p-2.5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all shadow-xs"
+                title="Toggle Chat History Sidebar"
               >
                 <History className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                <span className="hidden sm:inline">History</span>
               </SpecularButton>
 
-              <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate flex items-center gap-2">
+              {/* Start New Conversation Specular Button */}
+              <SpecularButton
+                radius={16}
+                lineColor="#38bdf8"
+                baseColor="#0284c7"
+                intensity={1}
+                onClick={handleNewChat}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 text-xs font-black transition-all"
+                title="Start a new conversation"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Convo</span>
+              </SpecularButton>
+
+              <span className="text-xs font-black tracking-tight text-slate-800 dark:text-slate-200 truncate hidden md:flex items-center gap-2 ml-2">
                 {isTemporaryChat ? (
                   <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 font-black bg-amber-50/80 dark:bg-amber-950/60 px-3 py-1 rounded-full border border-amber-200/80 dark:border-amber-800/60">
                     <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                    Incognito Temporary Mode
+                    Incognito Mode
                   </span>
                 ) : activeConversationId ? (
                   conversations.find((c) => c.id === activeConversationId)?.title || 'Current Chat'
@@ -404,19 +418,6 @@ export default function ChatPage() {
               >
                 <Flame className={`w-3.5 h-3.5 ${isTemporaryChat ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`} />
                 <span className="hidden sm:inline">{isTemporaryChat ? 'Incognito On' : 'Incognito'}</span>
-              </SpecularButton>
-
-              {/* New Chat Specular Button */}
-              <SpecularButton
-                radius={16}
-                lineColor="#38bdf8"
-                baseColor="#0284c7"
-                intensity={1}
-                onClick={handleNewChat}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-cyan-50 dark:bg-cyan-500/10 hover:bg-cyan-100 dark:hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/30 text-xs font-black transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">New Chat</span>
               </SpecularButton>
             </div>
           </div>
