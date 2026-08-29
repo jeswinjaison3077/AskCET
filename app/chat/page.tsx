@@ -492,64 +492,64 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Compact Feathered 3D Sphere Logo */}
+                  {/* Hero Smaller & Brighter Feathered 3D Sphere Logo */}
                   <div className="relative group cursor-pointer">
-                    {/* Grounding 3D Sphere Elliptical Drop Shadow & Soft Ambient Glow */}
-                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-28 h-6 rounded-[100%] bg-cyan-500/35 blur-lg group-hover:bg-cyan-400/50 transition-all duration-500" />
-                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-45 group-hover:opacity-75 transition-opacity duration-500" />
+                    {/* Vibrant Grounding 3D Sphere Elliptical Drop Shadow & Bright Backlight Glow */}
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-5 rounded-[100%] bg-cyan-400/50 blur-lg group-hover:bg-cyan-300/70 transition-all duration-500" />
+                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    {/* Compact 3D Sphere Orb Body (128px w-32 h-32) */}
+                    {/* Compact 3D Sphere Orb Body (104px w-26 h-26) */}
                     <div
-                      className="relative w-32 h-32 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500"
+                      className="relative w-26 h-26 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500"
                       style={{
-                        background: 'radial-gradient(circle at 35% 25%, #0e172a 0%, #060810 100%)',
+                        background: 'radial-gradient(circle at 35% 25%, #1e293b 0%, #060810 100%)',
                         boxShadow: `
-                          inset 0 0 15px rgba(255, 255, 255, 0.35),
-                          inset -10px -10px 22px rgba(0, 0, 0, 0.8),
-                          inset 8px 8px 16px rgba(56, 189, 248, 0.35),
-                          0 18px 36px -8px rgba(6, 182, 212, 0.4)
+                          inset 0 0 18px rgba(255, 255, 255, 0.6),
+                          inset -8px -8px 18px rgba(0, 0, 0, 0.7),
+                          inset 8px 8px 16px rgba(56, 189, 248, 0.55),
+                          0 20px 40px -6px rgba(6, 182, 212, 0.6)
                         `,
                       }}
                     >
-                      {/* Base Logo Image with 3D Spherical Scale & Subtle Edge Feather */}
+                      {/* Bright Base Logo Image with 3D Spherical Scale & Soft Edge Feather */}
                       <img
                         src="/logo.jpg"
-                        alt="AskCET 3D Feathered Sphere Logo"
+                        alt="AskCET Bright 3D Feathered Sphere Logo"
                         className="absolute inset-0 w-full h-full object-cover rounded-full scale-120"
                         style={{
-                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 72%, rgba(0,0,0,0.45) 90%, rgba(0,0,0,0) 100%)',
-                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 72%, rgba(0,0,0,0.45) 90%, rgba(0,0,0,0) 100%)',
-                          filter: 'contrast(1.08) brightness(0.95)',
+                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 75%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0) 100%)',
+                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 75%, rgba(0,0,0,0.55) 90%, rgba(0,0,0,0) 100%)',
+                          filter: 'contrast(1.15) brightness(1.2)',
                         }}
                       />
 
-                      {/* Soft Balanced 3D Spherical Volume Shading */}
+                      {/* Bright 3D Spherical Volume Shading */}
                       <div
                         className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
                           background: `
-                            radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 22%, rgba(0, 0, 0, 0) 50%),
-                            radial-gradient(circle at 70% 75%, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0) 75%),
-                            radial-gradient(circle at center, rgba(0, 0, 0, 0) 50%, rgba(6, 182, 212, 0.2) 82%, rgba(0, 0, 0, 0.8) 100%)
+                            radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 55%),
+                            radial-gradient(circle at 75% 80%, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 45%, rgba(0, 0, 0, 0) 80%),
+                            radial-gradient(circle at center, rgba(0, 0, 0, 0) 50%, rgba(56, 189, 248, 0.35) 85%, rgba(0, 0, 0, 0.6) 100%)
                           `,
                         }}
                       />
 
-                      {/* Soft Specular Highlight Spot (Top-Left Light Source) */}
+                      {/* Bright Specular Glass Highlight Spot (Top-Left Light Source) */}
                       <div
-                        className="absolute top-2.5 left-3.5 w-12 h-7 rounded-full pointer-events-none -rotate-12"
+                        className="absolute top-2 left-2.5 w-10 h-6 rounded-full pointer-events-none -rotate-12"
                         style={{
-                          background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.2) 45%, rgba(255, 255, 255, 0) 100%)',
-                          filter: 'blur(1px)',
+                          background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%)',
+                          filter: 'blur(0.8px)',
                         }}
                       />
 
-                      {/* Soft Bottom Fresnel Rim Reflection */}
+                      {/* Bright Bottom Fresnel Rim Reflection */}
                       <div
-                        className="absolute bottom-1.5 left-4 right-4 h-4 rounded-b-full pointer-events-none"
+                        className="absolute bottom-1 left-3 right-3 h-3.5 rounded-b-full pointer-events-none"
                         style={{
-                          background: 'linear-gradient(to top, rgba(56, 189, 248, 0.45), rgba(56, 189, 248, 0))',
-                          filter: 'blur(1.5px)',
+                          background: 'linear-gradient(to top, rgba(56, 189, 248, 0.75), rgba(56, 189, 248, 0))',
+                          filter: 'blur(1px)',
                         }}
                       />
                     </div>
@@ -557,9 +557,9 @@ export default function ChatPage() {
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
                     <div
                       style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.95)] transition-transform duration-75 z-20"
+                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_16px_rgba(6,182,212,1)] transition-transform duration-75 z-20"
                     >
-                      <Sparkles className="w-7 h-7 text-cyan-400" />
+                      <Sparkles className="w-6.5 h-6.5 text-cyan-400" />
                     </div>
                   </div>
 
