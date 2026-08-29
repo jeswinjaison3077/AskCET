@@ -339,21 +339,14 @@ export default function ChatPage() {
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center p-6 max-w-3xl mx-auto space-y-8">
-                {/* Minimal Clean Logo */}
-                <div className="flex items-center gap-3">
-                  <img
-                    src="/logo.jpg"
-                    alt="AskCET Logo"
-                    className="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-800 shadow-sm"
-                  />
-                  <div className="text-left">
-                    <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                      AskCET College Intelligence
-                    </h1>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
-                      Source-grounded AI for CET College of Engineering
-                    </p>
-                  </div>
+                {/* Minimal Clean Title — No logo image */}
+                <div className="text-center space-y-2">
+                  <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    AskCET
+                  </h1>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto">
+                    Source-grounded AI assistant for CET College of Engineering
+                  </p>
                 </div>
 
                 {/* Minimalist Cards */}
