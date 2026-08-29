@@ -217,21 +217,27 @@ export default function FAQPage() {
     }
   };
 
-  // Active Category Scroll Listener
+  // Real-Time Scroll Observer - Transitions Active Topic Name as soon as heading reaches threshold
   useEffect(() => {
     const handleScrollObserver = () => {
+      let currentIdx = 0;
+      const triggerPosition = window.innerHeight * 0.35;
+
       FAQ_CATEGORIES.forEach((_, idx) => {
         const el = document.getElementById(`faq-cat-${idx}`);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 200 && rect.bottom >= 150) {
-            setActiveCategoryIndex(idx);
+          if (rect.top <= triggerPosition) {
+            currentIdx = idx;
           }
         }
       });
+
+      setActiveCategoryIndex(currentIdx);
     };
 
     window.addEventListener('scroll', handleScrollObserver, { passive: true });
+    handleScrollObserver();
     return () => window.removeEventListener('scroll', handleScrollObserver);
   }, []);
 
@@ -267,7 +273,7 @@ export default function FAQPage() {
 
         {/* Desktop 2-Column Layout with Smoothly Moving Sticky Topic Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start relative">
-          {/* Smooth Sticky Left LineSidebar Navigation moving alongside window scroll */}
+          {/* Sticky Left LineSidebar Navigation synchronized with heading scroll position */}
           <aside className="hidden lg:block lg:col-span-1 sticky top-24 self-start bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl z-20">
             <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
               Topic Sections
