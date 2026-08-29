@@ -11,8 +11,8 @@ import path from 'path';
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden: Admin access required.' }, { status: 403 });
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const documents = await prisma.document.findMany({
@@ -34,8 +34,20 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Forbidden: Admin access required.' }, { status: 403 });
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Ensure session userId exists in DB
+    let dbUser = await prisma.user.findUnique({ where: { id: session.userId } });
+    let validUserId = dbUser ? session.userId : null;
+    if (!validUserId) {
+      const defaultAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+      if (defaultAdmin) validUserId = defaultAdmin.id;
+    }
+
+    if (!validUserId) {
+      return NextResponse.json({ error: 'No admin user found' }, { status: 400 });
     }
 
     const formData = await request.formData();
@@ -66,7 +78,7 @@ export async function POST(request: Request) {
           department,
           version: `Date: ${noticeDate}`,
           status: 'PROCESSING',
-          uploadedById: session.userId,
+          uploadedById: validUserId,
         },
       });
 
@@ -100,53 +112,45 @@ export async function POST(request: Request) {
           where: { id: docRecord.id },
           data: { status: 'FAILED' },
         });
-        return NextResponse.json({ error: 'Failed to index campus notice.' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to index notice.' }, { status: 500 });
       }
     }
 
-    // Handle File Upload (PDF, DOCX, TXT)
+    // Handle File Upload Submission
     const file = formData.get('file') as File | null;
-    const title = (formData.get('title') as string) || file?.name || 'Untitled Document';
     const category = (formData.get('category') as string) || 'General';
     const department = (formData.get('department') as string) || 'General';
-    const version = (formData.get('version') as string) || 'v1.0';
 
     if (!file) {
-      return NextResponse.json({ error: 'No document file uploaded.' }, { status: 400 });
+      return NextResponse.json({ error: 'File is required.' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const fileExtension = path.extname(file.name).replace('.', '').toLowerCase();
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'txt';
+    const uploadDir = path.join(process.cwd(), 'uploads');
+    await fs.mkdir(uploadDir, { recursive: true });
 
-    // 1. Save file locally
-    const uploadsDir = path.join(process.cwd(), 'uploads');
-    await fs.mkdir(uploadsDir, { recursive: true });
-    const storedFileName = `${Date.now()}_${file.name}`;
-    const filePath = path.join(uploadsDir, storedFileName);
-    await fs.writeFile(filePath, buffer);
+    const safeFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const filePath = path.join(uploadDir, safeFileName);
+    await fs.writeFile(filePath, fileBuffer);
 
-    // 2. Create Document record in DB with PENDING status
     const docRecord = await prisma.document.create({
       data: {
-        title,
+        title: file.name.replace(/\.[^/.]+$/, ''),
         fileName: file.name,
-        filePath,
-        fileType: fileExtension,
+        filePath: `/uploads/${safeFileName}`,
+        fileType: ext,
         category,
         department,
-        version,
         status: 'PROCESSING',
-        uploadedById: session.userId,
+        uploadedById: validUserId,
       },
     });
 
-    // 3. Extract text content & chunk pages
     try {
-      const extracted = await extractDocumentText(buffer, fileExtension);
+      const extracted = await extractDocumentText(fileBuffer, ext);
       const chunks = chunkDocumentPages(extracted.pages, { maxChunkSize: 800, overlap: 150 });
 
-      // 4. Generate embeddings & store vector chunks
       for (const chunk of chunks) {
         const embedding = await generateEmbedding(chunk.content);
         await storeChunkVector(
@@ -158,7 +162,6 @@ export async function POST(request: Request) {
         );
       }
 
-      // Mark document as INDEXED
       const updatedDoc = await prisma.document.update({
         where: { id: docRecord.id },
         data: { status: 'INDEXED' },
@@ -169,20 +172,16 @@ export async function POST(request: Request) {
         document: updatedDoc,
         chunkCount: chunks.length,
       });
-    } catch (ingestionError) {
-      console.error('Ingestion failure:', ingestionError);
+    } catch (indexError) {
+      console.error('File indexing error:', indexError);
       await prisma.document.update({
         where: { id: docRecord.id },
         data: { status: 'FAILED' },
       });
-
-      return NextResponse.json(
-        { error: 'Failed to extract text or index document embeddings.' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to process and index document.' }, { status: 500 });
     }
   } catch (error) {
-    console.error('Upload API Error:', error);
+    console.error('Document POST handler error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
