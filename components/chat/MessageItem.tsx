@@ -24,7 +24,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
   const [feedback, setFeedback] = useState<'UPVOTE' | 'DOWNVOTE' | null>(null);
-  const [showSources, setShowSources] = useState(true);
+  const [showSources, setShowSources] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
