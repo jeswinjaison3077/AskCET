@@ -76,32 +76,47 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/70 dark:bg-[#070a12] transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] transition-colors duration-500 relative overflow-hidden">
+      {/* Ambient Backdrop Blurs */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+
       <Navbar />
 
-      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 space-y-10">
         {/* Page Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/20 text-xs font-bold">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center space-y-3 max-w-2xl mx-auto"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-50/90 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-500/30 text-xs font-black shadow-xs backdrop-blur-md">
             <HelpCircle className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
             <span>Campus Knowledge Directory</span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            Frequently Asked Campus Questions
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Frequently Asked <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">Campus Questions</span>
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
             Find instant verified answers regarding CET academic regulations, hostel curfews, semester exams, and scholarship guidelines.
           </p>
-        </div>
+        </motion.div>
 
         {/* Accordion Categories */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {FAQ_CATEGORIES.map((cat, catIdx) => {
             const Icon = cat.icon;
             return (
-              <div key={catIdx} className="space-y-3">
-                <div className="flex items-center gap-2 font-black text-base text-slate-900 dark:text-white px-1">
-                  <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-md`}>
+              <motion.div
+                key={catIdx}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: catIdx * 0.08 }}
+                className="space-y-3"
+              >
+                <div className="flex items-center gap-2.5 font-black text-lg text-slate-900 dark:text-white px-1">
+                  <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-lg shadow-cyan-500/20`}>
                     <Icon className="w-4 h-4" />
                   </div>
                   <span>{cat.category}</span>
@@ -112,19 +127,21 @@ export default function FAQPage() {
                     const itemKey = `${catIdx}-${qIdx}`;
                     const isOpen = !!openItems[itemKey];
                     return (
-                      <div
+                      <motion.div
                         key={qIdx}
-                        className="bg-white dark:bg-slate-900/90 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md dark:shadow-xl overflow-hidden transition-all"
+                        whileHover={{ scale: 1.008 }}
+                        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                        className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[24px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl overflow-hidden transition-all duration-300 hover:border-cyan-500/40"
                       >
                         <button
                           onClick={() => toggleItem(itemKey)}
                           className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-slate-900 dark:text-white hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
                         >
-                          <span className="flex items-start gap-2">
+                          <span className="flex items-start gap-3">
                             <Sparkles className="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" />
                             {q.q}
                           </span>
-                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform shrink-0 ${isOpen ? 'rotate-180 text-cyan-500' : ''}`} />
+                          <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-cyan-500' : ''}`} />
                         </button>
 
                         <AnimatePresence>
@@ -133,19 +150,20 @@ export default function FAQPage() {
                               initial={{ opacity: 0, height: 0 }}
                               animate={{ opacity: 1, height: 'auto' }}
                               exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3 }}
                               className="px-5 pb-5 pt-1 text-xs text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800/80 leading-relaxed font-medium"
                             >
-                              <div className="bg-slate-50 dark:bg-slate-950/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-800/60">
+                              <div className="bg-slate-50/80 dark:bg-slate-950/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-inner">
                                 {q.a}
                               </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

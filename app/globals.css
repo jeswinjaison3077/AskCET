@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --font-outfit: 'Outfit', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-outfit), 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
   html.dark, body.dark {
     color-scheme: dark;
-    @apply bg-[#070a12] text-slate-100 antialiased selection:bg-cyan-500 selection:text-white;
+    @apply bg-[#060810] text-slate-100 antialiased selection:bg-cyan-500 selection:text-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     background-image: 
       radial-gradient(at 15% 15%, rgba(14, 165, 233, 0.12) 0px, transparent 55%),
@@ -16,7 +24,7 @@
 
   html:not(.dark), body:not(.dark) {
     color-scheme: light;
-    @apply bg-slate-50 text-slate-900 antialiased selection:bg-brand-500 selection:text-white;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-cyan-500 selection:text-white;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     background-image: 
       radial-gradient(at 10% 10%, rgba(224, 239, 254, 0.7) 0px, transparent 50%),
@@ -28,30 +36,30 @@
 
 /* Glassmorphism & Card Utilities */
 .dark .glass-panel {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 :not(.dark) .glass-panel {
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .dark .glass-card {
-  background: rgba(30, 41, 59, 0.5);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 :not(.dark) .glass-card {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
@@ -61,7 +69,7 @@
 }
 
 :not(.dark) .gradient-text {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600;
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600;
 }
 
 /* Custom Scrollbar */
