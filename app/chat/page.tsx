@@ -131,13 +131,13 @@ export default function ChatPage() {
       currentPosRef.current = { x: nextX, y: nextY };
 
       if (torchBgRef.current) {
-        const maskStr = `radial-gradient(circle 220px at ${nextX.toFixed(1)}px ${nextY.toFixed(1)}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`;
+        const maskStr = `radial-gradient(circle 110px at ${nextX.toFixed(1)}px ${nextY.toFixed(1)}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%)`;
         torchBgRef.current.style.maskImage = maskStr;
         torchBgRef.current.style.webkitMaskImage = maskStr;
       }
 
       if (torchBeamRef.current) {
-        torchBeamRef.current.style.transform = `translate3d(${(nextX - 125).toFixed(1)}px, ${(nextY - 125).toFixed(1)}px, 0)`;
+        torchBeamRef.current.style.transform = `translate3d(${(nextX - 70).toFixed(1)}px, ${(nextY - 70).toFixed(1)}px, 0)`;
       }
 
       animFrameRef.current = requestAnimationFrame(updateTorchPosition);
@@ -394,8 +394,8 @@ export default function ChatPage() {
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
-              WebkitMaskImage: `radial-gradient(circle 220px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 220px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 45%, rgba(0,0,0,0) 100%)`,
+              WebkitMaskImage: `radial-gradient(circle 110px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 110px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
@@ -405,10 +405,10 @@ export default function ChatPage() {
             className="absolute top-0 left-0 pointer-events-none rounded-full blur-2xl z-0"
             style={{
               opacity: 0.45,
-              width: '250px',
-              height: '250px',
-              transform: 'translate3d(375px, 175px, 0)',
-              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 100%)',
+              width: '140px',
+              height: '140px',
+              transform: 'translate3d(430px, 230px, 0)',
+              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.65) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 100%)',
               willChange: 'transform',
             }}
           />
