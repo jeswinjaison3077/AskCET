@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import LineSidebar from '@/components/animations/LineSidebar';
-import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Award, Briefcase } from 'lucide-react';
+import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQ_CATEGORIES = [
@@ -24,6 +24,26 @@ const FAQ_CATEGORIES = [
         q: 'What is the official KTU formula to convert SGPA / CGPA into percentage?',
         a: 'The official formula prescribed by KTU to convert CGPA to percentage is: Percentage Marks = (CGPA - 0.5) × 10.',
       },
+      {
+        q: 'What is the maximum number of years allowed to complete B.Tech degree at CET?',
+        a: 'As per university guidelines, students admitted to B.Tech must complete all degree requirements within a maximum period of 6 academic years (12 semesters) from the date of admission.',
+      },
+      {
+        q: 'How is SGPA calculated at the end of each semester?',
+        a: 'SGPA is calculated by taking the sum of the product of credits and grade points earned in all courses divided by the total sum of credits registered in that semester.',
+      },
+      {
+        q: 'What is the minimum internal evaluation mark required to pass a subject?',
+        a: 'Students must secure a minimum of 45% in Internal Assessment (IA) evaluation (continuous evaluation tests, assignments, and tutorials) to be eligible for end semester exams.',
+      },
+      {
+        q: 'How do I apply for course condonation if attendance falls between 65% and 74%?',
+        a: 'Condonation applications accompanied by a verified medical certificate and prescribed university fee receipt must be submitted through the HOD to the Academic Office before semester end.',
+      },
+      {
+        q: 'Can I apply for branch transfer after Semester 1?',
+        a: 'Branch transfer is permitted after S2 based on merit rank of combined S1/S2 CGPA against vacant seats in target departments, subject to university quota notifications.',
+      },
     ],
   },
   {
@@ -42,6 +62,26 @@ const FAQ_CATEGORIES = [
       {
         q: 'What is the procedure for mess dues clearance and hostel vacant pass?',
         a: 'Students must pay all monthly mess dues by the 10th of every month at the Hostel Office. Before vacating at the end of the year, a No-Dues Certificate must be signed by the Senior Warden.',
+      },
+      {
+        q: 'What are the rules regarding motor vehicle usage inside campus hostels?',
+        a: 'First year hostel residents are strictly prohibited from parking personal two-wheelers or cars inside hostel premises. Senior students must register vehicle details with campus security.',
+      },
+      {
+        q: 'What is the procedure to clear mess dues and get mess fee refund for long leaves?',
+        a: 'Mess reduction is permitted for continuous approved leaves exceeding 5 consecutive days, provided a leave application is submitted to the Mess Secretary 48 hours in advance.',
+      },
+      {
+        q: 'Where are the main student canteens and central dining facilities located on campus?',
+        a: 'The Central CET College Canteen operates near the Administrative Block, with annex canteens located near PG Block, Mens Hostel 1, and Womens Hostel complex.',
+      },
+      {
+        q: 'What are the emergency contact numbers for campus security and health centers?',
+        a: 'Campus Security Gate 1 and CET Health Centre medical officers are reachable 24/7 via internal phone extensions or emergency helplines posted at hostel notice boards.',
+      },
+      {
+        q: 'What are the anti-ragging policies and complaint cell contacts at CET?',
+        a: 'CET maintains zero tolerance for ragging. Complaints can be filed directly with the Anti-Ragging Committee, HODs, Warden Office, or online via the UGC Anti-Ragging Portal.',
       },
     ],
   },
@@ -62,6 +102,26 @@ const FAQ_CATEGORIES = [
         q: 'Are grace marks awarded for NSS, NCC, or University sports level participation?',
         a: 'Yes, KTU awards up to 5% to 10% grace marks per semester for students representing CET or KTU in state/national sports, NSS special camps, or Republic Day parades.',
       },
+      {
+        q: 'What is the procedure for obtaining a duplicate hall ticket if lost before exams?',
+        a: 'Apply at the Controller of Examinations desk in the Administrative Block with a passport photo and pay the nominal duplicate hall ticket fee before exam commencement.',
+      },
+      {
+        q: 'How many backlogs are allowed before entering 7th semester placement eligibility?',
+        a: 'While criteria vary by company, most tier-1 IT & core recruiters permit a maximum of 2 active backlogs during early campus recruitment drives.',
+      },
+      {
+        q: 'What happens if a student misses a series exam due to representational sports/cultural duty?',
+        a: 'Special re-series examinations are conducted by respective departments for students on official duty pass representing CET at university/state events.',
+      },
+      {
+        q: 'How do I request a photocopy of my evaluated semester answer scripts?',
+        a: 'Apply for evaluated answer script copy on the KTU student portal within 7 days of result announcement after paying the required fee per answer script.',
+      },
+      {
+        q: 'What are the rules regarding university exam hall entry and calculator usage?',
+        a: 'Students must arrive 15 mins before exam start. Non-programmable scientific calculators (e.g. Casio fx-991ES) are allowed, while smartwatches and mobile phones are strictly banned.',
+      },
     ],
   },
   {
@@ -81,6 +141,26 @@ const FAQ_CATEGORIES = [
         q: 'How does the Tuition Fee Waiver (TFW) scheme work at CET?',
         a: '5% of total seats in each branch are reserved under TFW for meritorious students with family annual income below ₹8 Lakhs. Tuition fees are completely waived for selected students.',
       },
+      {
+        q: 'What is the deadline for e-Grantz scholarship renewal for SC/ST/OEC students?',
+        a: 'e-Grantz renewals must be submitted within 30 days of entering the new academic year via the e-Grantz 3.0 portal along with income and caste certificates.',
+      },
+      {
+        q: 'Where can I get semester fee extension or installment permission?',
+        a: 'Written applications for fee payment extension must be submitted to the Principal through HOD with guardian undertaking prior to the due date.',
+      },
+      {
+        q: 'What is the procedure for claiming caution deposit refund upon graduation?',
+        a: 'Submit the completed No-Dues Clearance Form signed by HOD, Library, Hostels, and Accounts Section along with original fee receipt to Counter 2.',
+      },
+      {
+        q: 'Are there financial aid schemes for economically backward general category students?',
+        a: 'Yes, CET Alumni Association provides Merit-cum-Means financial assistance and laptop grants to deserving students each academic year.',
+      },
+      {
+        q: 'How can I download official fee breakdown slips for educational loan processing?',
+        a: 'Official fee breakdown slips stamped with college seal are issued by Counter 3 upon presenting your CET admission ID card.',
+      },
     ],
   },
   {
@@ -95,6 +175,26 @@ const FAQ_CATEGORIES = [
       {
         q: 'How can I obtain an official Internship NOC from the college?',
         a: 'Students can apply for an Internship NOC through the Placement Cell desk by attaching the internship offer letter and HOD recommendation.',
+      },
+      {
+        q: 'What companies regularly visit CET for campus recruitment?',
+        a: 'Top recruiters visiting CET include TCS, Infosys, Cognizant, L&T, Tata Elxsi, Bosch, Texas Instruments, Oracle, Mahindra, and MRF.',
+      },
+      {
+        q: 'When does the campus placement season officially commence for final year students?',
+        a: 'Placement drives officially begin in July at the start of the 7th semester and continue through the 8th semester until graduation.',
+      },
+      {
+        q: 'Is summer internship mandatory for 6th semester B.Tech students?',
+        a: 'Yes, a 2 to 4 week industrial training or internship is mandatory between S6 and S7 for industrial exposure credits as per KTU curriculum.',
+      },
+      {
+        q: 'What training programs are organized by Career Guidance & Placement Unit (CGPU)?',
+        a: 'CGPU conducts aptitude training, mock technical interviews, coding bootcamps, resume building workshops, and soft skill sessions throughout S5-S7.',
+      },
+      {
+        q: 'What is the policy for students receiving multiple job offers during placement drives?',
+        a: 'CET operates a One-Student One-Job policy; once a student receives an offer, they can only apply for higher slab dream companies offering 1.5x salary.',
       },
     ],
   },
