@@ -12,7 +12,7 @@ export interface ExtractedDocument {
 }
 
 /**
- * Extracts structured text and page content from PDF, DOCX, or TXT file buffers.
+ * Extracts structured text and page content from PDF, DOCX, TXT, or MD file buffers.
  */
 export async function extractDocumentText(
   fileBuffer: Buffer,
@@ -43,7 +43,6 @@ export async function extractDocumentText(
   ) {
     const result = await mammoth.extractRawText({ buffer: fileBuffer });
     const fullText = result.value.trim();
-    // DOCX files split by major section double-newlines
     const sections = fullText.split(/\n\s*\n/);
     const pages: ExtractedPage[] = sections.map((sec, idx) => ({
       pageNumber: Math.floor(idx / 3) + 1,
@@ -56,13 +55,26 @@ export async function extractDocumentText(
     };
   }
 
-  if (normalizedType === 'txt' || normalizedType === 'text/plain') {
+  if (
+    normalizedType === 'txt' ||
+    normalizedType === 'text/plain' ||
+    normalizedType === 'md' ||
+    normalizedType === 'markdown' ||
+    normalizedType === 'text/markdown'
+  ) {
     const fullText = fileBuffer.toString('utf-8').trim();
+    // Split markdown headers into separate page chunks if available
+    const sections = fullText.split(/(?=\n#+ )/);
+    const pages: ExtractedPage[] = sections.map((sec, idx) => ({
+      pageNumber: idx + 1,
+      text: sec.trim(),
+    })).filter(p => p.text.length > 0);
+
     return {
       text: fullText,
-      pages: [{ pageNumber: 1, text: fullText }],
+      pages: pages.length > 0 ? pages : [{ pageNumber: 1, text: fullText }],
     };
   }
 
-  throw new Error(`Unsupported file type: ${fileType}. Allowed types are PDF, DOCX, and TXT.`);
+  throw new Error(`Unsupported file type: ${fileType}. Allowed types are PDF, DOCX, TXT, and MD.`);
 }

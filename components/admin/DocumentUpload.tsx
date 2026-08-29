@@ -168,7 +168,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
             }`}
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Upload PDF / DOCX</span>
+            <span>Upload PDF / DOCX / MD</span>
           </button>
         </div>
       </div>
@@ -310,7 +310,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
           <div className="border-2 border-dashed border-slate-300 dark:border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 text-center cursor-pointer transition-colors relative bg-slate-50/50 dark:bg-slate-950/40">
             <input
               type="file"
-              accept=".pdf,.docx,.doc,.txt"
+              accept=".pdf,.docx,.doc,.txt,.md,.markdown"
               onChange={handleFileChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
@@ -320,7 +320,7 @@ export default function DocumentUpload({ onUploadSuccess }: DocumentUploadProps)
                 <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>
               ) : (
                 <>
-                  <span className="text-sm text-slate-800 dark:text-slate-200 font-bold">Click or drag PDF, DOCX, or TXT file here</span>
+                  <span className="text-sm text-slate-800 dark:text-slate-200 font-bold">Click or drag PDF, DOCX, TXT, or MD file here</span>
                   <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Maximum size: 25MB</span>
                 </>
               )}
