@@ -492,21 +492,64 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Organic Ultra-Feathered Floating Logo Emblem (No Circle Rim) */}
+                  {/* Hero 3D Photorealistic Glass Sphere Orb */}
                   <div className="relative group cursor-pointer">
-                    {/* Ambient Volumetric Backlight Aura */}
-                    <div className="absolute -inset-6 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-50 group-hover:opacity-85 transition-opacity duration-500" />
+                    {/* Grounding 3D Sphere Elliptical Drop Shadow & Ambient Neon Glow */}
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-36 h-8 rounded-[100%] bg-cyan-500/40 blur-xl group-hover:bg-cyan-400/60 transition-all duration-500" />
+                    <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-50 group-hover:opacity-85 transition-opacity duration-500" />
 
-                    {/* Feathered Logo Image (Soft Elliptical/Radial Edge Fade out to 0% opacity - No Circle Rim) */}
-                    <div className="relative w-44 h-44 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+                    {/* True 3D Sphere Orb Body */}
+                    <div
+                      className="relative w-44 h-44 rounded-full overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500"
+                      style={{
+                        background: 'radial-gradient(circle at 35% 25%, #0e172a 0%, #060810 100%)',
+                        boxShadow: `
+                          inset 0 0 20px rgba(255, 255, 255, 0.4),
+                          inset -15px -15px 35px rgba(0, 0, 0, 0.95),
+                          inset 12px 12px 25px rgba(56, 189, 248, 0.45),
+                          0 25px 50px -12px rgba(6, 182, 212, 0.5)
+                        `,
+                      }}
+                    >
+                      {/* Base Logo Image with 3D Spherical Scale Distortion & Feathered Radial Edge */}
                       <img
                         src="/logo.jpg"
-                        alt="AskCET Feathered Logo Emblem"
-                        className="w-full h-full object-cover opacity-90"
+                        alt="AskCET 3D Sphere Logo"
+                        className="absolute inset-0 w-full h-full object-cover rounded-full scale-125"
                         style={{
-                          maskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)',
-                          WebkitMaskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0) 100%)',
-                          filter: 'brightness(1.15) contrast(1.1)',
+                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 55%, rgba(0,0,0,0.65) 80%, rgba(0,0,0,0) 100%)',
+                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 55%, rgba(0,0,0,0.65) 80%, rgba(0,0,0,0) 100%)',
+                          filter: 'contrast(1.1) brightness(0.95)',
+                        }}
+                      />
+
+                      {/* 3D Spherical Volume Shading & Edge Vignetting */}
+                      <div
+                        className="absolute inset-0 rounded-full pointer-events-none"
+                        style={{
+                          background: `
+                            radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.2) 20%, rgba(0, 0, 0, 0) 45%),
+                            radial-gradient(circle at 70% 75%, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 40%, rgba(0, 0, 0, 0) 70%),
+                            radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(6, 182, 212, 0.25) 80%, rgba(0, 0, 0, 0.9) 100%)
+                          `,
+                        }}
+                      />
+
+                      {/* Intense 3D Glass Specular Reflection Spot (Top-Left Light Source) */}
+                      <div
+                        className="absolute top-3 left-4 w-16 h-10 rounded-full pointer-events-none -rotate-12"
+                        style={{
+                          background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0) 100%)',
+                          filter: 'blur(1px)',
+                        }}
+                      />
+
+                      {/* Secondary Bottom Crescent Rim Reflection (Fresnel Glass Effect) */}
+                      <div
+                        className="absolute bottom-2 left-6 right-6 h-5 rounded-b-full pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(to top, rgba(56, 189, 248, 0.6), rgba(56, 189, 248, 0))',
+                          filter: 'blur(2px)',
                         }}
                       />
                     </div>
