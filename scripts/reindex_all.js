@@ -5,7 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function reindexAllUploads() {
-  console.log('🔄 Fast Re-indexing all upload files into Supabase Cloud Database...');
+  console.log('🔄 Re-indexing all upload files into Supabase Cloud Database with High-Precision 500-char Chunks...');
 
   // Get Admin user
   const adminUser = await prisma.user.findFirst({
@@ -26,6 +26,12 @@ async function reindexAllUploads() {
   const files = fs.readdirSync(uploadsDir);
   console.log(`📁 Found ${files.length} upload files to index:`, files);
 
+  // Clear existing documents to eliminate stale/duplicate vectors
+  console.log('🧹 Clearing old document records and vector chunks...');
+  await prisma.documentChunk.deleteMany({});
+  await prisma.document.deleteMany({});
+  console.log('✅ Database cleared.');
+
   for (const filename of files) {
     if (filename.startsWith('.')) continue;
 
@@ -33,7 +39,7 @@ async function reindexAllUploads() {
     const textContent = fs.readFileSync(filePath, 'utf-8');
 
     // Clean title
-    let cleanTitle = filename.replace(/^\d+_/, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ');
+    let cleanTitle = filename.replace(/^\d+_/, '').replace(/\.[^/.]+$/, '').replace(/_/g, ' ').trim();
     let category = 'General';
     if (cleanTitle.toLowerCase().includes('academic')) category = 'Academics';
     else if (cleanTitle.toLowerCase().includes('admission')) category = 'Admissions';
@@ -42,17 +48,7 @@ async function reindexAllUploads() {
     else if (cleanTitle.toLowerCase().includes('event') || cleanTitle.toLowerCase().includes('club')) category = 'Events';
     else if (cleanTitle.toLowerCase().includes('placement')) category = 'Placements';
 
-    // Check if already indexed
-    const existing = await prisma.document.findFirst({
-      where: { title: cleanTitle },
-    });
-
-    if (existing) {
-      console.log(`⏩ Skipping already indexed document: ${cleanTitle}`);
-      continue;
-    }
-
-    console.log(`📄 Indexing: ${cleanTitle} (Category: ${category})...`);
+    console.log(`📄 Indexing: "${cleanTitle}" (Category: ${category})...`);
 
     const docRecord = await prisma.document.create({
       data: {
@@ -68,9 +64,9 @@ async function reindexAllUploads() {
       },
     });
 
-    // Chunk text content into 800 char blocks
-    const chunkSize = 800;
-    const overlap = 150;
+    // Precision 500-character chunking with 100-char overlap
+    const chunkSize = 500;
+    const overlap = 100;
     const chunkData = [];
     let start = 0;
     let index = 0;
@@ -81,7 +77,7 @@ async function reindexAllUploads() {
       if (chunkText.length > 20) {
         chunkData.push({
           documentId: docRecord.id,
-          content: chunkText,
+          content: `[Document: ${cleanTitle}] ${chunkText}`,
           pageNumber: 1,
           chunkIndex: index,
         });
@@ -90,7 +86,6 @@ async function reindexAllUploads() {
       start += chunkSize - overlap;
     }
 
-    // High speed batch insertion
     if (chunkData.length > 0) {
       await prisma.documentChunk.createMany({
         data: chunkData,
@@ -102,14 +97,14 @@ async function reindexAllUploads() {
       data: { status: 'INDEXED' },
     });
 
-    console.log(`✅ Fast-indexed ${cleanTitle} with ${chunkData.length} chunks.`);
+    console.log(`✅ Indexed "${cleanTitle}" with ${chunkData.length} precision chunks.`);
   }
 
-  console.log('🎉 All files from /uploads/ have been successfully indexed into Supabase Cloud Database!');
+  console.log('🎉 All files from /uploads/ have been successfully re-indexed into Supabase Cloud Database!');
   await prisma.$disconnect();
 }
 
 reindexAllUploads().catch((err) => {
-  console.error('Migration failed:', err);
+  console.error('Re-indexing failed:', err);
   prisma.$disconnect();
 });

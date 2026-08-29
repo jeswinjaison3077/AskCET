@@ -41,7 +41,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance
+ * Get configured Gemini Generative Model instance with Google Search Grounding for live web synthesis
  */
 export function getChatModel() {
   const apiKey = getApiKey();
@@ -50,6 +50,7 @@ export function getChatModel() {
   
   return genAI.getGenerativeModel({
     model: modelName,
+    tools: [{ googleSearch: {} }] as any,
     generationConfig: {
       temperature: 0.2,
       topP: 0.9,
