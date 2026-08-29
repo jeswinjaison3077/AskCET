@@ -344,7 +344,7 @@ export default function ChatPage() {
           onSelectPrompt={handleSendMessage}
         />
 
-        {/* Main Conversation Stream with Torch Spotlight Effect */}
+        {/* Main Conversation Stream with Refined Soft Torch Spotlight Effect */}
         <main
           ref={mainStreamRef}
           onPointerMove={handlePointerMove}
@@ -352,29 +352,29 @@ export default function ChatPage() {
           onPointerLeave={() => setIsPointerInside(false)}
           className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
         >
-          {/* Torch Spotlight Background Image Layer (reveals background image only around pointer) */}
+          {/* Soft Torch Spotlight Background Image Layer (low opacity 0.22, smaller 140px radius, heavily feathered) */}
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
             style={{
-              opacity: isPointerInside ? 0.45 : 0,
+              opacity: isPointerInside ? 0.22 : 0,
               backgroundImage: `url('/logo.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              WebkitMaskImage: `radial-gradient(circle 240px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 240px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%)`,
+              WebkitMaskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 30%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Torch Beam Light Aura Circle */}
+          {/* Soft Torch Beam Light Aura Circle */}
           <div
-            className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-xl -z-10"
+            className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-2xl -z-10"
             style={{
-              opacity: isPointerInside ? 0.35 : 0,
-              left: `${mousePos.x - 140}px`,
-              top: `${mousePos.y - 140}px`,
-              width: '280px',
-              height: '280px',
-              background: 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, rgba(99,102,241,0.2) 60%, transparent 100%)',
+              opacity: isPointerInside ? 0.2 : 0,
+              left: `${mousePos.x - 90}px`,
+              top: `${mousePos.y - 90}px`,
+              width: '180px',
+              height: '180px',
+              background: 'radial-gradient(circle, rgba(6,182,212,0.3) 0%, rgba(99,102,241,0.15) 50%, transparent 100%)',
             }}
           />
 
