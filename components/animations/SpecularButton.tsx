@@ -91,7 +91,7 @@ interface SpecularButtonProps {
 
 const SpecularButton = ({
   children = 'Get Started',
-  size = 'lg',
+  size = '',
   radius = 18,
   tint = '#ffffff',
   tintOpacity = 0,
