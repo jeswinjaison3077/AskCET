@@ -6,7 +6,6 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
-import ScrollFloat from '@/components/animations/ScrollFloat';
 import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -415,19 +414,13 @@ export default function ChatPage() {
                       chatScrollContainerRef.current?.scrollTo({ top: 350, behavior: 'smooth' });
                     }}
                   >
-                    <span>Scroll down for FAQs & Feature Topics</span>
+                    <span>Scroll for FAQs</span>
                     <ChevronDown className="w-4 h-4 text-cyan-500" />
                   </motion.div>
                 </motion.div>
 
-                {/* Feature Question Tiles - Reveals upon scroll */}
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, margin: '-50px' }}
-                  transition={{ duration: 0.6, type: 'spring', stiffness: 220, damping: 22 }}
-                  className="w-full pt-10"
-                >
+                {/* Feature Question Tiles Container - Staggered Spring Pop-Up */}
+                <div className="w-full pt-10">
                   <div className="text-center mb-6">
                     <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Explore Popular Campus Topics
@@ -440,9 +433,17 @@ export default function ChatPage() {
                       return (
                         <motion.button
                           key={i}
-                          whileHover={{ y: -6, scale: 1.025 }}
+                          initial={{ opacity: 0, y: 60, scale: 0.8 }}
+                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                          viewport={{ once: false, amount: 0.2 }}
+                          transition={{
+                            type: 'spring',
+                            stiffness: 280,
+                            damping: 20,
+                            delay: i * 0.12,
+                          }}
+                          whileHover={{ y: -8, scale: 1.03 }}
                           whileTap={{ scale: 0.97 }}
-                          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                           onClick={() => handleSendMessage(card.question)}
                           className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
                         >
@@ -453,17 +454,9 @@ export default function ChatPage() {
                               <Icon className="w-6 h-6" />
                             </div>
 
-                            {/* React Bits ScrollFloat Animated Title */}
-                            <ScrollFloat
-                              scrollContainerRef={chatScrollContainerRef}
-                              animationDuration={0.8}
-                              ease="back.inOut(2)"
-                              stagger={0.02}
-                              containerClassName="mb-1.5"
-                              textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
-                            >
+                            <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1.5 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                               {card.title}
-                            </ScrollFloat>
+                            </h3>
 
                             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{card.desc}</p>
                           </div>
@@ -476,7 +469,7 @@ export default function ChatPage() {
                       );
                     })}
                   </div>
-                </motion.div>
+                </div>
               </div>
             ) : (
               messages.map((msg, index) => <MessageItem key={index} {...msg} />)
