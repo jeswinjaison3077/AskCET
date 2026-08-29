@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp, ShieldCheck, Volume2, VolumeX } from 'lucide-react';
+import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp, ShieldCheck, Volume2, VolumeX, Share2 } from 'lucide-react';
 
 export interface Citation {
   documentTitle: string;
@@ -22,6 +22,7 @@ export interface MessageProps {
 
 export default function MessageItem({ id, role, content, citations, createdAt }: MessageProps) {
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
   const [feedback, setFeedback] = useState<'UPVOTE' | 'DOWNVOTE' | null>(null);
   const [showSources, setShowSources] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -38,6 +39,25 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
     navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShare = async () => {
+    const shareText = `🎓 *AskCET Verified Answer*:\n\n${content.slice(0, 300)}...\n\n🔗 Verified via AskCET College Intelligence Assistant`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'AskCET College Answer',
+          text: shareText,
+          url: window.location.href,
+        });
+      } catch {
+        // Share cancelled
+      }
+    } else {
+      navigator.clipboard.writeText(shareText);
+      setShared(true);
+      setTimeout(() => setShared(false), 2000);
+    }
   };
 
   const toggleSpeak = () => {
@@ -173,6 +193,16 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
             >
               {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
               <span>{isSpeaking ? 'Stop Speaking' : 'Read Aloud'}</span>
+            </button>
+
+            {/* Quick WhatsApp / Social Share */}
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 font-medium"
+              title="Share verified answer via WhatsApp / Telegram"
+            >
+              {shared ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
+              <span>{shared ? 'Link Copied!' : 'Share Answer'}</span>
             </button>
 
             <button

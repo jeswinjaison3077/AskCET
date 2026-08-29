@@ -5,6 +5,7 @@ import Navbar from '@/components/shared/Navbar';
 import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
+import DeadlineWidget from '@/components/chat/DeadlineWidget';
 import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -343,8 +344,11 @@ export default function ChatPage() {
                   </p>
                 </div>
 
+                {/* Live Campus Deadlines & Notice Countdown Widget */}
+                <DeadlineWidget />
+
                 {/* Interactive Sample Question Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mt-2">
                   {FEATURE_CARDS.map((card, i) => {
                     const Icon = card.icon;
                     return (
