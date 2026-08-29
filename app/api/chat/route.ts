@@ -163,15 +163,15 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (genErr: any) {
-          console.warn('Gemini API stream error, using grounded RAG context fallback:', genErr?.message || genErr);
+          console.warn('Gemini API stream fallback to Grounded RAG mode:', genErr?.message || genErr);
 
           let fallbackResponse = '';
           if (relevantChunks.length > 0) {
-            fallbackResponse = `Based on the official **AskCET College Database**:\n\n` +
-              relevantChunks.map((c, i) => `**[Excerpt ${i + 1} from ${c.documentTitle}]**:\n> ${c.content}`).join('\n\n') +
-              `\n\n---\n*Note: To enable live conversational AI synthesis with Gemini, add a free API Key starting with \`AIzaSy...\` from [Google AI Studio](https://aistudio.google.com/app/apikey) to your \`.env\` file.*`;
+            fallbackResponse = `### AskCET Official Response\n\n` +
+              `According to official college documentation:\n\n` +
+              relevantChunks.map((c, i) => `**Information from ${c.documentTitle}**:\n${c.content}`).join('\n\n');
           } else {
-            fallbackResponse = `### College Knowledge Base Search Result\n\nNo exact documents matched your query. Please refine your query or ask about academic calendars, CSE curriculum, admissions, fees, hostel regulations, or placement statistics.\n\n---\n*Note: Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey) to your \`.env\` file to enable live AI responses.*`;
+            fallbackResponse = `### College Information System\n\nNo specific document matches found for "${userQuery}". You can ask about BTech CSE curriculum, academic calendar, hostel regulations, examination guidelines, or placement statistics.`;
           }
 
           controller.enqueue(
