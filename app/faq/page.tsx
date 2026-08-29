@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/shared/Navbar';
 import LineSidebar from '@/components/animations/LineSidebar';
-import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles } from 'lucide-react';
+import { HelpCircle, ChevronDown, BookOpen, Home, Calendar, CreditCard, Sparkles, Award, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FAQ_CATEGORIES = [
@@ -17,8 +17,12 @@ const FAQ_CATEGORIES = [
         a: 'Students must maintain a minimum of 75% attendance in each course to be eligible to appear for semester examinations. Condonation up to 10% may be granted on medical grounds upon submitting a valid certificate to the Academic Office.',
       },
       {
-        q: 'How many credits are required for graduation in B.Tech?',
-        a: 'As per KTU / CET academic regulations, B.Tech students must complete a total of 160 credits across 8 semesters, including core subjects, electives, lab practicals, and final year projects.',
+        q: 'How many credits and activity points are required for B.Tech graduation?',
+        a: 'As per KTU / CET academic regulations, B.Tech students must complete a total of 160 credits across 8 semesters along with 100 mandatory Activity Points (earned via NSS, NCC, professional bodies, or cultural participation).',
+      },
+      {
+        q: 'What is the official KTU formula to convert SGPA / CGPA into percentage?',
+        a: 'The official formula prescribed by KTU to convert CGPA to percentage is: Percentage Marks = (CGPA - 0.5) × 10.',
       },
     ],
   },
@@ -35,6 +39,10 @@ const FAQ_CATEGORIES = [
         q: 'How do I apply for hostel leave or weekend pass?',
         a: 'Hostel leave permissions must be submitted online via the CET Warden Portal at least 24 hours prior to departure, signed by the parents/guardians.',
       },
+      {
+        q: 'What is the procedure for mess dues clearance and hostel vacant pass?',
+        a: 'Students must pay all monthly mess dues by the 10th of every month at the Hostel Office. Before vacating at the end of the year, a No-Dues Certificate must be signed by the Senior Warden.',
+      },
     ],
   },
   {
@@ -44,11 +52,15 @@ const FAQ_CATEGORIES = [
     questions: [
       {
         q: 'What is the procedure and fee for semester exam revaluation?',
-        a: 'Revaluation applications open within 10 days of result publication. Students can apply via the KTU portal by paying the prescribed revaluation fee per paper.',
+        a: 'Revaluation applications open within 10 days of result publication. Students can apply via the KTU student portal by paying the prescribed revaluation fee per paper.',
       },
       {
         q: 'When are supplementary exams conducted?',
         a: 'Supplementary examinations are typically held alongside even and odd semester end examinations, as notified by the Controller of Examinations.',
+      },
+      {
+        q: 'Are grace marks awarded for NSS, NCC, or University sports level participation?',
+        a: 'Yes, KTU awards up to 5% to 10% grace marks per semester for students representing CET or KTU in state/national sports, NSS special camps, or Republic Day parades.',
       },
     ],
   },
@@ -64,6 +76,25 @@ const FAQ_CATEGORIES = [
       {
         q: 'Where can I get fee structure receipts and Bonafide certificates?',
         a: 'Bonafide and fee structure certificates can be requested at the Academic Counter 3 or downloaded from the student portal.',
+      },
+      {
+        q: 'How does the Tuition Fee Waiver (TFW) scheme work at CET?',
+        a: '5% of total seats in each branch are reserved under TFW for meritorious students with family annual income below ₹8 Lakhs. Tuition fees are completely waived for selected students.',
+      },
+    ],
+  },
+  {
+    category: 'Placements & Internships',
+    icon: Briefcase,
+    color: 'from-purple-500 to-violet-600',
+    questions: [
+      {
+        q: 'What is the CGPA eligibility criterion for campus placement drives?',
+        a: 'While requirements vary by company, most tier-1 IT & core recruiters require a minimum CGPA of 6.5 or 7.0 with no standing backlogs at the time of recruitment drives.',
+      },
+      {
+        q: 'How can I obtain an official Internship NOC from the college?',
+        a: 'Students can apply for an Internship NOC through the Placement Cell desk by attaching the internship offer letter and HOD recommendation.',
       },
     ],
   },
@@ -115,9 +146,9 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
-        {/* Desktop 2-Column Layout with Sticky React Bits LineSidebar */}
+        {/* Desktop 2-Column Layout with Clean Proximity LineSidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* Sticky Left LineSidebar Navigation */}
+          {/* Sticky Left LineSidebar Navigation (Clean text proximity shift, no markers or numbers) */}
           <div className="hidden lg:block lg:col-span-1 sticky top-24 bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl">
             <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
               Topic Sections
@@ -126,18 +157,13 @@ export default function FAQPage() {
               items={sidebarCategoryTitles}
               accentColor="#06b6d4"
               textColor="#94a3b8"
-              markerColor="#475569"
-              showIndex
-              showMarker
-              proximityRadius={120}
-              maxShift={18}
+              showIndex={false}
+              showMarker={false}
+              proximityRadius={140}
+              maxShift={24}
               falloff="smooth"
-              markerLength={32}
-              markerGap={6}
-              tickScale={0.5}
-              scaleTick
               itemGap={18}
-              fontSize={0.82}
+              fontSize={0.85}
               smoothing={100}
               defaultActive={activeCategoryIndex}
               onItemClick={(index) => handleSidebarItemClick(index)}
