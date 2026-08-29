@@ -392,7 +392,7 @@ export default function ChatPage() {
               opacity: 0.35,
               backgroundImage: `url('/bg.jpg')`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center 20%',
+              backgroundPosition: 'center 45%',
               filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
               WebkitMaskImage: `radial-gradient(circle 260px at 500px 300px, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 100%)`,
               maskImage: `radial-gradient(circle 260px at 500px 300px, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 25%, rgba(0,0,0,0.2) 55%, rgba(0,0,0,0) 100%)`,
@@ -495,11 +495,10 @@ export default function ChatPage() {
                 baseColor={isTemporaryChat ? '#78350f' : '#0f172a'}
                 intensity={isTemporaryChat ? 1.2 : 0.8}
                 onClick={toggleTemporaryChat}
-                className={`p-2.5 rounded-2xl transition-all border shadow-md ${
-                  isTemporaryChat
-                    ? 'bg-gradient-to-r from-amber-500/25 to-purple-500/25 border-amber-500/50 shadow-amber-500/15'
-                    : 'bg-slate-900/90 border-slate-700/80 hover:border-amber-500/40'
-                }`}
+                className={`p-2.5 rounded-2xl transition-all border shadow-md ${isTemporaryChat
+                  ? 'bg-gradient-to-r from-amber-500/25 to-purple-500/25 border-amber-500/50 shadow-amber-500/15'
+                  : 'bg-slate-900/90 border-slate-700/80 hover:border-amber-500/40'
+                  }`}
                 title={isTemporaryChat ? 'Click to turn off Incognito Mode' : 'Enable Incognito Temporary Chat'}
               >
                 <Flame className={`w-4 h-4 ${isTemporaryChat ? 'text-amber-400 animate-pulse' : 'text-slate-400 hover:text-amber-400'}`} />
@@ -641,7 +640,7 @@ export default function ChatPage() {
                               className="p-6 text-left group flex flex-col justify-between h-full cursor-pointer relative overflow-hidden"
                             >
                               <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                              
+
                               <div>
                                 <div className={`w-12 h-12 rounded-2xl ${card.iconColor} text-white flex items-center justify-center mb-4 shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform duration-300`}>
                                   <Icon className="w-6 h-6" />
