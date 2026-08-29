@@ -6,7 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
-import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download, BellRing } from 'lucide-react';
+import { Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download, BellRing } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ChatMessage {
@@ -349,10 +349,12 @@ export default function ChatPage() {
                 transition={{ duration: 0.4 }}
                 className="h-full flex flex-col items-center justify-center text-center p-6 max-w-3xl mx-auto space-y-6"
               >
-                {/* Hero Icon */}
-                <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-2xl shadow-cyan-500/30">
-                  <Sparkles className="w-8 h-8 text-white" />
-                </div>
+                {/* Hero Logo Image */}
+                <img
+                  src="/logo.jpg"
+                  alt="AskCET Logo"
+                  className="w-20 h-20 rounded-3xl object-cover shadow-2xl shadow-cyan-500/30 border-2 border-cyan-500/30"
+                />
 
                 <div className="space-y-2">
                   <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">

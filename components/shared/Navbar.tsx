@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Sparkles, MessageSquare, Shield, LogOut, Sun, Moon, Search, HelpCircle } from 'lucide-react';
+import { MessageSquare, Shield, LogOut, Sun, Moon, Search, HelpCircle } from 'lucide-react';
 import { useTheme } from '@/components/shared/ThemeProvider';
 
 export default function Navbar() {
@@ -41,9 +41,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
           <Link href="/chat" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform duration-200">
-              <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            </div>
+            <img
+              src="/logo.jpg"
+              alt="AskCET Logo"
+              className="w-10 h-10 rounded-2xl object-cover shadow-lg shadow-cyan-500/20 border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform duration-200"
+            />
             <div className="flex flex-col">
               <span className="font-black text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
                 Ask<span className="gradient-text">CET</span>
