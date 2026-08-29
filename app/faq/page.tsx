@@ -217,14 +217,14 @@ export default function FAQPage() {
     }
   };
 
-  // Scroll Position Observer to automatically highlight active category as user scrolls up/down
+  // Active Category Scroll Listener
   useEffect(() => {
     const handleScrollObserver = () => {
       FAQ_CATEGORIES.forEach((_, idx) => {
         const el = document.getElementById(`faq-cat-${idx}`);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= 160 && rect.bottom >= 160) {
+          if (rect.top <= 200 && rect.bottom >= 150) {
             setActiveCategoryIndex(idx);
           }
         }
@@ -238,10 +238,10 @@ export default function FAQPage() {
   const sidebarCategoryTitles = FAQ_CATEGORIES.map((c) => c.category);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] transition-colors duration-500 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] transition-colors duration-500 relative">
       {/* Ambient Backdrop Blurs */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[450px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed top-1/4 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed bottom-1/4 right-1/4 w-[450px] h-[450px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
 
       <Navbar />
 
@@ -265,10 +265,10 @@ export default function FAQPage() {
           </p>
         </motion.div>
 
-        {/* Desktop 2-Column Layout with Locked-in-Place Sticky Topic Sections */}
+        {/* Desktop 2-Column Layout with Smoothly Moving Sticky Topic Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start relative">
-          {/* Locked Sticky Left LineSidebar Navigation */}
-          <div className="hidden lg:block lg:col-span-1 sticky top-28 self-start bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl z-20">
+          {/* Smooth Sticky Left LineSidebar Navigation moving alongside window scroll */}
+          <aside className="hidden lg:block lg:col-span-1 sticky top-24 self-start bg-white/70 dark:bg-slate-900/70 p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 backdrop-blur-2xl shadow-xl z-20">
             <div className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-1">
               Topic Sections
             </div>
@@ -287,7 +287,7 @@ export default function FAQPage() {
               defaultActive={activeCategoryIndex}
               onItemClick={(index) => handleSidebarItemClick(index)}
             />
-          </div>
+          </aside>
 
           {/* Accordion Categories Content Stream */}
           <div className="lg:col-span-3 space-y-8">
