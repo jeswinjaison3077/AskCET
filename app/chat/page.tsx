@@ -108,7 +108,7 @@ export default function ChatPage() {
       chatScrollContainerRef.current.scrollTop = 0;
     }
     setScrollTop(0);
-  }, [isTemporaryChat]);
+  }, [isTemporaryChat, activeConversationId]);
 
   const handleScroll = () => {
     if (chatScrollContainerRef.current) {
@@ -153,19 +153,25 @@ export default function ChatPage() {
     setActiveConversationId(null);
     setMessages([]);
     setIsTemporaryChat(false);
+    setScrollTop(0);
     fetchConversations();
-    if (chatScrollContainerRef.current) {
-      chatScrollContainerRef.current.scrollTop = 0;
-    }
+    setTimeout(() => {
+      if (chatScrollContainerRef.current) {
+        chatScrollContainerRef.current.scrollTop = 0;
+      }
+    }, 10);
   };
 
   const toggleTemporaryChat = () => {
     setIsTemporaryChat((prev) => !prev);
     setActiveConversationId(null);
     setMessages([]);
-    if (chatScrollContainerRef.current) {
-      chatScrollContainerRef.current.scrollTop = 0;
-    }
+    setScrollTop(0);
+    setTimeout(() => {
+      if (chatScrollContainerRef.current) {
+        chatScrollContainerRef.current.scrollTop = 0;
+      }
+    }, 10);
   };
 
   const handleDeleteConversation = async (id: string) => {
@@ -421,30 +427,30 @@ export default function ChatPage() {
             </div>
           </div>
 
+          {/* Floating Incognito Mode Status Glass Pill Overlay (Pure Absolute - Never Shifts Hero Layout) */}
+          <AnimatePresence>
+            {isTemporaryChat && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-indigo-500/20 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-xs font-extrabold flex items-center justify-center gap-2 shadow-2xl backdrop-blur-2xl max-w-fit pointer-events-none"
+              >
+                <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                <span>Incognito Mode Active • Messages will not be saved</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Chat Messages Stream & Hero Screen */}
           <div
             ref={chatScrollContainerRef}
             onScroll={handleScroll}
             className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12 scroll-smooth"
           >
-            {/* Floating Incognito Mode Status Glass Pill Inside Scroll Container */}
-            <AnimatePresence>
-              {isTemporaryChat && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.96 }}
-                  className="mx-auto mb-4 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-indigo-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-extrabold flex items-center justify-center gap-2 shadow-lg backdrop-blur-xl max-w-fit"
-                >
-                  <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                  <span>Incognito Mode Active • Messages will not be saved to your account history</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Blurs and Fades Out on Scroll */}
+                {/* HERO SCREEN - Stays EXACTLY Dead Center */}
                 <div
                   style={{
                     opacity: heroOpacity,
