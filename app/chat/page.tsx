@@ -6,6 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
+import TransparentLogo from '@/components/shared/TransparentLogo';
 import ScrollFloat from '@/components/animations/ScrollFloat';
 import SpecularButton from '@/components/animations/SpecularButton';
 import BorderGlow from '@/components/animations/BorderGlow';
@@ -491,21 +492,17 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Pure Boundary Logo Emblem (Ultra-soft gradient fade, ZERO sharp border rings) */}
+                  {/* Hero Pure Organic Boundary Logo Emblem (No circle mask, no square box) */}
                   <div className="relative group cursor-pointer">
                     {/* Ambient Soft Backlight Glow */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
                     
-                    {/* Pure Transparent Seamlessly Dissolving Logo Boundary Image */}
-                    <img
+                    {/* Pure Transparent Organic Boundary Logo Image */}
+                    <TransparentLogo
                       src="/logo.jpg"
-                      alt="AskCET Pure Emblem Logo"
-                      className="relative w-28 h-28 object-cover border-none shadow-none group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
-                      style={{
-                        maskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 85%)',
-                        WebkitMaskImage: 'radial-gradient(circle at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.7) 25%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0) 85%)',
-                        filter: 'drop-shadow(0 0 20px rgba(6,182,212,0.8))',
-                      }}
+                      alt="AskCET Organic Emblem Logo"
+                      className="relative w-28 h-28 object-contain border-none shadow-none drop-shadow-[0_0_20px_rgba(6,182,212,0.8)] group-hover:scale-105 transition-transform duration-300"
+                      threshold={220}
                     />
                     
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
@@ -598,7 +595,7 @@ export default function ChatPage() {
                                   {card.title}
                                 </ScrollFloat>
 
-                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{card.desc}</p>
                               </div>
 
                               <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
