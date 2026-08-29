@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
+import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp, ShieldCheck, Volume2, VolumeX } from 'lucide-react';
 
 export interface Citation {
   documentTitle: string;
@@ -24,11 +24,39 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<'UPVOTE' | 'DOWNVOTE' | null>(null);
   const [showSources, setShowSources] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const toggleSpeak = () => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      alert('Text-to-speech is not supported in this browser.');
+      return;
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(content.replace(/[*#]/g, ''));
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
   };
 
   const handleFeedback = async (type: 'UPVOTE' | 'DOWNVOTE') => {
@@ -133,6 +161,20 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
         {/* Message Action Toolbar */}
         {!isUser && (
           <div className="flex items-center gap-3 px-1 text-slate-500 dark:text-slate-400 text-xs">
+            {/* Read Aloud Voice Speaker */}
+            <button
+              onClick={toggleSpeak}
+              className={`flex items-center gap-1.5 transition-colors py-1 px-2 rounded-lg font-medium ${
+                isSpeaking
+                  ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/20'
+                  : 'hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
+              }`}
+              title={isSpeaking ? 'Stop reading out loud' : 'Read answer out loud'}
+            >
+              {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
+              <span>{isSpeaking ? 'Stop Speaking' : 'Read Aloud'}</span>
+            </button>
+
             <button
               onClick={handleCopy}
               className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 font-medium"

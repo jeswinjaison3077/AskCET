@@ -13,11 +13,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { message, conversationId, isTemporary, attachment } = await request.json();
+    const { message, conversationId, isTemporary, attachment, language } = await request.json();
     if (!message && !attachment) {
       return NextResponse.json({ error: 'Message content or attachment is required.' }, { status: 400 });
     }
 
+    const preferredLanguage = language || 'English';
     const userQuery = message || `Please analyze this attached ${attachment?.type || 'file'}: ${attachment?.name}`;
 
     // Process document attachment text if uploaded
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
 
         try {
           const queryEmbedding = await generateEmbedding(userQuery);
-          const searchResults = await searchSimilarChunks(queryEmbedding, 4, 0.35);
+          const searchResults = await searchSimilarChunks(queryEmbedding, 4, 0.35, userQuery);
           relevantChunks = searchResults.map(r => ({
             documentTitle: r.documentTitle,
             category: r.category,
@@ -133,7 +134,7 @@ export async function POST(request: Request) {
           // Proceed without vector chunks if vector search delayed
         }
 
-        const systemPrompt = buildRAGSystemPrompt(relevantChunks, userQuery) + attachmentTextContext;
+        const systemPrompt = buildRAGSystemPrompt(relevantChunks, userQuery, preferredLanguage) + attachmentTextContext;
         const citations = relevantChunks.map(c => ({
           documentTitle: c.documentTitle,
           category: c.category,
@@ -162,7 +163,7 @@ export async function POST(request: Request) {
           const result = await model.generateContentStream(promptContents);
           let accumulatedText = '';
 
-          for await (const chunk of result.stream) {
+          for await (const chunk of resultStreamOrResult(result)) {
             const chunkText = chunk.text();
             accumulatedText += chunkText;
             controller.enqueue(
@@ -211,4 +212,8 @@ export async function POST(request: Request) {
     console.error('Chat API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+function resultStreamOrResult(result: any) {
+  return result.stream || [];
 }

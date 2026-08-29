@@ -5,7 +5,7 @@ import Navbar from '@/components/shared/Navbar';
 import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
-import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert } from 'lucide-react';
+import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ChatMessage {
@@ -121,7 +121,36 @@ export default function ChatPage() {
     }
   };
 
-  const handleSendMessage = async (userText: string) => {
+  const exportConversationMarkdown = () => {
+    if (messages.length === 0) return;
+    let mdContent = `# AskCET Chat Transcript\n*Exported on ${new Date().toLocaleString()}*\n\n---\n\n`;
+    messages.forEach((msg, idx) => {
+      if (msg.role === 'user') {
+        mdContent += `### 👤 Student Question (${idx + 1})\n${msg.content}\n\n`;
+      } else {
+        mdContent += `### 🤖 AskCET Grounded Answer\n${msg.content}\n\n`;
+        if (msg.citations && msg.citations.length > 0) {
+          mdContent += `**Verified Sources:**\n`;
+          msg.citations.forEach((c) => {
+            mdContent += `- **${c.documentTitle}** (Category: ${c.category} | Page ${c.pageNumber})\n`;
+          });
+          mdContent += `\n`;
+        }
+      }
+      mdContent += `---\n\n`;
+    });
+
+    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `AskCET_Chat_${Date.now()}.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSendMessage = async (userText: string, language: string = 'English') => {
     if (!userText || isLoading) return;
 
     const userMsg: ChatMessage = { role: 'user', content: userText };
@@ -136,6 +165,7 @@ export default function ChatPage() {
           message: userText,
           conversationId: isTemporaryChat ? null : activeConversationId,
           isTemporary: isTemporaryChat,
+          language: language,
         }),
       });
 
@@ -221,7 +251,7 @@ export default function ChatPage() {
 
         {/* Main Conversation Stream */}
         <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50/50 dark:bg-[#070a12]/60">
-          {/* Header Sub-bar with Icon-only Hamburger Toggle & Icon-only Temporary Chat Symbol */}
+          {/* Header Sub-bar */}
           <div className="px-4 py-2.5 bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between z-20">
             <div className="flex items-center gap-3">
               {/* Icon-only Hamburger Button */}
@@ -247,8 +277,20 @@ export default function ChatPage() {
               </span>
             </div>
 
-            {/* Symbol-only Temporary Chat Button & New Chat Button */}
             <div className="flex items-center gap-2">
+              {/* Export Chat Transcript Button */}
+              {messages.length > 0 && (
+                <button
+                  onClick={exportConversationMarkdown}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-xs font-bold transition-all shadow-xs"
+                  title="Export chat transcript as Markdown report"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                  <span className="hidden sm:inline">Export Chat</span>
+                </button>
+              )}
+
+              {/* Temporary Chat Button */}
               <button
                 onClick={toggleTemporaryChat}
                 className={`p-2 rounded-xl text-xs font-bold transition-all border flex items-center justify-center ${
@@ -256,7 +298,7 @@ export default function ChatPage() {
                     ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-500/50 shadow-sm'
                     : 'bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:text-amber-500 dark:hover:text-amber-400'
                 }`}
-                title={isTemporaryChat ? 'Temporary Chat Mode Active (Click to turn off)' : 'Enable Temporary Chat Mode (Messages not saved to history)'}
+                title={isTemporaryChat ? 'Temporary Chat Mode Active (Click to turn off)' : 'Enable Temporary Chat Mode'}
               >
                 <Flame className={`w-4 h-4 ${isTemporaryChat ? 'text-amber-500 animate-pulse' : 'text-slate-400'}`} />
               </button>
