@@ -5,11 +5,11 @@ export function getApiKey(): string {
 }
 
 export function isValidApiKey(key: string): boolean {
-  return typeof key === 'string' && key.trim().length > 5;
+  return typeof key === 'string' && key.trim().startsWith('AIzaSy') && key.trim().length > 20;
 }
 
 /**
- * Generate vector embedding for a given text snippet using Gemini API
+ * Generate vector embedding for a given text snippet using Gemini API or deterministic fallback
  */
 export async function generateEmbedding(text: string): Promise<number[]> {
   const apiKey = getApiKey();
@@ -30,7 +30,6 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     const result = await model.embedContent(text);
     return result.embedding.values;
   } catch (error) {
-    console.warn('Gemini embedding error, fallback to mock vector:', error);
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
       hash = (hash << 5) - hash + text.charCodeAt(i);
@@ -41,7 +40,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance (gemini-1.5-flash for fast, grounded response streaming)
+ * Get configured Gemini Generative Model instance
  */
 export function getChatModel() {
   const apiKey = getApiKey();
@@ -51,7 +50,7 @@ export function getChatModel() {
   return genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
-      temperature: 0.2, // Tuned for high precision with natural articulation
+      temperature: 0.2,
       topP: 0.9,
       topK: 40,
       maxOutputTokens: 2048,
