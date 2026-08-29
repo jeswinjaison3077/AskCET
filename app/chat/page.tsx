@@ -476,7 +476,7 @@ export default function ChatPage() {
                   </motion.div>
                 </div>
 
-                {/* 6 Campus FAQ Tiles - Appears EVERY TIME on Scroll Down */}
+                {/* 6 Campus FAQ Tiles - Fluid Re-Triggerable Scroll Entrance */}
                 <div className="w-full pt-8 pb-24">
                   <div className="text-center mb-8">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
@@ -490,13 +490,12 @@ export default function ChatPage() {
                       return (
                         <motion.button
                           key={i}
-                          initial={{ opacity: 0, y: 50, scale: 0.92 }}
+                          initial={{ opacity: 0, y: 40, scale: 0.94 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
                           viewport={{ once: false, amount: 0.05 }}
                           transition={{
                             duration: 0.45,
-                            ease: [0.22, 1, 0.36, 1],
-                            delay: i * 0.06,
+                            ease: [0.16, 1, 0.3, 1],
                           }}
                           whileHover={{ y: -6, scale: 1.025 }}
                           whileTap={{ scale: 0.97 }}
