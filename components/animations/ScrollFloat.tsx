@@ -26,11 +26,11 @@ const ScrollFloat = ({
   scrollContainerRef,
   containerClassName = '',
   textClassName = '',
-  animationDuration = 1,
+  animationDuration = 0.8,
   ease = 'back.inOut(2)',
-  scrollStart = 'top bottom-=20%',
-  scrollEnd = 'bottom center',
-  stagger = 0.03,
+  scrollStart = 'top 95%',
+  scrollEnd = 'top 70%',
+  stagger = 0.02,
 }: ScrollFloatProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -76,7 +76,7 @@ const ScrollFloat = ({
             scroller,
             start: scrollStart,
             end: scrollEnd,
-            scrub: true,
+            scrub: 0.5,
           },
         }
       );

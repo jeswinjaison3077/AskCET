@@ -473,7 +473,7 @@ export default function ChatPage() {
                 </div>
 
                 {/* 6 Campus FAQ Tiles - Scroll Float Character Animation */}
-                <div className="w-full pt-8 pb-16">
+                <div className="w-full pt-8 pb-24">
                   <div className="text-center mb-8">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Explore Popular Campus Topics & FAQs
@@ -488,11 +488,11 @@ export default function ChatPage() {
                           key={i}
                           initial={{ opacity: 0, y: 50, scale: 0.92 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                          viewport={{ once: true, amount: 0.1 }}
+                          viewport={{ once: true, amount: 0.05 }}
                           transition={{
-                            duration: 0.5,
+                            duration: 0.45,
                             ease: [0.22, 1, 0.36, 1],
-                            delay: i * 0.08,
+                            delay: i * 0.06,
                           }}
                           whileHover={{ y: -6, scale: 1.025 }}
                           whileTap={{ scale: 0.97 }}
@@ -509,8 +509,10 @@ export default function ChatPage() {
                             {/* React Bits ScrollFloat Animated Character Title */}
                             <ScrollFloat
                               scrollContainerRef={chatScrollContainerRef}
-                              animationDuration={0.8}
+                              animationDuration={0.7}
                               ease="back.inOut(2)"
+                              scrollStart="top 98%"
+                              scrollEnd="top 75%"
                               stagger={0.02}
                               containerClassName="mb-1.5"
                               textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
