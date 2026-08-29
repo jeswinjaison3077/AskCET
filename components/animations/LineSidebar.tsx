@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState, useCallback, useEffect, PointerEvent } from 'react';
-import { motion } from 'framer-motion';
 import './LineSidebar.css';
 
 const FALLOFF_CURVES: Record<string, (p: number) => number> = {
@@ -187,13 +186,6 @@ const LineSidebar = ({
               aria-current={isActive ? 'true' : undefined}
               onClick={() => handleClick(index, label)}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="lineSidebarFlowingHighlight"
-                  className="line-sidebar__flowing-highlight"
-                  transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                />
-              )}
               {showMarker && <span className="line-sidebar__marker" aria-hidden="true" />}
               <span className="line-sidebar__label">
                 {showIndex && <span className="line-sidebar__index">{String(index + 1).padStart(2, '0')}</span>}
