@@ -41,19 +41,20 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance (gemini-3.5-flash-lite with low temperature to prevent hallucinating CET rules)
+ * Get configured Gemini Generative Model instance (gemini-3.5-flash-lite tuned for direct, detailed responses)
  */
 export function getChatModel() {
   const apiKey = getApiKey();
   const genAI = new GoogleGenerativeAI(apiKey);
   const modelName = process.env.LLM_MODEL || 'gemini-3.5-flash-lite';
+  
   return genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
-      temperature: 0.1, // Set to 0.1 to force strict factual adherence and prevent hallucination
-      topP: 0.8,
+      temperature: 0.2, // Tuned for high precision with natural articulation
+      topP: 0.9,
       topK: 40,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 2048,
     },
   });
 }
