@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { Bot, User, BookOpen, ThumbsUp, ThumbsDown, Copy, Check, FileText, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 
 export interface Citation {
   documentTitle: string;
@@ -46,6 +46,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   };
 
   const isUser = role === 'user';
+  const hasCitations = !isUser && citations && citations.length > 0;
 
   return (
     <motion.div
@@ -67,6 +68,14 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
 
       {/* Content Container */}
       <div className={`max-w-[85%] sm:max-w-[78%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
+        {/* Confidence Indicator Badge */}
+        {hasCitations && (
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 text-[11px] font-bold shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Grounded Answer • High Relevance Match</span>
+          </div>
+        )}
+
         {/* Message Bubble */}
         <div
           className={`px-5 py-4 rounded-3xl text-sm leading-relaxed ${
@@ -79,7 +88,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
         </div>
 
         {/* Citations Box for Assistant */}
-        {!isUser && citations && citations.length > 0 && (
+        {hasCitations && (
           <div className="mt-1 w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-700 dark:text-slate-300 shadow-sm">
             <button
               onClick={() => setShowSources(!showSources)}

@@ -29,7 +29,7 @@ function cosineSimilarity(vecA: number[], vecB: number[]): number {
 }
 
 /**
- * Stores a chunk and its 768-dim vector embedding into SQLite database.
+ * Stores a chunk and its 768-dim vector embedding into database.
  */
 export async function storeChunkVector(
   documentId: string,
@@ -52,12 +52,13 @@ export async function storeChunkVector(
 }
 
 /**
- * Executes cosine similarity vector search over indexed document chunks.
+ * Executes Hybrid Retrieval (Vector Cosine Similarity + Keyword Re-ranking)
  */
 export async function searchSimilarChunks(
   queryEmbedding: number[],
   topK: number = 5,
-  similarityThreshold: number = 0.3
+  similarityThreshold: number = 0.3,
+  queryText: string = ''
 ): Promise<SearchResultChunk[]> {
   try {
     const chunks = await prisma.documentChunk.findMany({
@@ -71,6 +72,8 @@ export async function searchSimilarChunks(
       },
     });
 
+    const keywords = queryText.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+
     const scored = chunks.map((chunk) => {
       let vec: number[] = [];
       try {
@@ -81,7 +84,20 @@ export async function searchSimilarChunks(
         vec = [];
       }
 
-      const similarity = cosineSimilarity(queryEmbedding, vec);
+      let similarity = cosineSimilarity(queryEmbedding, vec);
+
+      // Keyword boost for hybrid search (spec.md section 12)
+      if (keywords.length > 0) {
+        const textLower = `${chunk.document.title} ${chunk.document.category} ${chunk.document.department} ${chunk.content}`.toLowerCase();
+        let keywordHits = 0;
+        for (const kw of keywords) {
+          if (textLower.includes(kw)) {
+            keywordHits += 1;
+          }
+        }
+        const keywordScore = Math.min(keywordHits / keywords.length, 1.0) * 0.25;
+        similarity = (similarity * 0.75) + keywordScore;
+      }
 
       return {
         chunkId: chunk.id,
