@@ -100,27 +100,27 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      initial={{ opacity: 0, y: 16, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.35, type: 'spring', stiffness: 300, damping: 24 }}
       className={`flex gap-3.5 my-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
     >
-      {/* Avatar Icon */}
+      {/* iOS Avatar Badge */}
       <div
         className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
           isUser
-            ? 'bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-cyan-500/25'
-            : 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 border border-slate-200 dark:border-slate-700/80 shadow-slate-200/50 dark:shadow-slate-900/50'
+            ? 'bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-cyan-500/25'
+            : 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 border border-slate-200/80 dark:border-slate-800 shadow-xl'
         }`}
       >
         {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
       </div>
 
-      {/* Content Container */}
+      {/* Content Bubble Container */}
       <div className={`max-w-[85%] sm:max-w-[78%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
-        {/* Confidence Indicator Badge */}
+        {/* Grounded Confidence Indicator */}
         {hasCitations && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 text-[11px] font-bold shadow-xs">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 text-[11px] font-extrabold shadow-xs">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Grounded Answer • High Relevance Match</span>
           </div>
@@ -128,23 +128,23 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
 
         {/* Message Bubble */}
         <div
-          className={`px-5 py-4 rounded-3xl text-sm leading-relaxed ${
+          className={`px-5 py-4 rounded-[26px] text-sm leading-relaxed ${
             isUser
-              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-lg shadow-cyan-500/15 font-medium'
-              : 'bg-white dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200 dark:border-slate-800 shadow-md dark:shadow-xl'
+              ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-medium'
+              : 'bg-white/90 dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800 shadow-xl backdrop-blur-xl'
           }`}
         >
           <div className="whitespace-pre-wrap">{cleanContent}</div>
         </div>
 
-        {/* Citations Box for Assistant */}
+        {/* Verified Sources Collapsible Box */}
         {hasCitations && (
-          <div className="mt-1 w-full bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-700 dark:text-slate-300 shadow-sm">
+          <div className="mt-1 w-full bg-slate-50/80 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-700 dark:text-slate-300 shadow-xs backdrop-blur-md">
             <button
               onClick={() => setShowSources(!showSources)}
-              className="w-full flex items-center justify-between font-semibold text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
+              className="w-full flex items-center justify-between font-bold text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
             >
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                 <span>Verified Campus Sources ({citations.length})</span>
               </div>
@@ -155,20 +155,20 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="flex flex-col gap-2 mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-800/80"
+                className="flex flex-col gap-2 mt-2.5 pt-2.5 border-t border-slate-200/80 dark:border-slate-800/80"
               >
                 {citations.map((c, i) => (
-                  <div key={i} className="bg-white dark:bg-slate-900/90 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-start gap-2 shadow-2xs">
+                  <div key={i} className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-start gap-2 shadow-2xs">
                     <FileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-bold text-slate-800 dark:text-slate-200 truncate">{c.documentTitle}</span>
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-500/20 shrink-0">
+                        <span className="font-extrabold text-slate-800 dark:text-slate-200 truncate">{c.documentTitle}</span>
+                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-500/20 shrink-0">
                           Page {c.pageNumber}
                         </span>
                       </div>
                       {c.snippet && (
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60">
+                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60">
                           "{c.snippet}"
                         </p>
                       )}
@@ -180,40 +180,46 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
           </div>
         )}
 
-        {/* Message Action Toolbar */}
+        {/* Message Toolbar Controls */}
         {!isUser && (
-          <div className="flex items-center gap-3 px-1 text-slate-500 dark:text-slate-400 text-xs">
+          <div className="flex items-center gap-2 px-1 text-slate-500 dark:text-slate-400 text-xs font-semibold">
             {/* Read Aloud Voice Speaker */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleSpeak}
-              className={`flex items-center gap-1.5 transition-colors py-1 px-2 rounded-lg font-medium ${
+              className={`flex items-center gap-1.5 transition-colors py-1 px-2.5 rounded-xl ${
                 isSpeaking
-                  ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/20'
+                  ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/20 font-bold'
                   : 'hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
               }`}
               title={isSpeaking ? 'Stop reading out loud' : 'Read answer out loud'}
             >
               {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
               <span>{isSpeaking ? 'Stop Speaking' : 'Read Aloud'}</span>
-            </button>
+            </motion.button>
 
-            {/* Quick WhatsApp / Social Share */}
-            <button
+            {/* Quick Share Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleShare}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 font-medium"
+              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
               title="Share verified answer via WhatsApp / Telegram"
             >
               {shared ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
-              <span>{shared ? 'Link Copied!' : 'Share Answer'}</span>
-            </button>
+              <span>{shared ? 'Copied Share Link' : 'Share'}</span>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleCopy}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 font-medium"
+              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
             >
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy'}</span>
-            </button>
+            </motion.button>
 
             {id && (
               <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-2">
