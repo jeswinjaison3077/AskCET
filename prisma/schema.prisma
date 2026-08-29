@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum DocumentStatus {
+  PENDING
+  PROCESSING
+  INDEXED
+  FAILED
+}
+
+enum FeedbackType {
+  UPVOTE
+  DOWNVOTE
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  name          String
+  role          String         @default("STUDENT") // STUDENT or ADMIN
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  conversations Conversation[]
+  documents     Document[]
+  feedback      Feedback[]
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  title     String    @default("New Conversation")
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String       // "user" or "assistant"
+  content        String
+  sources        String?      // JSON string of source citations
+  createdAt      DateTime     @default(now())
+  feedback       Feedback[]
+}
+
+model Document {
+  id           String         @id @default(cuid())
+  title        String
+  fileName     String
+  filePath     String
+  fileType     String         // pdf, docx, txt
+  category     String         // Academics, Hostel, Fees, Examinations, Admissions, General
+  department   String         @default("General")
+  version      String         @default("v1.0")
+  status       String         @default("PENDING") // PENDING, PROCESSING, INDEXED, FAILED
+  uploadedById String
+  uploadedBy   User           @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  chunks       DocumentChunk[]
+}
+
+model DocumentChunk {
+  id         String   @id @default(cuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  content    String
+  pageNumber Int      @default(1)
+  chunkIndex Int
+  embedding  String?  // JSON string array of 768 float values
+  createdAt  DateTime @default(now())
+
+  @@index([documentId])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // UPVOTE or DOWNVOTE
+  reason    String?
+  comment   String?
+  createdAt DateTime @default(now())
+}
