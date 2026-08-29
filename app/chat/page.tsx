@@ -344,7 +344,7 @@ export default function ChatPage() {
           onSelectPrompt={handleSendMessage}
         />
 
-        {/* Main Conversation Stream with Refined Soft Torch Spotlight Effect */}
+        {/* Main Conversation Stream with Custom Background Torch Spotlight Effect */}
         <main
           ref={mainStreamRef}
           onPointerMove={handlePointerMove}
@@ -352,30 +352,30 @@ export default function ChatPage() {
           onPointerLeave={() => setIsPointerInside(false)}
           className="flex-1 flex flex-col h-full overflow-hidden relative backdrop-blur-3xl"
         >
-          {/* Soft Torch Spotlight Background Image Layer (Matched with website dark theme & low opacity) */}
+          {/* Custom Line Art Background Image Layer with Website Color Tint (#060810 / Cyan) & Low Opacity */}
           <div
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 -z-10"
             style={{
-              opacity: isPointerInside ? 0.12 : 0,
-              backgroundImage: `url('/logo-transparent.png')`,
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
+              opacity: isPointerInside ? 0.18 : 0,
+              backgroundImage: `url('/bg.jpg')`,
+              backgroundSize: 'cover',
               backgroundPosition: 'center',
-              WebkitMaskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 140px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0) 100%)`,
+              filter: 'sepia(100%) hue-rotate(165deg) saturate(220%) brightness(0.85)',
+              WebkitMaskImage: `radial-gradient(circle 150px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 150px at ${mousePos.x}px ${mousePos.y}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Soft Torch Beam Light Aura Circle Matched to Website Cyan Theme */}
+          {/* Soft Cyan/Indigo Torch Light Beam Circle */}
           <div
             className="absolute pointer-events-none transition-opacity duration-300 rounded-full blur-2xl -z-10"
             style={{
-              opacity: isPointerInside ? 0.15 : 0,
-              left: `${mousePos.x - 80}px`,
-              top: `${mousePos.y - 80}px`,
-              width: '160px',
-              height: '160px',
-              background: 'radial-gradient(circle, rgba(6,182,212,0.25) 0%, rgba(14,165,233,0.12) 50%, transparent 100%)',
+              opacity: isPointerInside ? 0.18 : 0,
+              left: `${mousePos.x - 95}px`,
+              top: `${mousePos.y - 95}px`,
+              width: '190px',
+              height: '190px',
+              background: 'radial-gradient(circle, rgba(6,182,212,0.35) 0%, rgba(99,102,241,0.18) 50%, transparent 100%)',
             }}
           />
 
@@ -492,16 +492,20 @@ export default function ChatPage() {
                   }}
                   className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero Pure Circular Boundary Logo Emblem */}
+                  {/* Hero Pure Circular Boundary Logo Emblem (Larger radius, ultra-feathered round shape) */}
                   <div className="relative group cursor-pointer">
                     {/* Ambient Neon Backlight Glow */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-2xl opacity-50 group-hover:opacity-80 transition-opacity duration-500" />
                     
-                    {/* Pure Transparent Emblem Logo */}
+                    {/* Pure Transparent Heavily Feathered Circular Emblem Logo */}
                     <img
-                      src="/logo-transparent.png"
+                      src="/logo.jpg"
                       alt="AskCET Pure Emblem Logo"
-                      className="relative w-36 h-36 object-contain border-none shadow-none drop-shadow-[0_0_30px_rgba(6,182,212,0.85)] group-hover:scale-105 transition-transform duration-300"
+                      className="relative w-36 h-36 object-cover rounded-full border-none shadow-none drop-shadow-[0_0_30px_rgba(6,182,212,0.85)] group-hover:scale-105 transition-transform duration-300 mix-blend-multiply dark:mix-blend-lighten"
+                      style={{
+                        maskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
+                        WebkitMaskImage: 'radial-gradient(circle closest-side at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0) 100%)',
+                      }}
                     />
                     
                     {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
