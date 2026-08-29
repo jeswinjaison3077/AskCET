@@ -5,8 +5,8 @@ import Navbar from '@/components/shared/Navbar';
 import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
-import DeadlineWidget from '@/components/chat/DeadlineWidget';
-import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download } from 'lucide-react';
+import NoticeDrawer from '@/components/chat/NoticeDrawer';
+import { Sparkles, Loader2, BookOpen, Home, Calendar, ArrowRight, Menu, Plus, Flame, ShieldAlert, Download, BellRing } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ChatMessage {
@@ -48,6 +48,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
+  const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -250,6 +251,13 @@ export default function ChatPage() {
           onDelete={handleDeleteConversation}
         />
 
+        {/* Side Notice & Deadlines Drawer */}
+        <NoticeDrawer
+          isOpen={isNoticeDrawerOpen}
+          onClose={() => setIsNoticeDrawerOpen(false)}
+          onSelectPrompt={handleSendMessage}
+        />
+
         {/* Main Conversation Stream */}
         <main className="flex-1 flex flex-col h-full overflow-hidden relative bg-slate-50/50 dark:bg-[#070a12]/60">
           {/* Header Sub-bar */}
@@ -279,6 +287,17 @@ export default function ChatPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* Notice & Deadline Side Panel Trigger */}
+              <button
+                onClick={() => setIsNoticeDrawerOpen(!isNoticeDrawerOpen)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 text-xs font-bold transition-all shadow-xs relative"
+                title="Open Campus Deadlines & Notices Panel"
+              >
+                <BellRing className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
+                <span className="hidden sm:inline">Deadlines & Notices</span>
+                <span className="w-2 h-2 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5 animate-ping" />
+              </button>
+
               {/* Export Chat Transcript Button */}
               {messages.length > 0 && (
                 <button
@@ -343,9 +362,6 @@ export default function ChatPage() {
                     Your AI Knowledge Assistant for CET College of Engineering. Ask any question regarding college rules, exam schedules, hostel policies, or course details.
                   </p>
                 </div>
-
-                {/* Live Campus Deadlines & Notice Countdown Widget */}
-                <DeadlineWidget />
 
                 {/* Interactive Sample Question Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mt-2">
