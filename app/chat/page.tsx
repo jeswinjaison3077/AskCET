@@ -6,7 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
-import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown } from 'lucide-react';
+import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText, CreditCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
@@ -21,7 +21,7 @@ const FEATURE_CARDS = [
   {
     icon: BookOpen,
     title: 'Academic Regulations',
-    desc: 'Attendance policies, credit requirements, passing criteria & registration.',
+    desc: '75% attendance rules, credit system, grade point calculation & condonation.',
     question: 'What is the minimum attendance requirement for semester exams?',
     gradient: 'from-cyan-500/20 via-blue-500/20 to-indigo-500/20',
     border: 'hover:border-cyan-500/50',
@@ -30,7 +30,7 @@ const FEATURE_CARDS = [
   {
     icon: Home,
     title: 'Hostel & Campus Rules',
-    desc: 'Gate curfew timings, mess fee clearance, leave passes & warden permissions.',
+    desc: 'Curfew timings, warden passes, mess dues clearance & hostel allotment.',
     question: 'What are the hostel gate timings and curfew rules?',
     gradient: 'from-indigo-500/20 via-purple-500/20 to-pink-500/20',
     border: 'hover:border-indigo-500/50',
@@ -38,12 +38,39 @@ const FEATURE_CARDS = [
   },
   {
     icon: Calendar,
-    title: 'Exams & Schedules',
-    desc: 'Timetables, supplementary exam dates, revaluation & portal registration.',
+    title: 'Exams & Revaluation',
+    desc: 'Semester end exams, supply registration, revaluation fees & KTU results.',
     question: 'When is the deadline for exam registration and revaluation?',
     gradient: 'from-emerald-500/20 via-teal-500/20 to-cyan-500/20',
     border: 'hover:border-emerald-500/50',
     iconColor: 'bg-gradient-to-tr from-emerald-500 to-teal-600',
+  },
+  {
+    icon: Award,
+    title: 'Scholarships & Grants',
+    desc: 'Central sector grants, e-Grantz for SC/ST/OEC & Alumni Merit scholarships.',
+    question: 'What scholarships are available for CET students?',
+    gradient: 'from-amber-500/20 via-orange-500/20 to-yellow-500/20',
+    border: 'hover:border-amber-500/50',
+    iconColor: 'bg-gradient-to-tr from-amber-500 to-orange-600',
+  },
+  {
+    icon: Briefcase,
+    title: 'Placements & Internships',
+    desc: 'Placement Cell CGPA eligibility, campus recruitment drives & internship NOC.',
+    question: 'What is the minimum CGPA required for campus placements?',
+    gradient: 'from-purple-500/20 via-violet-500/20 to-indigo-500/20',
+    border: 'hover:border-purple-500/50',
+    iconColor: 'bg-gradient-to-tr from-purple-500 to-violet-600',
+  },
+  {
+    icon: FileText,
+    title: 'Certificates & Services',
+    desc: 'Bonafide certificates, fee structure slips, conduct certificates & Counter 3.',
+    question: 'Where can I get fee structure receipts and Bonafide certificates?',
+    gradient: 'from-blue-500/20 via-cyan-500/20 to-teal-500/20',
+    border: 'hover:border-blue-500/50',
+    iconColor: 'bg-gradient-to-tr from-blue-500 to-cyan-600',
   },
 ];
 
@@ -375,13 +402,13 @@ export default function ChatPage() {
           {/* Chat Messages Stream & Hero Screen */}
           <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12">
             {messages.length === 0 ? (
-              <div className="min-h-full flex flex-col items-center justify-between py-12 max-w-4xl mx-auto space-y-16">
+              <div className="min-h-full flex flex-col items-center justify-between py-10 max-w-5xl mx-auto space-y-14">
                 {/* Hero View - Initially Visible */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, type: 'spring', stiffness: 260, damping: 20 }}
-                  className="flex flex-col items-center text-center space-y-6 max-w-xl my-auto pt-8"
+                  transition={{ duration: 0.4 }}
+                  className="flex flex-col items-center text-center space-y-5 max-w-xl my-auto pt-4"
                 >
                   {/* Hero iOS Squircle Logo */}
                   <div className="relative group cursor-pointer">
@@ -396,7 +423,7 @@ export default function ChatPage() {
                     </div>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                       Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
                     </h1>
@@ -407,11 +434,11 @@ export default function ChatPage() {
 
                   {/* Light Opacity Scroll Text Hint */}
                   <motion.div
-                    animate={{ y: [0, 5, 0] }}
+                    animate={{ y: [0, 6, 0] }}
                     transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                    className="pt-6 flex flex-col items-center gap-1.5 text-xs font-bold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    className="pt-4 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={() => {
-                      chatScrollContainerRef.current?.scrollTo({ top: 350, behavior: 'smooth' });
+                      chatScrollContainerRef.current?.scrollTo({ top: 320, behavior: 'smooth' });
                     }}
                   >
                     <span>Scroll for FAQs</span>
@@ -419,11 +446,11 @@ export default function ChatPage() {
                   </motion.div>
                 </motion.div>
 
-                {/* Feature Question Tiles Container - Staggered Spring Pop-Up */}
-                <div className="w-full pt-10">
+                {/* 6 Expanded Relevant Feature Question Tiles */}
+                <div className="w-full pt-6">
                   <div className="text-center mb-6">
-                    <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
-                      Explore Popular Campus Topics
+                    <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                      Explore Popular Campus Topics & FAQs
                     </span>
                   </div>
 
@@ -433,19 +460,18 @@ export default function ChatPage() {
                       return (
                         <motion.button
                           key={i}
-                          initial={{ opacity: 0, y: 60, scale: 0.8 }}
+                          initial={{ opacity: 0, y: 30, scale: 0.95 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                          viewport={{ once: false, amount: 0.2 }}
+                          viewport={{ once: true, amount: 0.15 }}
                           transition={{
-                            type: 'spring',
-                            stiffness: 280,
-                            damping: 20,
-                            delay: i * 0.12,
+                            duration: 0.45,
+                            ease: [0.22, 1, 0.36, 1],
+                            delay: i * 0.08,
                           }}
-                          whileHover={{ y: -8, scale: 1.03 }}
+                          whileHover={{ y: -6, scale: 1.025 }}
                           whileTap={{ scale: 0.97 }}
                           onClick={() => handleSendMessage(card.question)}
-                          className={`bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
+                          className={`bg-white/85 dark:bg-slate-900/85 backdrop-blur-2xl p-6 rounded-[28px] border border-slate-200/80 dark:border-slate-800/80 shadow-xl dark:shadow-2xl ${card.border} transition-all text-left group flex flex-col justify-between relative overflow-hidden`}
                         >
                           <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${card.gradient} rounded-full blur-2xl -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                           
@@ -458,7 +484,7 @@ export default function ChatPage() {
                               {card.title}
                             </h3>
 
-                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{card.desc}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
                           </div>
 
                           <div className="text-xs font-extrabold text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
