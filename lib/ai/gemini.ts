@@ -5,7 +5,7 @@ export function getApiKey(): string {
 }
 
 export function isValidApiKey(key: string): boolean {
-  return typeof key === 'string' && key.trim().length > 10;
+  return typeof key === 'string' && key.trim().startsWith('AIzaSy') && key.trim().length > 20;
 }
 
 /**
@@ -25,7 +25,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const modelName = process.env.EMBEDDING_MODEL || 'gemini-embedding-001';
+    const modelName = process.env.EMBEDDING_MODEL || 'text-embedding-004';
     const model = genAI.getGenerativeModel({ model: modelName });
     const result = await model.embedContent(text);
     return result.embedding.values;
@@ -41,12 +41,12 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance (gemini-3.5-flash-lite tuned for direct, detailed responses)
+ * Get configured Gemini Generative Model instance (gemini-1.5-flash for fast, grounded response streaming)
  */
 export function getChatModel() {
   const apiKey = getApiKey();
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = process.env.LLM_MODEL || 'gemini-3.5-flash-lite';
+  const modelName = process.env.LLM_MODEL || 'gemini-1.5-flash';
   
   return genAI.getGenerativeModel({
     model: modelName,

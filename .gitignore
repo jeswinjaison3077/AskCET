@@ -28,6 +28,11 @@ yarn-error.log*
 .env*.local
 !.env.example
 
+# database binary files
+prisma/*.db
+prisma/*.db-journal
+uploads/
+
 # vercel
 .vercel
 

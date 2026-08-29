@@ -48,26 +48,39 @@ export async function POST(request: Request) {
     // 1. Get or create conversation (only if NOT temporary mode)
     let targetConversationId: string | null = null;
     if (!isTemporary) {
-      targetConversationId = conversationId;
-      if (!targetConversationId) {
-        const titleSnippet = userQuery.slice(0, 30) + (userQuery.length > 30 ? '...' : '');
-        const newConv = await prisma.conversation.create({
-          data: {
-            title: titleSnippet,
-            userId: session.userId,
-          },
-        });
-        targetConversationId = newConv.id;
+      // Ensure user ID exists in current database (prevents foreign key errors from stale session cookies)
+      let dbUser = await prisma.user.findUnique({ where: { id: session.userId } });
+      let validUserId = dbUser ? session.userId : null;
+      
+      if (!validUserId) {
+        const defaultUser = await prisma.user.findFirst();
+        if (defaultUser) {
+          validUserId = defaultUser.id;
+        }
       }
 
-      // Save user message to DB in background
-      prisma.message.create({
-        data: {
-          conversationId: targetConversationId,
-          role: 'user',
-          content: attachment ? `${userQuery}\n📎 Attached: ${attachment.name}` : userQuery,
-        },
-      }).catch(() => {});
+      if (validUserId) {
+        targetConversationId = conversationId;
+        if (!targetConversationId) {
+          const titleSnippet = userQuery.slice(0, 30) + (userQuery.length > 30 ? '...' : '');
+          const newConv = await prisma.conversation.create({
+            data: {
+              title: titleSnippet,
+              userId: validUserId,
+            },
+          });
+          targetConversationId = newConv.id;
+        }
+
+        // Save user message to DB in background
+        prisma.message.create({
+          data: {
+            conversationId: targetConversationId,
+            role: 'user',
+            content: attachment ? `${userQuery}\n📎 Attached: ${attachment.name}` : userQuery,
+          },
+        }).catch(() => {});
+      }
     }
 
     const encoder = new TextEncoder();
@@ -155,7 +168,6 @@ export async function POST(request: Request) {
           )
         );
 
-        // Stream Gemini output with low latency
         const model = getChatModel();
         const promptContents: any = imagePart ? [systemPrompt, imagePart] : systemPrompt;
 
