@@ -10,11 +10,6 @@ import path from 'path';
 
 export async function GET() {
   try {
-    const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const documents = await prisma.document.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -34,13 +29,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
-    // Ensure session userId exists in DB
-    let dbUser = await prisma.user.findUnique({ where: { id: session.userId } });
-    let validUserId = dbUser ? session.userId : null;
+    // Ensure session userId or default Admin exists in DB
+    let validUserId = session?.userId || null;
+    if (validUserId) {
+      let dbUser = await prisma.user.findUnique({ where: { id: validUserId } });
+      if (!dbUser) validUserId = null;
+    }
+    
     if (!validUserId) {
       const defaultAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
       if (defaultAdmin) validUserId = defaultAdmin.id;

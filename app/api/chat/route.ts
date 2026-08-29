@@ -9,9 +9,6 @@ import { extractDocumentText } from '@/lib/rag/extractor';
 export async function POST(request: Request) {
   try {
     const session = await getSession();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const { message, conversationId, isTemporary, attachment, language } = await request.json();
     if (!message && !attachment) {
@@ -45,9 +42,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // 1. Get or create conversation (only if NOT temporary mode)
+    // 1. Get or create conversation (if logged in and NOT temporary mode)
     let targetConversationId: string | null = null;
-    if (!isTemporary) {
+    if (session && !isTemporary) {
       let dbUser = await prisma.user.findUnique({ where: { id: session.userId } });
       let validUserId = dbUser ? session.userId : null;
       
@@ -126,7 +123,7 @@ export async function POST(request: Request) {
               type: 'metadata',
               conversationId: targetConversationId,
               citations: citations,
-              isTemporary: !!isTemporary,
+              isTemporary: !session || !!isTemporary,
             })}\n\n`
           )
         );
@@ -151,7 +148,7 @@ export async function POST(request: Request) {
               );
             }
 
-            if (!isTemporary && targetConversationId) {
+            if (session && !isTemporary && targetConversationId) {
               prisma.message.create({
                 data: {
                   conversationId: targetConversationId,
@@ -198,7 +195,7 @@ export async function POST(request: Request) {
           )
         );
 
-        if (!isTemporary && targetConversationId) {
+        if (session && !isTemporary && targetConversationId) {
           prisma.message.create({
             data: {
               conversationId: targetConversationId,
