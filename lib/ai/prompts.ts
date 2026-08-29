@@ -27,7 +27,8 @@ Instructions:
 2. ${languageInstruction}
 3. Advise the student to contact the concerned department or college administration directly.
 4. Do NOT say "Hello I am AskCET" or add greeting intros. Jump directly to the answer.
-5. Do NOT invent, assume, or hallucinate facts or policies.`;
+5. Do NOT use double asterisks (**) around headings or text.
+6. Do NOT invent, assume, or hallucinate facts or policies.`;
   }
 
   const contextText = chunks
@@ -53,6 +54,6 @@ STRICT GROUNDING RULES:
 2. Rely ONLY on the information given in the retrieved documentation above.
 3. If the retrieved context does not contain enough information to answer the question accurately, explicitly state that complete information could not be found in official documents.
 4. Do NOT invent dates, fee amounts, room rules, attendance percentages, or policies that are not stated in the context.
-5. Structure your response clearly using clean markdown formatting (bullet points, bold text).
+5. Structure your response clearly using bullet points and clean text formatting. Do NOT use double asterisks (**) around headings or text.
 6. Do NOT append text lists of sources or references at the end of your response. The application UI handles displaying verified sources separately.`;
 }

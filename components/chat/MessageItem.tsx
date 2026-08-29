@@ -35,14 +35,16 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
     };
   }, []);
 
+  const cleanContent = content ? content.replace(/\*\*/g, '') : '';
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(content);
+    navigator.clipboard.writeText(cleanContent);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleShare = async () => {
-    const shareText = `🎓 *AskCET Verified Answer*:\n\n${content.slice(0, 300)}...\n\n🔗 Verified via AskCET College Intelligence Assistant`;
+    const shareText = `🎓 *AskCET Verified Answer*:\n\n${cleanContent.slice(0, 300)}...\n\n🔗 Verified via AskCET College Intelligence Assistant`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -71,7 +73,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
       setIsSpeaking(false);
     } else {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(content.replace(/[*#]/g, ''));
+      const utterance = new SpeechSynthesisUtterance(cleanContent.replace(/[*#]/g, ''));
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
       window.speechSynthesis.speak(utterance);
@@ -132,7 +134,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
               : 'bg-white dark:bg-slate-900/90 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200 dark:border-slate-800 shadow-md dark:shadow-xl'
           }`}
         >
-          <div className="whitespace-pre-wrap">{content}</div>
+          <div className="whitespace-pre-wrap">{cleanContent}</div>
         </div>
 
         {/* Citations Box for Assistant */}
