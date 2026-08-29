@@ -120,7 +120,7 @@ export default function ChatPage() {
     setScrollTop(0);
   }, [isTemporaryChat, activeConversationId]);
 
-  // Direct rAF GPU animation loop for focused, zero-lag pointer tracking
+  // Direct rAF GPU animation loop for ultra-feathered, zero-lag pointer tracking
   useEffect(() => {
     const updateTorchPosition = () => {
       const target = targetPosRef.current;
@@ -131,7 +131,7 @@ export default function ChatPage() {
       currentPosRef.current = { x: nextX, y: nextY };
 
       if (torchBgRef.current) {
-        const maskStr = `radial-gradient(circle 150px at ${nextX.toFixed(1)}px ${nextY.toFixed(1)}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0) 100%)`;
+        const maskStr = `radial-gradient(circle 150px at ${nextX.toFixed(1)}px ${nextY.toFixed(1)}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 25%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 100%)`;
         torchBgRef.current.style.maskImage = maskStr;
         torchBgRef.current.style.webkitMaskImage = maskStr;
       }
@@ -394,21 +394,21 @@ export default function ChatPage() {
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'sepia(100%) hue-rotate(165deg) saturate(240%) brightness(0.9)',
-              WebkitMaskImage: `radial-gradient(circle 150px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0) 100%)`,
-              maskImage: `radial-gradient(circle 150px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0) 100%)`,
+              WebkitMaskImage: `radial-gradient(circle 150px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 25%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 100%)`,
+              maskImage: `radial-gradient(circle 150px at 500px 300px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.65) 25%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0) 100%)`,
             }}
           />
 
-          {/* Soft Cyan/Indigo GPU-Accelerated Torch Light Beam Spotlight */}
+          {/* Soft Cyan/Indigo Ultra-Feathered GPU-Accelerated Torch Light Beam */}
           <div
             ref={torchBeamRef}
-            className="absolute top-0 left-0 pointer-events-none rounded-full blur-2xl z-0"
+            className="absolute top-0 left-0 pointer-events-none rounded-full blur-3xl z-0"
             style={{
-              opacity: 0.45,
+              opacity: 0.38,
               width: '170px',
               height: '170px',
               transform: 'translate3d(415px, 215px, 0)',
-              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.65) 0%, rgba(99, 102, 241, 0.35) 45%, transparent 100%)',
+              background: 'radial-gradient(circle, rgba(6, 182, 212, 0.65) 0%, rgba(99, 102, 241, 0.25) 50%, transparent 100%)',
               willChange: 'transform',
             }}
           />
