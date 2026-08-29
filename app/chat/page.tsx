@@ -427,21 +427,6 @@ export default function ChatPage() {
             </div>
           </div>
 
-          {/* Floating Incognito Mode Status Glass Pill Overlay (Pure Absolute - Never Shifts Hero Layout) */}
-          <AnimatePresence>
-            {isTemporaryChat && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.96 }}
-                className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-indigo-500/20 border border-amber-500/40 text-amber-700 dark:text-amber-300 text-xs font-extrabold flex items-center justify-center gap-2 shadow-2xl backdrop-blur-2xl max-w-fit pointer-events-none"
-              >
-                <Flame className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
-                <span>Incognito Mode Active • Messages will not be saved</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Chat Messages Stream & Hero Screen */}
           <div
             ref={chatScrollContainerRef}
