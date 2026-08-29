@@ -515,7 +515,7 @@ export default function ChatPage() {
           >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Positioned lower for comfortable floating above input capsule */}
+                {/* HERO SCREEN - Siri AI Assistant Orb Display */}
                 <div
                   style={{
                     opacity: heroOpacity,
@@ -523,53 +523,85 @@ export default function ChatPage() {
                     transform: `scale(${heroScale})`,
                     transition: 'opacity 0.1s linear, filter 0.1s linear, transform 0.1s linear',
                   }}
-                  className="min-h-[calc(100vh-260px)] pb-4 w-full flex flex-col items-center justify-center text-center space-y-5 pointer-events-auto"
+                  className="min-h-[calc(100vh-260px)] pb-4 w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
                 >
-                  {/* Hero 3D Ultra-Feathered Sphere Logo */}
-                  <div className="relative group cursor-pointer">
-                    {/* Ambient Neon Backlight Sphere Glow */}
-                    <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-
-                    {/* Feathered 3D Sphere Wrapper */}
-                    <div
-                      className="relative w-36 h-36 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_35px_rgba(6,182,212,0.6)]"
+                  {/* Hero Siri-Style AI Assistant Orb Logo */}
+                  <div className="relative group cursor-pointer flex items-center justify-center">
+                    {/* Outer Siri Radiant Fluid Neon Glow Ring (Layer 1 - Rotating Conic Gradient) */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
+                      className="absolute -inset-6 rounded-full blur-2xl opacity-70 group-hover:opacity-100 transition-opacity duration-500"
                       style={{
-                        maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
-                        WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.95) 45%, rgba(0, 0, 0, 0.5) 78%, rgba(0, 0, 0, 0) 100%)',
+                        background: 'conic-gradient(from 0deg, #06b6d4, #3b82f6, #818cf8, #c084fc, #ec4899, #06b6d4)',
                       }}
+                    />
+
+                    {/* Pulsing Siri Wave Aura Ring (Layer 2 - Counter Rotating) */}
+                    <motion.div
+                      animate={{ rotate: -360, scale: [0.98, 1.06, 0.98] }}
+                      transition={{
+                        rotate: { repeat: Infinity, duration: 12, ease: 'linear' },
+                        scale: { repeat: Infinity, duration: 3, ease: 'easeInOut' },
+                      }}
+                      className="absolute -inset-4 rounded-full blur-xl opacity-60 mix-blend-screen"
+                      style={{
+                        background: 'conic-gradient(from 180deg, #ec4899, #818cf8, #06b6d4, #10b981, #ec4899)',
+                      }}
+                    />
+
+                    {/* Inner Siri Floating Voice Orb Container */}
+                    <motion.div
+                      animate={{ y: [0, -4, 0] }}
+                      transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                      className="relative w-40 h-40 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_40px_rgba(6,182,212,0.8)]"
                     >
-                      {/* Base Logo Image */}
-                      <img
-                        src="/logo.jpg"
-                        alt="AskCET 3D Feathered Sphere Logo"
-                        className="absolute inset-0 w-full h-full object-cover rounded-full mix-blend-lighten"
-                      />
-
-                      {/* 3D Specular Curvature Gradient (creates volumetric 3D spherical depth) */}
+                      {/* Feathered Siri Spherical Wrapper */}
                       <div
-                        className="absolute inset-0 rounded-full pointer-events-none"
+                        className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center"
                         style={{
-                          background: 'radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 30%, rgba(0, 0, 0, 0.35) 65%, rgba(0, 0, 0, 0.9) 100%)',
-                          mixBlendMode: 'overlay',
+                          maskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0.3) 80%, rgba(0, 0, 0, 0) 100%)',
+                          WebkitMaskImage: 'radial-gradient(circle closest-side at 50% 50%, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.92) 55%, rgba(0, 0, 0, 0.3) 80%, rgba(0, 0, 0, 0) 100%)',
                         }}
-                      />
+                      >
+                        {/* Siri Liquid Orb Background Layer */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900 via-indigo-950 to-purple-900 animate-pulse" />
 
-                      {/* Soft Spherical Inner Shadow Vignette */}
+                        {/* Base Logo Image */}
+                        <img
+                          src="/logo.jpg"
+                          alt="AskCET Siri AI Assistant Orb"
+                          className="absolute inset-0 w-full h-full object-cover rounded-full mix-blend-lighten scale-105"
+                        />
+
+                        {/* Siri Iridescent Volumetric Glass Reflections */}
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ repeat: Infinity, duration: 6, ease: 'linear' }}
+                          className="absolute inset-0 rounded-full opacity-60 pointer-events-none"
+                          style={{
+                            background: 'radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.75) 0%, rgba(56, 189, 248, 0.3) 30%, transparent 70%)',
+                            mixBlendMode: 'overlay',
+                          }}
+                        />
+
+                        {/* Soft Spherical Shadow Vignette */}
+                        <div
+                          className="absolute inset-0 rounded-full pointer-events-none"
+                          style={{
+                            background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0) 35%, rgba(6, 12, 24, 0.7) 80%, rgba(6, 12, 24, 0.95) 100%)',
+                          }}
+                        />
+                      </div>
+
+                      {/* Sparkle Icon Overlay */}
                       <div
-                        className="absolute inset-0 rounded-full pointer-events-none"
-                        style={{
-                          background: 'radial-gradient(circle at center, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.7) 85%, rgba(0, 0, 0, 0.95) 100%)',
-                        }}
-                      />
-                    </div>
-
-                    {/* Pure Diamond Icon Symbol without background, rotating in sync with scroll */}
-                    <div
-                      style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
-                      className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_14px_rgba(6,182,212,0.9)] transition-transform duration-75 z-20"
-                    >
-                      <Sparkles className="w-7 h-7 text-cyan-400" />
-                    </div>
+                        style={{ transform: `rotate(${scrollTop * 1.5}deg)` }}
+                        className="absolute -bottom-1 -right-1 text-cyan-300 drop-shadow-[0_0_16px_rgba(6,182,212,1)] transition-transform duration-75 z-20"
+                      >
+                        <Sparkles className="w-7 h-7 text-cyan-300 animate-pulse" />
+                      </div>
+                    </motion.div>
                   </div>
 
                   <div className="space-y-2.5 max-w-xl">
