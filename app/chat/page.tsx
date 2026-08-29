@@ -6,6 +6,7 @@ import ChatSidebar, { ConversationItem } from '@/components/chat/ChatSidebar';
 import MessageItem, { Citation } from '@/components/chat/MessageItem';
 import ChatBox from '@/components/chat/ChatBox';
 import NoticeDrawer from '@/components/chat/NoticeDrawer';
+import ScrollFloat from '@/components/animations/ScrollFloat';
 import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -82,6 +83,7 @@ export default function ChatPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isTemporaryChat, setIsTemporaryChat] = useState(false);
   const [isNoticeDrawerOpen, setIsNoticeDrawerOpen] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -99,6 +101,12 @@ export default function ChatPage() {
       chatScrollContainerRef.current.scrollTop = 0;
     }
   }, []);
+
+  const handleScroll = () => {
+    if (chatScrollContainerRef.current) {
+      setScrollTop(chatScrollContainerRef.current.scrollTop);
+    }
+  };
 
   const fetchConversations = async () => {
     try {
@@ -275,6 +283,11 @@ export default function ChatPage() {
     }
   };
 
+  // Scroll Blur/Fade Calculations for Hero View
+  const heroOpacity = Math.max(0, 1 - scrollTop / 200);
+  const heroBlur = Math.min(16, scrollTop / 12);
+  const heroScale = Math.max(0.9, 1 - scrollTop / 1200);
+
   return (
     <div className="h-screen flex flex-col bg-slate-50/80 dark:bg-[#060810] overflow-hidden transition-colors duration-500">
       <Navbar />
@@ -406,17 +419,25 @@ export default function ChatPage() {
           </AnimatePresence>
 
           {/* Chat Messages Stream & Hero Screen */}
-          <div ref={chatScrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12">
+          <div
+            ref={chatScrollContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-12 scroll-smooth"
+          >
             {messages.length === 0 ? (
               <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
-                {/* HERO SCREEN - Exactly 100% of Initial Viewport Height */}
-                <div className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6">
+                {/* HERO SCREEN - Blurs and Fades Out on Scroll */}
+                <div
+                  style={{
+                    opacity: heroOpacity,
+                    filter: `blur(${heroBlur}px)`,
+                    transform: `scale(${heroScale})`,
+                    transition: 'opacity 0.1s linear, filter 0.1s linear, transform 0.1s linear',
+                  }}
+                  className="min-h-[calc(100vh-210px)] w-full flex flex-col items-center justify-center text-center space-y-6 pointer-events-auto"
+                >
                   {/* Hero iOS Squircle Logo */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="relative group cursor-pointer"
-                  >
+                  <div className="relative group cursor-pointer">
                     <div className="absolute inset-0 rounded-[32px] bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 blur-xl opacity-40 group-hover:opacity-70 transition-opacity duration-500" />
                     <img
                       src="/logo.jpg"
@@ -426,29 +447,24 @@ export default function ChatPage() {
                     <div className="absolute -bottom-1 -right-1 p-1.5 rounded-2xl bg-cyan-500 text-white shadow-lg">
                       <Sparkles className="w-4 h-4 animate-spin" />
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
-                    className="space-y-3 max-w-xl"
-                  >
+                  <div className="space-y-3 max-w-xl">
                     <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                       Welcome to <span className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent">AskCET Intelligence</span>
                     </h1>
                     <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
                       Your source-grounded AI assistant for CET College of Engineering. Ask anything about academic regulations, exam timetables, hostel curfews, or fee schedules.
                     </p>
-                  </motion.div>
+                  </div>
 
                   {/* Subtle Light Opacity Scroll Text Hint */}
                   <motion.div
                     animate={{ y: [0, 6, 0] }}
                     transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                    className="pt-8 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    className="pt-6 flex flex-col items-center gap-1 text-xs font-extrabold text-slate-400 dark:text-slate-500 opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={() => {
-                      chatScrollContainerRef.current?.scrollTo({ top: 400, behavior: 'smooth' });
+                      chatScrollContainerRef.current?.scrollTo({ top: 380, behavior: 'smooth' });
                     }}
                   >
                     <span>Scroll for FAQs</span>
@@ -456,8 +472,8 @@ export default function ChatPage() {
                   </motion.div>
                 </div>
 
-                {/* 6 Campus FAQ Tiles - Positioned Below the Fold (Reveals ONLY when scrolled) */}
-                <div className="w-full pt-12 pb-16">
+                {/* 6 Campus FAQ Tiles - Scroll Float Character Animation */}
+                <div className="w-full pt-8 pb-16">
                   <div className="text-center mb-8">
                     <span className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Explore Popular Campus Topics & FAQs
@@ -470,11 +486,11 @@ export default function ChatPage() {
                       return (
                         <motion.button
                           key={i}
-                          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                          initial={{ opacity: 0, y: 50, scale: 0.92 }}
                           whileInView={{ opacity: 1, y: 0, scale: 1 }}
                           viewport={{ once: true, amount: 0.1 }}
                           transition={{
-                            duration: 0.45,
+                            duration: 0.5,
                             ease: [0.22, 1, 0.36, 1],
                             delay: i * 0.08,
                           }}
@@ -490,9 +506,17 @@ export default function ChatPage() {
                               <Icon className="w-6 h-6" />
                             </div>
 
-                            <h3 className="font-extrabold text-base text-slate-900 dark:text-white mb-1.5 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                            {/* React Bits ScrollFloat Animated Character Title */}
+                            <ScrollFloat
+                              scrollContainerRef={chatScrollContainerRef}
+                              animationDuration={0.8}
+                              ease="back.inOut(2)"
+                              stagger={0.02}
+                              containerClassName="mb-1.5"
+                              textClassName="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors"
+                            >
                               {card.title}
-                            </h3>
+                            </ScrollFloat>
 
                             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4 font-medium">{card.desc}</p>
                           </div>
