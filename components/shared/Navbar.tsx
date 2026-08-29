@@ -30,6 +30,12 @@ export default function Navbar() {
     router.refresh();
   };
 
+  const handleNavClick = (href: string) => {
+    if (pathname !== href) {
+      router.push(href);
+    }
+  };
+
   const navLinks = [
     { href: '/chat', label: 'AI Assistant', icon: MessageSquare },
     { href: '/faq', label: 'Campus FAQs', icon: HelpCircle },
@@ -39,8 +45,8 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white/75 dark:bg-[#060810]/80 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo with Glowing Squircle Frame */}
-          <Link href="/chat" className="flex items-center gap-3 group">
+          {/* Brand Logo */}
+          <Link href="/chat" onClick={() => handleNavClick('/chat')} className="flex items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 rounded-2xl bg-cyan-500/20 blur-md group-hover:bg-cyan-500/40 transition-all duration-300" />
               <img
@@ -66,10 +72,11 @@ export default function Navbar() {
               const Icon = link.icon;
               const isActive = pathname === link.href;
               return (
-                <Link
+                <button
                   key={link.href}
-                  href={link.href}
-                  className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+                  type="button"
+                  onClick={() => handleNavClick(link.href)}
+                  className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                     isActive
                       ? 'bg-white dark:bg-slate-800 text-cyan-700 dark:text-cyan-300 font-extrabold shadow-sm border border-slate-200/80 dark:border-slate-700/80'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
@@ -77,14 +84,15 @@ export default function Navbar() {
                 >
                   <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-500' : 'text-slate-400'}`} />
                   <span>{link.label}</span>
-                </Link>
+                </button>
               );
             })}
 
             {user?.role === 'ADMIN' && (
-              <Link
-                href="/admin"
-                className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 ${
+              <button
+                type="button"
+                onClick={() => handleNavClick('/admin')}
+                className={`px-4 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer ${
                   pathname === '/admin'
                     ? 'bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-300 font-extrabold shadow-sm border border-amber-200/80 dark:border-amber-700/80'
                     : 'text-amber-600 dark:text-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-500/10'
@@ -92,7 +100,7 @@ export default function Navbar() {
               >
                 <Shield className="w-4 h-4 text-amber-500" />
                 <span>Admin Portal</span>
-              </Link>
+              </button>
             )}
           </nav>
 
@@ -126,12 +134,13 @@ export default function Navbar() {
                 </motion.button>
               </div>
             ) : (
-              <Link
-                href="/login"
+              <button
+                type="button"
+                onClick={() => handleNavClick('/login')}
                 className="px-4 py-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-cyan-500/25 transition-all duration-300"
               >
                 Sign In
-              </Link>
+              </button>
             )}
           </div>
         </div>
