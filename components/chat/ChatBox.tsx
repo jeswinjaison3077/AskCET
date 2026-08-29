@@ -4,6 +4,7 @@ import { useState, useEffect, KeyboardEvent } from 'react';
 import { Send, Sparkles, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SpecularButton from '@/components/animations/SpecularButton';
+import BorderGlow from '@/components/animations/BorderGlow';
 
 interface ChatBoxProps {
   onSendMessage: (message: string, language?: string) => void;
@@ -216,53 +217,65 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         ))}
       </div>
 
-      {/* Main Input Box with Voice Mic & Specular Send Button */}
-      <div className="relative bg-white dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl p-2.5 focus-within:ring-2 focus-within:ring-cyan-500/40 border border-slate-200 dark:border-slate-800 flex items-end gap-2 shadow-2xl transition-colors duration-300">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={
-            isListening
-              ? '🎙️ Listening... Speak your question now...'
-              : `Ask AskCET in ${selectedLanguage} (academic rules, exam dates, hostel policies)...`
-          }
-          disabled={isLoading}
-          rows={2}
-          className="w-full bg-transparent resize-none px-3 py-1 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none max-h-32"
-        />
+      {/* Main Input Box Wrapped in React Bits BorderGlow Edge Proximity Glow */}
+      <BorderGlow
+        edgeSensitivity={30}
+        glowColor="190 90 60"
+        backgroundColor="rgba(15, 23, 42, 0.85)"
+        borderRadius={22}
+        glowRadius={30}
+        glowIntensity={1.2}
+        coneSpread={25}
+        animated={false}
+        colors={['#38bdf8', '#818cf8', '#c084fc']}
+      >
+        <div className="relative p-2.5 flex items-end gap-2 w-full">
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              isListening
+                ? '🎙️ Listening... Speak your question now...'
+                : `Ask AskCET in ${selectedLanguage} (academic rules, exam dates, hostel policies)...`
+            }
+            disabled={isLoading}
+            rows={2}
+            className="w-full bg-transparent resize-none px-3 py-1 text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none max-h-32"
+          />
 
-        {/* Speech-to-Text Voice Mic Specular Button */}
-        <SpecularButton
-          radius={12}
-          lineColor={isListening ? '#f43f5e' : '#38bdf8'}
-          baseColor={isListening ? '#be123c' : '#1e293b'}
-          intensity={isListening ? 1.5 : 0.6}
-          onClick={toggleListening}
-          disabled={isLoading}
-          className={`p-2.5 transition-all shrink-0 border ${
-            isListening
-              ? 'bg-rose-500 text-white animate-pulse border-rose-400 shadow-md shadow-rose-500/30'
-              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border-slate-200 dark:border-slate-700/60'
-          }`}
-          title={isListening ? 'Stop recording voice' : 'Speak question using Voice Mic'}
-        >
-          {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-        </SpecularButton>
+          {/* Speech-to-Text Voice Mic Specular Button */}
+          <SpecularButton
+            radius={12}
+            lineColor={isListening ? '#f43f5e' : '#38bdf8'}
+            baseColor={isListening ? '#be123c' : '#1e293b'}
+            intensity={isListening ? 1.5 : 0.6}
+            onClick={toggleListening}
+            disabled={isLoading}
+            className={`p-2.5 transition-all shrink-0 border ${
+              isListening
+                ? 'bg-rose-500 text-white animate-pulse border-rose-400 shadow-md shadow-rose-500/30'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 border-slate-200 dark:border-slate-700/60'
+            }`}
+            title={isListening ? 'Stop recording voice' : 'Speak question using Voice Mic'}
+          >
+            {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </SpecularButton>
 
-        {/* Send Specular Button */}
-        <SpecularButton
-          radius={12}
-          lineColor="#38bdf8"
-          baseColor="#0284c7"
-          intensity={1.2}
-          onClick={handleSubmit}
-          disabled={!input.trim() || isLoading}
-          className="shrink-0 w-11 h-11 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-500/20"
-        >
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4" />}
-        </SpecularButton>
-      </div>
+          {/* Send Specular Button */}
+          <SpecularButton
+            radius={12}
+            lineColor="#38bdf8"
+            baseColor="#0284c7"
+            intensity={1.2}
+            onClick={handleSubmit}
+            disabled={!input.trim() || isLoading}
+            className="shrink-0 w-11 h-11 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-500/20"
+          >
+            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-4 h-4" />}
+          </SpecularButton>
+        </div>
+      </BorderGlow>
     </div>
   );
 }
