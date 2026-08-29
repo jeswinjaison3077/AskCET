@@ -686,8 +686,8 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Bottom Floating iOS Input Box */}
-          <div className="p-4 sm:p-5 bg-[#080c16]/80 backdrop-blur-2xl border-t border-slate-800/70 shadow-2xl z-20">
+          {/* Floating Clean Input Area */}
+          <div className="p-4 sm:p-5 z-20 bg-transparent">
             <ChatBox onSendMessage={handleSendMessage} isLoading={isLoading} />
           </div>
         </main>
