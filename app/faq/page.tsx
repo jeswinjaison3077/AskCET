@@ -205,23 +205,6 @@ export default function FAQPage() {
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number>(0);
 
-  // Dynamic Scroll Observer: Automatically update active category index as user scrolls!
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 200;
-      for (let i = FAQ_CATEGORIES.length - 1; i >= 0; i--) {
-        const element = document.getElementById(`faq-cat-${i}`);
-        if (element && element.offsetTop <= scrollPosition) {
-          setActiveCategoryIndex(i);
-          break;
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const toggleItem = (key: string) => {
     setOpenItems((prev) => ({ ...prev, [key]: !prev[key] }));
   };
@@ -230,9 +213,29 @@ export default function FAQPage() {
     setActiveCategoryIndex(index);
     const element = document.getElementById(`faq-cat-${index}`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const offsetTop = element.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 180;
+      FAQ_CATEGORIES.forEach((_, idx) => {
+        const el = document.getElementById(`faq-cat-${idx}`);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveCategoryIndex(idx);
+          }
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const sidebarCategoryTitles = FAQ_CATEGORIES.map((c) => c.category);
 
@@ -244,11 +247,11 @@ export default function FAQPage() {
 
       <Navbar />
 
-      {/* Sticky Top Category Navigation Bar (Syncs smoothly with current scroll section) */}
-      <div className="sticky top-16 z-30 bg-white/80 dark:bg-[#080c16]/85 backdrop-blur-2xl border-b border-slate-200/80 dark:border-slate-800/80 py-2.5 px-4 shadow-sm transition-all">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs font-bold">
-          <span className="text-slate-400 dark:text-slate-500 shrink-0 uppercase tracking-widest text-[10px] font-black mr-1 hidden sm:inline">
-            Active Topic:
+      {/* Sticky Top Interactive Section Tile Bar */}
+      <div className="sticky top-16 z-30 bg-white/80 dark:bg-[#080c16]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 py-2.5 px-4 sm:px-8 shadow-md">
+        <div className="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto no-scrollbar text-xs">
+          <span className="text-slate-400 dark:text-slate-500 text-[11px] font-black uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> Active Section:
           </span>
           {FAQ_CATEGORIES.map((cat, i) => {
             const Icon = cat.icon;
@@ -263,8 +266,8 @@ export default function FAQPage() {
                 onClick={() => handleSidebarItemClick(i)}
                 className={`shrink-0 px-3.5 py-1.5 font-bold transition-all flex items-center gap-2 text-xs rounded-full ${
                   isSelected
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
-                    : 'bg-slate-100/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'
+                    ? 'bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40 scale-105'
+                    : 'bg-slate-100/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800/80'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -330,7 +333,7 @@ export default function FAQPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: catIdx * 0.08 }}
-                  className="space-y-3 scroll-mt-36"
+                  className="space-y-3 scroll-mt-28"
                 >
                   <div className="flex items-center gap-2.5 font-black text-lg text-slate-900 dark:text-white px-1">
                     <div className={`w-9 h-9 rounded-2xl bg-gradient-to-tr ${cat.color} text-white flex items-center justify-center shadow-lg shadow-cyan-500/20`}>
