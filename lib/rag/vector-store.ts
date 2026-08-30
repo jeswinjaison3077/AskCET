@@ -15,7 +15,7 @@ export interface SearchResultChunk {
  * Calculates Cosine Similarity between two numerical vector arrays
  */
 function cosineSimilarity(vecA: number[], vecB: number[]): number {
-  if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+  if (!vecA || !vecB || vecA.length === 0 || vecB.length === 0 || vecA.length !== vecB.length) return 0;
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
@@ -51,8 +51,16 @@ export async function storeChunkVector(
   return chunk.id;
 }
 
+const STOP_WORDS = new Set([
+  'what', 'is', 'the', 'for', 'in', 'of', 'to', 'a', 'an', 'on', 'by', 'with',
+  'your', 'was', 'searched', 'against', 'our', 'college', 'database', 'where',
+  'how', 'when', 'which', 'who', 'does', 'can', 'should', 'would', 'could',
+  'are', 'were', 'been', 'being', 'have', 'has', 'had', 'do', 'did', 'doing',
+  'and', 'or', 'but', 'if', 'because', 'as', 'until', 'while', 'about'
+]);
+
 /**
- * Executes Hybrid Retrieval (Vector Cosine Similarity + Keyword Re-ranking)
+ * Executes Hybrid Retrieval (Vector Cosine Similarity + Keyword Re-ranking with Stop-Word Filtering)
  */
 export async function searchSimilarChunks(
   queryEmbedding: number[],
@@ -72,7 +80,11 @@ export async function searchSimilarChunks(
       },
     });
 
-    const keywords = queryText.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const keywords = queryText
+      .toLowerCase()
+      .split(/\s+/)
+      .map(w => w.replace(/[^a-z0-9]/g, ''))
+      .filter(w => w.length > 2 && !STOP_WORDS.has(w));
 
     const scored = chunks.map((chunk) => {
       let vec: number[] = [];
@@ -95,8 +107,8 @@ export async function searchSimilarChunks(
             keywordHits += 1;
           }
         }
-        const keywordScore = Math.min(keywordHits / keywords.length, 1.0) * 0.4;
-        similarity = (similarity * 0.6) + keywordScore;
+        const keywordScore = (keywordHits / keywords.length) * 0.5;
+        similarity = (similarity * 0.5) + keywordScore;
       }
 
       return {
@@ -112,11 +124,6 @@ export async function searchSimilarChunks(
     });
 
     const sorted = scored.sort((a, b) => b.similarity - a.similarity);
-    const filtered = sorted.filter((s) => s.similarity >= similarityThreshold);
-    if (filtered.length > 0) {
-      return filtered.slice(0, topK);
-    }
-
     return sorted.slice(0, topK);
   } catch (error) {
     console.error('Vector similarity query failed:', error);
