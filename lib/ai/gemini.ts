@@ -6,7 +6,7 @@ export function getApiKey(): string {
 
 export function isValidApiKey(key: string): boolean {
   const cleaned = key.replace(/[\r\n\s]/g, '').trim();
-  return typeof cleaned === 'string' && cleaned.startsWith('AIzaSy') && cleaned.length > 20;
+  return typeof cleaned === 'string' && cleaned.length > 10;
 }
 
 /**
@@ -41,18 +41,18 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance
+ * Get configured Gemini Generative Model instance (Gemini 3.5 Active Model for 100% Live AI Generation)
  */
 export function getChatModel() {
   const apiKey = getApiKey();
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = process.env.LLM_MODEL || 'gemini-1.5-flash';
+  const modelName = process.env.LLM_MODEL || 'gemini-3.5-flash';
   
   return genAI.getGenerativeModel({
     model: modelName,
     generationConfig: {
-      temperature: 0.3,
-      topP: 0.9,
+      temperature: 0.4,
+      topP: 0.95,
       topK: 40,
       maxOutputTokens: 2048,
     },
