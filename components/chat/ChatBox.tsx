@@ -77,7 +77,8 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
     } else {
       try {
         const rec = new SpeechRecognition();
-        rec.continuous = true;
+        // Use continuous = false for better cross-browser reliability (auto-stops when user pauses)
+        rec.continuous = false;
         rec.interimResults = true;
         rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
@@ -96,7 +97,10 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         };
 
         rec.onerror = (err: any) => {
-          console.warn('Speech recognition error:', err);
+          console.warn('Speech recognition error:', err.error, err.message);
+          if (err.error === 'not-allowed' || err.error === 'permission-denied') {
+            alert('Microphone access was denied. Please allow microphone permissions in your browser settings (click the lock icon next to the URL).');
+          }
           setIsListening(false);
         };
 
@@ -106,7 +110,6 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
 
         recognitionRef.current = rec;
         rec.start();
-        setIsListening(true);
       } catch (err) {
         console.warn('Mic start exception:', err);
         setIsListening(false);
