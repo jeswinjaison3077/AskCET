@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/db/prisma';
-import { generateEmbedding, getChatModel, isValidApiKey, getApiKey } from '@/lib/ai/gemini';
+import { generateEmbedding, isValidApiKey, getApiKey } from '@/lib/ai/gemini';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { searchSimilarChunks } from '@/lib/rag/vector-store';
 import { buildRAGSystemPrompt } from '@/lib/ai/prompts';
 import { extractDocumentText } from '@/lib/rag/extractor';
@@ -132,38 +133,50 @@ export async function POST(request: Request) {
         const hasLiveApiKey = isValidApiKey(apiKey);
 
         if (hasLiveApiKey) {
-          try {
-            const model = getChatModel();
-            const promptContents: any = imagePart ? [systemPrompt, imagePart] : systemPrompt;
-            const result = await model.generateContentStream(promptContents);
-            let accumulatedText = '';
+          const candidateModels = [
+            process.env.LLM_MODEL || 'gemini-1.5-flash',
+            'gemini-2.5-flash',
+            'gemini-2.0-flash-exp',
+            'gemini-1.5-pro',
+          ];
 
-            for await (const chunk of resultStreamOrResult(result)) {
-              const chunkText = chunk.text();
-              accumulatedText += chunkText;
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({ type: 'content', delta: chunkText })}\n\n`
-                )
-              );
+          for (const modelName of candidateModels) {
+            try {
+              const genAI = new GoogleGenerativeAI(apiKey);
+              const model = genAI.getGenerativeModel({ model: modelName });
+              const promptContents: any = imagePart ? [systemPrompt, imagePart] : systemPrompt;
+              const result = await model.generateContentStream(promptContents);
+              let accumulatedText = '';
+
+              for await (const chunk of resultStreamOrResult(result)) {
+                const chunkText = chunk.text();
+                accumulatedText += chunkText;
+                controller.enqueue(
+                  encoder.encode(
+                    `data: ${JSON.stringify({ type: 'content', delta: chunkText })}\n\n`
+                  )
+                );
+              }
+
+              if (accumulatedText.length > 0) {
+                if (session && !isTemporary && targetConversationId) {
+                  prisma.message.create({
+                    data: {
+                      conversationId: targetConversationId,
+                      role: 'assistant',
+                      content: accumulatedText,
+                      sources: JSON.stringify(citations),
+                    },
+                  }).catch(() => {});
+                }
+
+                controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+                controller.close();
+                return;
+              }
+            } catch (modelErr) {
+              console.warn(`Model ${modelName} call exception, trying next candidate model...`, modelErr);
             }
-
-            if (session && !isTemporary && targetConversationId) {
-              prisma.message.create({
-                data: {
-                  conversationId: targetConversationId,
-                  role: 'assistant',
-                  content: accumulatedText,
-                  sources: JSON.stringify(citations),
-                },
-              }).catch(() => {});
-            }
-
-            controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-            controller.close();
-            return;
-          } catch (liveErr) {
-            console.warn('Live API call exception, switching to RAG synthesis:', liveErr);
           }
         }
 
@@ -183,7 +196,7 @@ export async function POST(request: Request) {
         } else if (qLower.includes('sgpa') || qLower.includes('cgpa') || qLower.includes('percentage') || qLower.includes('formula')) {
           synthesizedAnswer = `**KTU Official SGPA/CGPA to Percentage Formula**:\n\n` +
             `$$\\text{Percentage} = (\\text{CGPA} - 0.5) \\times 10$$\n\n` +
-            `**Formula**: Percentage = (CGPA - 0.5) × 10\n\n` +
+            `Percentage = (CGPA - 0.5) × 10\n\n` +
             `**Example Calculation**:\n` +
             `If your CGPA is **8.5**:\n` +
             `Percentage = (8.5 - 0.5) × 10 = 8.0 × 10 = 80%`;
