@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, KeyboardEvent } from 'react';
-import { Send, Sparkles, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe, ChevronDown } from 'lucide-react';
+import { useState, useRef, KeyboardEvent } from 'react';
+import { Send, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatBoxProps {
@@ -45,17 +45,17 @@ const CATEGORIZED_PROMPTS = [
 ];
 
 const LANGUAGES = [
-  { code: 'English', short: 'EN', label: '🇬🇧 English' },
-  { code: 'Malayalam', short: 'ML', label: '🇮🇳 മലയാളം' },
-  { code: 'Hindi', short: 'HI', label: '🇮🇳 हिंदी' },
+  { code: 'English', label: '🇬🇧 English' },
+  { code: 'Malayalam', label: '🇮🇳 മലയാളം' },
+  { code: 'Hindi', label: '🇮🇳 हिंदी' },
 ];
 
 export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const [input, setInput] = useState('');
   const [activeCategory, setActiveCategory] = useState(0);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   const toggleListening = () => {
     if (typeof window === 'undefined') return;
@@ -67,11 +67,16 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
     }
 
     if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
       setIsListening(false);
     } else {
       try {
         const rec = new SpeechRecognition();
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
         rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
@@ -80,11 +85,12 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         };
 
         rec.onresult = (e: any) => {
-          const transcript = Array.from(e.results)
-            .map((res: any) => res[0].transcript)
-            .join('');
-          if (transcript) {
-            setInput(transcript);
+          let liveTranscript = '';
+          for (let i = 0; i < e.results.length; i++) {
+            liveTranscript += e.results[i][0].transcript;
+          }
+          if (liveTranscript) {
+            setInput(liveTranscript);
           }
         };
 
@@ -97,7 +103,9 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           setIsListening(false);
         };
 
+        recognitionRef.current = rec;
         rec.start();
+        setIsListening(true);
       } catch (err) {
         console.warn('Mic start exception:', err);
         setIsListening(false);
@@ -107,6 +115,12 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
 
   const handleSubmit = () => {
     if (!input.trim() || isLoading) return;
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+      setIsListening(false);
+    }
     onSendMessage(input.trim(), selectedLanguage);
     setInput('');
   };
@@ -122,8 +136,6 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
     onSendMessage(promptText, selectedLanguage);
     setInput('');
   };
-
-  const activeLangObj = LANGUAGES.find((l) => l.code === selectedLanguage) || LANGUAGES[0];
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-3 relative z-30">
@@ -184,49 +196,26 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         />
 
         {/* Input Bar Controls Header */}
-        <div className="flex items-center justify-between pt-2 border-t border-cyan-500/20 relative">
-          {/* Left Side: Language Selector & Topic Category Pills */}
-          <div className="flex items-center gap-2">
-            {/* Language Selector Dropdown with z-50 overlay */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="px-3 py-1.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-              >
-                <Globe className="w-3.5 h-3.5 text-cyan-400" />
-                <span>{activeLangObj.label}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
-
-              <AnimatePresence>
-                {isLangDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.95 }}
-                    className="absolute left-0 bottom-full mb-2 w-40 bg-[#0f172a] border border-cyan-500/40 rounded-2xl shadow-2xl p-1.5 z-50 space-y-1 text-xs backdrop-blur-xl"
-                  >
-                    {LANGUAGES.map((lang) => (
-                      <button
-                        key={lang.code}
-                        type="button"
-                        onClick={() => {
-                          setSelectedLanguage(lang.code);
-                          setIsLangDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-xl font-bold transition-all flex items-center justify-between cursor-pointer ${
-                          selectedLanguage === lang.code
-                            ? 'bg-cyan-500/20 text-cyan-300'
-                            : 'text-slate-300 hover:bg-slate-800'
-                        }`}
-                      >
-                        <span>{lang.label}</span>
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-cyan-500/20">
+          {/* Left Side: Inline Language Selector Pills & Topic Category Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {/* Inline Language Selector Tabs */}
+            <div className="inline-flex items-center p-1 rounded-2xl bg-slate-900/90 border border-cyan-500/30 text-xs shrink-0">
+              <Globe className="w-3.5 h-3.5 text-cyan-400 ml-2 mr-1" />
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setSelectedLanguage(lang.code)}
+                  className={`px-2.5 py-1 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                    selectedLanguage === lang.code
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              ))}
             </div>
 
             {/* Topic Category Pills */}
@@ -239,7 +228,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                     key={i}
                     type="button"
                     onClick={() => setActiveCategory(i)}
-                    className={`shrink-0 px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 text-xs cursor-pointer ${
+                    className={`shrink-0 px-3 py-1.5 rounded-2xl font-bold transition-all flex items-center gap-1.5 text-xs cursor-pointer ${
                       isSelected
                         ? 'bg-gradient-to-r from-cyan-500/30 to-blue-600/30 text-cyan-300 border border-cyan-400/50 shadow-xs'
                         : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
