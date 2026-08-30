@@ -64,22 +64,26 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const rec = new SpeechRecognition();
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
         rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
         rec.onresult = (e: any) => {
-          const transcript = Array.from(e.results)
-            .map((res: any) => res[0].transcript)
-            .join('');
-          setInput(transcript);
+          let liveTranscript = '';
+          for (let i = e.resultIndex; i < e.results.length; i++) {
+            liveTranscript += e.results[i][0].transcript;
+          }
+          if (liveTranscript) {
+            setInput(liveTranscript);
+          }
         };
 
         rec.onend = () => {
           setIsListening(false);
         };
 
-        rec.onerror = () => {
+        rec.onerror = (err: any) => {
+          console.warn('Speech recognition error:', err);
           setIsListening(false);
         };
 
@@ -95,16 +99,31 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
     }
 
     if (isListening) {
-      recognition.stop();
+      try {
+        recognition.stop();
+      } catch {
+        // Ignore stop error
+      }
       setIsListening(false);
     } else {
-      recognition.start();
-      setIsListening(true);
+      try {
+        recognition.start();
+        setIsListening(true);
+      } catch (startErr) {
+        console.warn('Recognition start exception:', startErr);
+        setIsListening(false);
+      }
     }
   };
 
   const handleSubmit = () => {
     if (!input.trim() || isLoading) return;
+    if (isListening && recognition) {
+      try {
+        recognition.stop();
+      } catch {}
+      setIsListening(false);
+    }
     onSendMessage(input.trim(), selectedLanguage);
     setInput('');
   };
@@ -119,61 +138,78 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const activeLangObj = LANGUAGES.find((l) => l.code === selectedLanguage) || LANGUAGES[0];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-2.5">
-      {/* Quick Suggested Prompt Chips Floating above AI Capsule */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-        {CATEGORIZED_PROMPTS[activeCategory].prompts.map((prompt, idx) => (
-          <SpecularButton
-            key={idx}
-            radius={999}
-            lineColor="#38bdf8"
-            baseColor="#0f172a"
-            intensity={0.5}
-            onClick={() => onSendMessage(prompt, selectedLanguage)}
-            disabled={isLoading}
-            className="shrink-0 px-3.5 py-1 rounded-full bg-[#0d1526]/80 hover:bg-[#131d33] text-slate-300 hover:text-cyan-300 border border-slate-800/80 hover:border-cyan-500/40 shadow-xs transition-all text-[11px] font-semibold"
-          >
-            "{prompt}"
-          </SpecularButton>
-        ))}
-      </div>
+    <div className="w-full max-w-4xl mx-auto space-y-3">
+      {/* Category Quick Suggestion Chips */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeCategory}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          className="flex flex-wrap gap-2 px-1"
+        >
+          {CATEGORIZED_PROMPTS[activeCategory].prompts.map((promptText, idx) => (
+            <button
+              key={idx}
+              onClick={() => {
+                setInput(promptText);
+              }}
+              className="text-xs bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-1.5 rounded-2xl border border-cyan-500/20 hover:border-cyan-400/50 transition-all font-semibold shadow-xs"
+            >
+              💡 {promptText}
+            </button>
+          ))}
+        </motion.div>
+      </AnimatePresence>
 
-      {/* State-of-the-Art Modern AI Capsule Input Container */}
-      <div className="relative rounded-[28px] bg-[#0c1324]/85 backdrop-blur-2xl border border-cyan-500/30 shadow-[0_12px_45px_-10px_rgba(6,182,212,0.35)] focus-within:border-cyan-400/60 focus-within:shadow-[0_12px_50px_-8px_rgba(6,182,212,0.5)] transition-all duration-300 p-3.5 space-y-3">
-        {/* Main Textarea Input */}
+      {/* Voice Recording Live Indicator Bar */}
+      {isListening && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          className="p-2.5 rounded-2xl bg-rose-950/80 border border-rose-500/40 text-rose-300 text-xs font-black flex items-center justify-between shadow-lg shadow-rose-950/40"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+            <span>🎙️ Listening in {selectedLanguage}... Speak your question now!</span>
+          </div>
+          <button
+            type="button"
+            onClick={toggleListening}
+            className="text-[11px] bg-rose-500 text-white px-2.5 py-1 rounded-xl font-bold hover:bg-rose-400"
+          >
+            Done Recording
+          </button>
+        </motion.div>
+      )}
+
+      {/* Main Glassmorphic Input Container */}
+      <div className="relative bg-[#080d1a]/95 backdrop-blur-2xl rounded-[32px] border border-cyan-500/30 p-3 sm:p-4 shadow-2xl shadow-cyan-950/50 space-y-3">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={
-            isListening
-              ? '🎙️ Listening... Speak your question now...'
-              : `Ask AskCET in ${selectedLanguage} (academic regulations, exam dates, hostel rules)...`
-          }
-          disabled={isLoading}
+          placeholder={`Ask AskCET anything in ${selectedLanguage} (e.g. attendance rules, SGPA formula, hostel curfew)...`}
           rows={2}
-          className="w-full bg-transparent resize-none px-2 text-sm text-white placeholder-slate-400 focus:outline-none max-h-36 leading-relaxed font-medium"
+          className="w-full bg-transparent text-slate-100 placeholder-slate-500 text-sm focus:outline-none resize-none tracking-wide font-medium leading-relaxed"
         />
 
-        {/* Integrated Bottom Action Strip */}
-        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/70">
-          {/* Left Side: Topic Pills & Globe Language Selector */}
+        {/* Input Bar Controls Header */}
+        <div className="flex items-center justify-between pt-2 border-t border-cyan-500/20">
+          {/* Left Side: Language Selector & Topic Category Pills */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {/* Language Selector Dropdown Pill */}
-            <div className="relative shrink-0 z-30">
-              <SpecularButton
-                radius={999}
-                lineColor="#38bdf8"
-                baseColor="#0f172a"
-                intensity={0.6}
+            {/* Language Selector Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-700/80 text-slate-200 hover:text-cyan-300 transition-all text-xs font-black shadow-xs"
-                title="Switch AI Language (English, Malayalam, Hindi)"
+                className="px-3 py-1.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
               >
-                <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span className="text-[11px] font-black">{activeLangObj.short}</span>
-                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isLangDropdownOpen ? 'rotate-180 text-cyan-400' : ''}`} />
-              </SpecularButton>
+                <Globe className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{activeLangObj.label}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400" />
+              </button>
 
               <AnimatePresence>
                 {isLangDropdownOpen && (
@@ -249,10 +285,10 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               }`}
               title={isListening ? 'Stop recording voice' : 'Speak question using Voice Mic'}
             >
-              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4" />}
             </SpecularButton>
 
-            {/* Send Specular Button */}
+            {/* Circular Send Specular Button */}
             <SpecularButton
               radius={999}
               lineColor="#38bdf8"
@@ -260,9 +296,17 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               intensity={1.2}
               onClick={handleSubmit}
               disabled={!input.trim() || isLoading}
-              className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white flex items-center justify-center disabled:opacity-35 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-500/30 border border-cyan-400/40"
+              className={`p-3 rounded-full transition-all shrink-0 border border-cyan-400/40 shadow-lg ${
+                input.trim() && !isLoading
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/30 hover:scale-105'
+                  : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed'
+              }`}
             >
-              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </SpecularButton>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { Plus, MessageSquare, Trash2, Sparkles, History, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LineSidebar from '@/components/animations/LineSidebar';
 
 export interface ConversationItem {
   id: string;
@@ -28,6 +29,13 @@ export default function ChatSidebar({
   onNewChat,
   onDelete,
 }: ChatSidebarProps) {
+  const activeIndex = conversations.findIndex((c) => c.id === activeId);
+
+  const handleSelectConversation = (id: string) => {
+    onSelect(id);
+    onClose();
+  };
+
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
@@ -73,7 +81,10 @@ export default function ChatSidebar({
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={onNewChat}
+                onClick={() => {
+                  onNewChat();
+                  onClose();
+                }}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-xs shadow-lg shadow-cyan-500/30 border border-cyan-400/30 transition-all"
               >
                 <Plus className="w-4 h-4 text-cyan-200" />
@@ -81,7 +92,7 @@ export default function ChatSidebar({
               </motion.button>
             </div>
 
-            {/* Conversation List with Delete Button for Every Row */}
+            {/* Conversation List with Line Sidebar Flow Effect & Row Delete Buttons */}
             <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
               {conversations.length === 0 ? (
                 <div className="text-xs text-slate-400 text-center py-8 px-4 border border-dashed border-cyan-500/20 rounded-2xl bg-[#040711]/40 font-medium">
@@ -89,39 +100,63 @@ export default function ChatSidebar({
                   No saved conversations yet. Ask a question to start chatting!
                 </div>
               ) : (
-                conversations.map((c) => {
-                  const isActive = c.id === activeId;
-                  return (
-                    <div
-                      key={c.id}
-                      className={`group relative flex items-center justify-between p-2.5 rounded-2xl text-xs font-extrabold transition-all border ${
-                        isActive
-                          ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-200 shadow-md shadow-cyan-950/30'
-                          : 'bg-[#050814]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800/60 hover:text-white hover:border-slate-700'
-                      }`}
-                    >
-                      <button
-                        onClick={() => onSelect(c.id)}
-                        className="flex-1 flex items-center gap-2.5 truncate text-left mr-2"
-                        title={c.title}
-                      >
-                        <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                        <span className="truncate">{c.title}</span>
-                      </button>
+                <div className="space-y-1">
+                  {/* Line Flow Sidebar Proximity Component */}
+                  <div className="mb-2">
+                    <LineSidebar
+                      items={conversations.map((c) => c.title)}
+                      defaultActive={activeIndex >= 0 ? activeIndex : 0}
+                      onItemClick={(idx) => {
+                        if (conversations[idx]) {
+                          handleSelectConversation(conversations[idx].id);
+                        }
+                      }}
+                      accentColor="#06b6d4"
+                      textColor="#94a3b8"
+                      markerColor="#06b6d4"
+                    />
+                  </div>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(c.id);
-                        }}
-                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-950/60 opacity-80 group-hover:opacity-100 transition-all border border-transparent hover:border-rose-800/40 shrink-0"
-                        title="Delete this conversation"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                  {/* Detailed Action Rows with Delete Buttons */}
+                  <div className="mt-3 pt-3 border-t border-cyan-500/20 space-y-1">
+                    <div className="px-2 text-[10px] font-black uppercase text-cyan-400/70 tracking-wider mb-1">
+                      Manage Conversations
                     </div>
-                  );
-                })
+                    {conversations.map((c) => {
+                      const isActive = c.id === activeId;
+                      return (
+                        <div
+                          key={c.id}
+                          className={`group relative flex items-center justify-between p-2.5 rounded-2xl text-xs font-extrabold transition-all border ${
+                            isActive
+                              ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-200 shadow-md shadow-cyan-950/30'
+                              : 'bg-[#050814]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800/60 hover:text-white hover:border-slate-700'
+                          }`}
+                        >
+                          <button
+                            onClick={() => handleSelectConversation(c.id)}
+                            className="flex-1 flex items-center gap-2.5 truncate text-left mr-2"
+                            title={c.title}
+                          >
+                            <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                            <span className="truncate">{c.title}</span>
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(c.id);
+                            }}
+                            className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-950/60 opacity-80 group-hover:opacity-100 transition-all border border-transparent hover:border-rose-800/40 shrink-0"
+                            title="Delete this conversation"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </div>
           </motion.aside>

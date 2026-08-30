@@ -179,21 +179,24 @@ export default function ChatPage() {
   const loadConversationMessages = async (id: string) => {
     setActiveConversationId(id);
     setIsTemporaryChat(false);
+    setIsSidebarOpen(false);
     try {
       const res = await fetch(`/api/conversations/${id}`);
       if (res.ok) {
         const data = await res.json();
-        const loadedMessages: ChatMessage[] = (data.conversation.messages || []).map((m: any) => ({
-          id: m.id,
-          role: m.role as 'user' | 'assistant',
-          content: m.content,
-          citations: m.sources ? (typeof m.sources === 'string' ? JSON.parse(m.sources) : m.sources) : [],
-          createdAt: m.createdAt,
-        }));
-        setMessages(loadedMessages);
+        if (data && data.conversation && data.conversation.messages) {
+          const loadedMessages: ChatMessage[] = data.conversation.messages.map((m: any) => ({
+            id: m.id,
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+            citations: m.sources ? (typeof m.sources === 'string' ? JSON.parse(m.sources) : m.sources) : [],
+            createdAt: m.createdAt,
+          }));
+          setMessages(loadedMessages);
+        }
       }
-    } catch {
-      // Handle error
+    } catch (err) {
+      console.error('Error loading conversation messages:', err);
     }
   };
 
