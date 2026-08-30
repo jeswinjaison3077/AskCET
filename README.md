@@ -1,8 +1,6 @@
-<<<<<<< HEAD
-# AskCET
- AI-powered college information assistant that answers student questions using Retrieval-Augmented Generation (RAG). The chatbot retrieves relevant information from uploaded college documents, PDFs, notices, FAQs, and other resources before generating an answer.
-=======
 # AskCET 🎓 — AI-Powered RAG College Information Assistant
+
+<!-- Vercel Deployment Trigger: 2026-08-30 10:57 IST -->
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-14+-000000?logo=next.js)](https://nextjs.org/)
