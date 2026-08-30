@@ -9,7 +9,7 @@ import NoticeDrawer from '@/components/chat/NoticeDrawer';
 import ScrollFloat from '@/components/animations/ScrollFloat';
 import SpecularButton from '@/components/animations/SpecularButton';
 import BorderGlow from '@/components/animations/BorderGlow';
-import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText } from 'lucide-react';
+import { Loader2, BookOpen, Home, Calendar, ArrowRight, Plus, Flame, Download, BellRing, Sparkles, History, ChevronDown, Award, Briefcase, FileText, Users, Library, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatMessage {
@@ -74,6 +74,33 @@ const FEATURE_CARDS = [
     gradient: 'from-blue-500/20 via-cyan-500/20 to-teal-500/20',
     border: 'hover:border-blue-500/50',
     iconColor: 'bg-gradient-to-tr from-blue-500 to-cyan-600',
+  },
+  {
+    icon: Users,
+    title: 'Clubs & TechFests',
+    desc: 'Drishti, Dhwani, IEDC, IEEE, NSS activities & club memberships.',
+    question: 'How do I join clubs like IEDC or IEEE and what is Dhwani?',
+    gradient: 'from-pink-500/20 via-rose-500/20 to-red-500/20',
+    border: 'hover:border-pink-500/50',
+    iconColor: 'bg-gradient-to-tr from-pink-500 to-rose-600',
+  },
+  {
+    icon: Library,
+    title: 'Library & Resources',
+    desc: 'Central Library timings, book issuing, digital repository & ID card.',
+    question: 'What are the Central Library timings and how to issue books?',
+    gradient: 'from-sky-500/20 via-blue-500/20 to-indigo-500/20',
+    border: 'hover:border-sky-500/50',
+    iconColor: 'bg-gradient-to-tr from-sky-500 to-blue-600',
+  },
+  {
+    icon: ShieldAlert,
+    title: 'Anti-Ragging & Disciplinary',
+    desc: 'Anti-ragging committee, reporting procedures & disciplinary actions.',
+    question: 'What is the anti-ragging policy and how to report an incident?',
+    gradient: 'from-red-500/20 via-orange-500/20 to-amber-500/20',
+    border: 'hover:border-red-500/50',
+    iconColor: 'bg-gradient-to-tr from-red-500 to-orange-600',
   },
 ];
 
@@ -468,11 +495,10 @@ export default function ChatPage() {
                 baseColor="#78350f"
                 intensity={1}
                 onClick={() => setIsNoticeDrawerOpen(!isNoticeDrawerOpen)}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-extrabold transition-all shadow-md shadow-amber-500/10 relative"
+                className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 text-amber-300 border border-amber-500/40 transition-all shadow-md shadow-amber-500/10"
                 title="Open Campus Deadlines & Notices Panel"
               >
-                <BellRing className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
-                <span className="hidden sm:inline">Deadlines & Notices</span>
+                <BellRing className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-amber-400 animate-bounce" />
               </SpecularButton>
 
               {/* Export Chat Transcript Button */}
@@ -554,30 +580,41 @@ export default function ChatPage() {
                         transition: { duration: 0.3, ease: 'backOut' },
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="relative w-24 h-24 rounded-full p-0.5 bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-500 shadow-[0_0_20px_rgba(6,182,212,0.45)] group-hover:shadow-[0_0_35px_rgba(6,182,212,0.7)] transition-all duration-300"
+                      className="relative rounded-full transition-all duration-300"
                     >
-                      {/* Inner Smooth Circle Sphere */}
-                      <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-slate-950 relative">
-                        {/* Base Logo Image */}
-                        <img
-                          src="/logo.jpg"
-                          alt="AskCET Interactive Siri Assistant Orb"
-                          className="w-full h-full object-cover rounded-full mix-blend-lighten group-hover:scale-110 transition-transform duration-500"
-                        />
+                      <BorderGlow
+                        edgeSensitivity={40}
+                        glowColor="190 90 60"
+                        backgroundColor="rgba(15, 23, 42, 0.85)"
+                        borderRadius={9999}
+                        glowRadius={35}
+                        glowIntensity={1.5}
+                        colors={['#38bdf8', '#818cf8', '#c084fc']}
+                        className="rounded-full flex items-center justify-center p-0.5"
+                      >
+                        {/* Inner Smooth Circle Sphere */}
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center bg-slate-950 relative shadow-[0_0_20px_rgba(6,182,212,0.45)] group-hover:shadow-[0_0_35px_rgba(6,182,212,0.7)]">
+                          {/* Base Logo Image */}
+                          <img
+                            src="/logo.jpg"
+                            alt="AskCET Interactive Siri Assistant Orb"
+                            className="w-full h-full object-cover rounded-full mix-blend-lighten group-hover:scale-110 transition-transform duration-500"
+                          />
 
-                        {/* Volumetric Specular Curved Glass Reflection */}
-                        <div
-                          className="absolute inset-0 rounded-full pointer-events-none"
-                          style={{
-                            background: 'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 35%, transparent 70%)',
-                            mixBlendMode: 'overlay',
-                          }}
-                        />
-                      </div>
+                          {/* Volumetric Specular Curved Glass Reflection */}
+                          <div
+                            className="absolute inset-0 rounded-full pointer-events-none"
+                            style={{
+                              background: 'radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.15) 35%, transparent 70%)',
+                              mixBlendMode: 'overlay',
+                            }}
+                          />
+                        </div>
+                      </BorderGlow>
 
                       {/* Sparkle Symbol Badge - Unclipped, Always Visible */}
                       <div className="absolute -bottom-1 -right-1 text-cyan-400 drop-shadow-[0_0_10px_rgba(6,182,212,0.9)] group-hover:scale-125 group-hover:text-cyan-300 transition-transform duration-300 z-30">
-                        <Sparkles className="w-5 h-5 text-cyan-400 animate-pulse" />
+                        <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400 animate-pulse" />
                       </div>
                     </motion.div>
                   </div>
