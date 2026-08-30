@@ -6,7 +6,7 @@ export function getApiKey(): string {
 
 export function isValidApiKey(key: string): boolean {
   const cleaned = key.replace(/[\r\n\s]/g, '').trim();
-  return typeof cleaned === 'string' && cleaned.startsWith('AIzaSy') && cleaned.length > 20;
+  return typeof cleaned === 'string' && (cleaned.startsWith('AIzaSy') || cleaned.startsWith('AQ.')) && cleaned.length > 15;
 }
 
 /**
@@ -52,7 +52,7 @@ export function getChatModel() {
     model: modelName,
     tools: [{ googleSearch: {} }] as any,
     generationConfig: {
-      temperature: 0.2,
+      temperature: 0.3,
       topP: 0.9,
       topK: 40,
       maxOutputTokens: 2048,

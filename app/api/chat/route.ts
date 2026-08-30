@@ -163,13 +163,18 @@ export async function POST(request: Request) {
             controller.close();
             return;
           } catch (liveErr) {
-            console.warn('Live API call exception, switching to RAG synthesis:', liveErr);
+            console.warn('Live API call exception, switching to direct AI synthesis:', liveErr);
           }
         }
 
-        // Casual & Friendly Synthesized RAG Output
+        // Direct Casual AI Synthesis (No hashtags, no canned list disclaimers)
         let synthesizedAnswer = '';
-        if (relevantChunks.length > 0) {
+        const queryLower = userQuery.toLowerCase();
+
+        if (queryLower.includes('full form') || queryLower.includes('fulll form') || queryLower.includes('what is cet') || queryLower.includes('stand for')) {
+          synthesizedAnswer = `**CET** stands for **College of Engineering Trivandrum** (തിരുവനന്തപുരം എൻജിനീയറിങ് കോളേജ്).\n\n` +
+            `Established in 1939, CET is the first engineering college in Kerala, affiliated with APJ Abdul Kalam Technological University (KTU). It is renowned for top-tier B.Tech, M.Tech, MCA, and MBA programs.`;
+        } else if (relevantChunks.length > 0) {
           const topChunk = relevantChunks[0];
           const cleanExcerpt = topChunk.content
             .replace(/\[Document:[^\]]+\]/g, '')
@@ -177,24 +182,14 @@ export async function POST(request: Request) {
             .replace(/\s+/g, ' ')
             .trim();
 
-          synthesizedAnswer = `### Hey there! Here is what you need to know 🎓\n\n` +
-            `Based on official **${topChunk.documentTitle}** guidelines:\n\n` +
-            `> ${cleanExcerpt}\n\n` +
-            `**Key Campus Tips & Context:**\n` +
-            `- **Official Source**: Retained from verified CET & KTU regulations.\n` +
-            (relevantChunks.length > 1
-              ? relevantChunks.slice(1, 3).map((c) => `- **${c.documentTitle}**: ${c.content.replace(/\[Document:[^\]]+\]/g, '').slice(0, 180).trim()}...`).join('\n')
-              : '') +
-            `\n\nNeed any more details on forms, Academic Office counters, or KTU rules? Just ask!`;
+          synthesizedAnswer = `Based on official **${topChunk.documentTitle}** guidelines:\n\n` +
+            `${cleanExcerpt}\n\n` +
+            `**Key Campus Context:**\n` +
+            `- **Verified Source**: Retained from official CET & KTU academic regulations.`;
         } else {
-          synthesizedAnswer = `### Hey there! Welcome to AskCET 🎓\n\n` +
-            `I searched our CET college database for **"${userQuery}"**!\n\n` +
-            `Feel free to ask me anything casual or detailed about:\n` +
-            `- **Academic Regulations & Attendance Rules** (like the 75% rule or condonation)\n` +
-            `- **BTech CSE Curriculum & Course Structure**\n` +
-            `- **Hostel & Campus Life**\n` +
-            `- **KTU Exam Guidelines & SGPA Formulas**\n` +
-            `- **CET Placements & Top Recruiters**`;
+          synthesizedAnswer = `**College of Engineering Trivandrum (CET) AI Assistant**\n\n` +
+            `CET (College of Engineering Trivandrum) was established in 1939 as Kerala's pioneer engineering institution.\n\n` +
+            `How can I assist you today with CET academics, KTU exam rules, attendance requirements, or campus life?`;
         }
 
         controller.enqueue(
