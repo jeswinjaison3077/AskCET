@@ -60,7 +60,7 @@ const STOP_WORDS = new Set([
 ]);
 
 /**
- * Executes Hybrid Retrieval (Vector Cosine Similarity + Keyword Re-ranking with Stop-Word Filtering)
+ * Executes Robust Hybrid Retrieval (Vector Cosine Similarity + Keyword Search)
  */
 export async function searchSimilarChunks(
   queryEmbedding: number[],
@@ -96,19 +96,23 @@ export async function searchSimilarChunks(
         vec = [];
       }
 
-      let similarity = cosineSimilarity(queryEmbedding, vec);
+      let vecSimilarity = cosineSimilarity(queryEmbedding, vec);
+      let keywordHits = 0;
 
-      // Keyword boost for hybrid search (spec.md section 12)
       if (keywords.length > 0) {
         const textLower = `${chunk.document.title} ${chunk.document.category} ${chunk.document.department} ${chunk.content}`.toLowerCase();
-        let keywordHits = 0;
         for (const kw of keywords) {
           if (textLower.includes(kw)) {
             keywordHits += 1;
           }
         }
-        const keywordScore = (keywordHits / keywords.length) * 0.5;
-        similarity = (similarity * 0.5) + keywordScore;
+      }
+
+      const keywordScore = keywords.length > 0 ? (keywordHits / keywords.length) : 0;
+      let finalSimilarity = vecSimilarity;
+
+      if (keywordHits > 0) {
+        finalSimilarity = Math.max(vecSimilarity * 0.4 + keywordScore * 0.6, keywordScore);
       }
 
       return {
@@ -119,7 +123,7 @@ export async function searchSimilarChunks(
         department: chunk.document.department,
         pageNumber: chunk.pageNumber,
         content: chunk.content,
-        similarity,
+        similarity: finalSimilarity,
       };
     });
 
