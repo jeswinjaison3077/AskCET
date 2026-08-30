@@ -3,7 +3,6 @@
 import { useState, useEffect, KeyboardEvent } from 'react';
 import { Send, Sparkles, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import SpecularButton from '@/components/animations/SpecularButton';
 
 interface ChatBoxProps {
   onSendMessage: (message: string, language?: string) => void;
@@ -57,29 +56,36 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
-  const [recognition, setRecognition] = useState<any>(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
+  const toggleListening = () => {
+    if (typeof window === 'undefined') return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert('Voice recording is supported in Google Chrome, Microsoft Edge, and Safari. Please use a supported browser.');
+      return;
+    }
+
+    if (isListening) {
+      setIsListening(false);
+    } else {
+      try {
         const rec = new SpeechRecognition();
-        rec.continuous = true;
+        rec.continuous = false;
         rec.interimResults = true;
         rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
-        rec.onresult = (e: any) => {
-          let liveTranscript = '';
-          for (let i = e.resultIndex; i < e.results.length; i++) {
-            liveTranscript += e.results[i][0].transcript;
-          }
-          if (liveTranscript) {
-            setInput(liveTranscript);
-          }
+        rec.onstart = () => {
+          setIsListening(true);
         };
 
-        rec.onend = () => {
-          setIsListening(false);
+        rec.onresult = (e: any) => {
+          const transcript = Array.from(e.results)
+            .map((res: any) => res[0].transcript)
+            .join('');
+          if (transcript) {
+            setInput(transcript);
+          }
         };
 
         rec.onerror = (err: any) => {
@@ -87,30 +93,13 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           setIsListening(false);
         };
 
-        setRecognition(rec);
-      }
-    }
-  }, [selectedLanguage]);
+        rec.onend = () => {
+          setIsListening(false);
+        };
 
-  const toggleListening = () => {
-    if (!recognition) {
-      alert('Speech recognition is not supported in this browser. Please use Google Chrome or Edge.');
-      return;
-    }
-
-    if (isListening) {
-      try {
-        recognition.stop();
-      } catch {
-        // Ignore stop error
-      }
-      setIsListening(false);
-    } else {
-      try {
-        recognition.start();
-        setIsListening(true);
-      } catch (startErr) {
-        console.warn('Recognition start exception:', startErr);
+        rec.start();
+      } catch (err) {
+        console.warn('Mic start exception:', err);
         setIsListening(false);
       }
     }
@@ -118,12 +107,6 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
 
   const handleSubmit = () => {
     if (!input.trim() || isLoading) return;
-    if (isListening && recognition) {
-      try {
-        recognition.stop();
-      } catch {}
-      setIsListening(false);
-    }
     onSendMessage(input.trim(), selectedLanguage);
     setInput('');
   };
@@ -143,7 +126,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const activeLangObj = LANGUAGES.find((l) => l.code === selectedLanguage) || LANGUAGES[0];
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-3">
+    <div className="w-full max-w-4xl mx-auto space-y-3 relative z-30">
       {/* Category Quick Suggestion Chips - Direct Send on Click */}
       <AnimatePresence mode="wait">
         <motion.div
@@ -201,10 +184,10 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         />
 
         {/* Input Bar Controls Header */}
-        <div className="flex items-center justify-between pt-2 border-t border-cyan-500/20">
+        <div className="flex items-center justify-between pt-2 border-t border-cyan-500/20 relative">
           {/* Left Side: Language Selector & Topic Category Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-            {/* Language Selector Dropdown */}
+          <div className="flex items-center gap-2">
+            {/* Language Selector Dropdown with z-50 overlay */}
             <div className="relative">
               <button
                 type="button"
@@ -222,7 +205,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                     initial={{ opacity: 0, y: 6, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.95 }}
-                    className="absolute left-0 bottom-full mb-2 w-36 bg-[#0f172a] border border-slate-700/80 rounded-2xl shadow-2xl p-1.5 z-40 space-y-1 text-xs"
+                    className="absolute left-0 bottom-full mb-2 w-40 bg-[#0f172a] border border-cyan-500/40 rounded-2xl shadow-2xl p-1.5 z-50 space-y-1 text-xs backdrop-blur-xl"
                   >
                     {LANGUAGES.map((lang) => (
                       <button
@@ -232,7 +215,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                           setSelectedLanguage(lang.code);
                           setIsLangDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-1.5 rounded-xl font-bold transition-all flex items-center justify-between cursor-pointer ${
+                        className={`w-full text-left px-3 py-2 rounded-xl font-bold transition-all flex items-center justify-between cursor-pointer ${
                           selectedLanguage === lang.code
                             ? 'bg-cyan-500/20 text-cyan-300'
                             : 'text-slate-300 hover:bg-slate-800'
@@ -247,7 +230,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
             </div>
 
             {/* Topic Category Pills */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {CATEGORIZED_PROMPTS.map((cat, i) => {
                 const Icon = cat.icon;
                 const isSelected = activeCategory === i;
