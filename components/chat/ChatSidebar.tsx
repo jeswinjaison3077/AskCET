@@ -92,70 +92,67 @@ export default function ChatSidebar({
               </motion.button>
             </div>
 
-            {/* Conversation List with Line Sidebar Flow Effect & Row Delete Buttons */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+            {/* History Item List with Line Proximity Effect & Right-Corner Delete Button */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-2">
               {conversations.length === 0 ? (
                 <div className="text-xs text-slate-400 text-center py-8 px-4 border border-dashed border-cyan-500/20 rounded-2xl bg-[#040711]/40 font-medium">
                   <Sparkles className="w-6 h-6 text-cyan-400 mx-auto mb-2 opacity-80 animate-pulse" />
                   No saved conversations yet. Ask a question to start chatting!
                 </div>
               ) : (
-                <div className="space-y-1">
-                  {/* Line Flow Sidebar Proximity Component */}
+                <div className="space-y-1.5">
+                  {/* Proximity Motion Container (Lines Removed) */}
                   <div className="mb-2">
                     <LineSidebar
                       items={conversations.map((c) => c.title)}
                       defaultActive={activeIndex >= 0 ? activeIndex : 0}
+                      showMarker={false}
+                      markerLength={0}
+                      showIndex={false}
+                      proximityRadius={120}
+                      maxShift={12}
                       onItemClick={(idx) => {
                         if (conversations[idx]) {
                           handleSelectConversation(conversations[idx].id);
                         }
                       }}
                       accentColor="#06b6d4"
-                      textColor="#94a3b8"
-                      markerColor="#06b6d4"
+                      textColor="#cbd5e1"
                     />
                   </div>
 
-                  {/* Detailed Action Rows with Delete Buttons */}
-                  <div className="mt-3 pt-3 border-t border-cyan-500/20 space-y-1">
-                    <div className="px-2 text-[10px] font-black uppercase text-cyan-400/70 tracking-wider mb-1">
-                      Manage Conversations
-                    </div>
-                    {conversations.map((c) => {
-                      const isActive = c.id === activeId;
-                      return (
-                        <div
-                          key={c.id}
-                          className={`group relative flex items-center justify-between p-2.5 rounded-2xl text-xs font-extrabold transition-all border ${
-                            isActive
-                              ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-200 shadow-md shadow-cyan-950/30'
-                              : 'bg-[#050814]/80 border-slate-800/80 text-slate-300 hover:bg-slate-800/60 hover:text-white hover:border-slate-700'
-                          }`}
-                        >
-                          <button
-                            onClick={() => handleSelectConversation(c.id)}
-                            className="flex-1 flex items-center gap-2.5 truncate text-left mr-2"
-                            title={c.title}
-                          >
-                            <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
-                            <span className="truncate">{c.title}</span>
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDelete(c.id);
-                            }}
-                            className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-950/60 opacity-80 group-hover:opacity-100 transition-all border border-transparent hover:border-rose-800/40 shrink-0"
-                            title="Delete this conversation"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                  {/* Explicit History Items with Right-Corner Trash Icon */}
+                  {conversations.map((c) => {
+                    const isActive = c.id === activeId;
+                    return (
+                      <div
+                        key={c.id}
+                        onClick={() => handleSelectConversation(c.id)}
+                        className={`group relative flex items-center justify-between p-3 rounded-2xl text-xs font-extrabold transition-all border cursor-pointer ${
+                          isActive
+                            ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-md shadow-cyan-950/40'
+                            : 'bg-[#050814]/90 border-slate-800/90 text-slate-300 hover:bg-slate-800/80 hover:text-white hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 truncate pr-8">
+                          <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
+                          <span className="truncate">{c.title}</span>
                         </div>
-                      );
-                    })}
-                  </div>
+
+                        {/* Trash Delete Icon at Right Corner */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(c.id);
+                          }}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-950/80 opacity-70 group-hover:opacity-100 transition-all border border-transparent hover:border-rose-800/50 shrink-0"
+                          title="Delete this conversation"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
