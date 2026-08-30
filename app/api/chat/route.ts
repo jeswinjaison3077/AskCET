@@ -167,26 +167,34 @@ export async function POST(request: Request) {
           }
         }
 
-        // Clean Synthesized RAG Output
+        // Casual & Friendly Synthesized RAG Output
         let synthesizedAnswer = '';
         if (relevantChunks.length > 0) {
           const topChunk = relevantChunks[0];
-          synthesizedAnswer = `### AskCET Knowledge Assistant\n\n` +
-            `Based on **${topChunk.documentTitle}**:\n\n` +
-            `${topChunk.content.trim()}\n\n` +
+          const cleanExcerpt = topChunk.content
+            .replace(/\[Document:[^\]]+\]/g, '')
+            .replace(/\|/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          synthesizedAnswer = `### Hey there! Here is what you need to know 🎓\n\n` +
+            `Based on official **${topChunk.documentTitle}** guidelines:\n\n` +
+            `> ${cleanExcerpt}\n\n` +
+            `**Key Campus Tips & Context:**\n` +
+            `- **Official Source**: Retained from verified CET & KTU regulations.\n` +
             (relevantChunks.length > 1
-              ? `**Related Document Notes:**\n` +
-                relevantChunks.slice(1, 3).map((c) => `- **${c.documentTitle}**: ${c.content.slice(0, 180).trim()}...`).join('\n')
-              : '');
+              ? relevantChunks.slice(1, 3).map((c) => `- **${c.documentTitle}**: ${c.content.replace(/\[Document:[^\]]+\]/g, '').slice(0, 180).trim()}...`).join('\n')
+              : '') +
+            `\n\nNeed any more details on forms, Academic Office counters, or KTU rules? Just ask!`;
         } else {
-          synthesizedAnswer = `### AskCET Knowledge Assistant\n\n` +
-            `Welcome to AskCET! Your query **"${userQuery}"** was searched against our college database.\n\n` +
-            `You can ask about:\n` +
-            `- **Academic Regulations & Attendance Requirements** (e.g. 75% attendance rule)\n` +
+          synthesizedAnswer = `### Hey there! Welcome to AskCET 🎓\n\n` +
+            `I searched our CET college database for **"${userQuery}"**!\n\n` +
+            `Feel free to ask me anything casual or detailed about:\n` +
+            `- **Academic Regulations & Attendance Rules** (like the 75% rule or condonation)\n` +
             `- **BTech CSE Curriculum & Course Structure**\n` +
-            `- **Hostel & Campus Facilities**\n` +
-            `- **KTU Examination Guidelines**\n` +
-            `- **Placement Statistics & Top Recruiters**`;
+            `- **Hostel & Campus Life**\n` +
+            `- **KTU Exam Guidelines & SGPA Formulas**\n` +
+            `- **CET Placements & Top Recruiters**`;
         }
 
         controller.enqueue(
