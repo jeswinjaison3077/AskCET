@@ -135,11 +135,16 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
     }
   };
 
+  const handleSelectSuggestion = (promptText: string) => {
+    onSendMessage(promptText, selectedLanguage);
+    setInput('');
+  };
+
   const activeLangObj = LANGUAGES.find((l) => l.code === selectedLanguage) || LANGUAGES[0];
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-3">
-      {/* Category Quick Suggestion Chips */}
+      {/* Category Quick Suggestion Chips - Direct Send on Click */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeCategory}
@@ -151,10 +156,10 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           {CATEGORIZED_PROMPTS[activeCategory].prompts.map((promptText, idx) => (
             <button
               key={idx}
-              onClick={() => {
-                setInput(promptText);
-              }}
-              className="text-xs bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-1.5 rounded-2xl border border-cyan-500/20 hover:border-cyan-400/50 transition-all font-semibold shadow-xs"
+              type="button"
+              onClick={() => handleSelectSuggestion(promptText)}
+              disabled={isLoading}
+              className="text-xs bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white px-3.5 py-1.5 rounded-2xl border border-cyan-500/20 hover:border-cyan-400/50 transition-all font-semibold shadow-xs cursor-pointer active:scale-95"
             >
               💡 {promptText}
             </button>
@@ -177,7 +182,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           <button
             type="button"
             onClick={toggleListening}
-            className="text-[11px] bg-rose-500 text-white px-2.5 py-1 rounded-xl font-bold hover:bg-rose-400"
+            className="text-[11px] bg-rose-500 text-white px-2.5 py-1 rounded-xl font-bold hover:bg-rose-400 cursor-pointer"
           >
             Done Recording
           </button>
@@ -204,7 +209,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               <button
                 type="button"
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="px-3 py-1.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs"
+                className="px-3 py-1.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
               >
                 <Globe className="w-3.5 h-3.5 text-cyan-400" />
                 <span>{activeLangObj.label}</span>
@@ -227,7 +232,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                           setSelectedLanguage(lang.code);
                           setIsLangDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-1.5 rounded-xl font-bold transition-all flex items-center justify-between ${
+                        className={`w-full text-left px-3 py-1.5 rounded-xl font-bold transition-all flex items-center justify-between cursor-pointer ${
                           selectedLanguage === lang.code
                             ? 'bg-cyan-500/20 text-cyan-300'
                             : 'text-slate-300 hover:bg-slate-800'
@@ -247,14 +252,11 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                 const Icon = cat.icon;
                 const isSelected = activeCategory === i;
                 return (
-                  <SpecularButton
+                  <button
                     key={i}
-                    radius={999}
-                    lineColor={isSelected ? '#38bdf8' : '#64748b'}
-                    baseColor={isSelected ? '#0284c7' : '#0f172a'}
-                    intensity={isSelected ? 1.2 : 0.4}
+                    type="button"
                     onClick={() => setActiveCategory(i)}
-                    className={`shrink-0 px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 text-xs ${
+                    className={`shrink-0 px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1.5 text-xs cursor-pointer ${
                       isSelected
                         ? 'bg-gradient-to-r from-cyan-500/30 to-blue-600/30 text-cyan-300 border border-cyan-400/50 shadow-xs'
                         : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
@@ -262,23 +264,20 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
                   >
                     <Icon className="w-3.5 h-3.5" />
                     <span className="hidden sm:inline">{cat.category}</span>
-                  </SpecularButton>
+                  </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Right Side: Voice Mic & Circular Send Specular Button */}
+          {/* Right Side: Voice Mic & Circular Send Button */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Speech-to-Text Voice Mic Specular Button */}
-            <SpecularButton
-              radius={999}
-              lineColor={isListening ? '#f43f5e' : '#38bdf8'}
-              baseColor={isListening ? '#be123c' : '#0f172a'}
-              intensity={isListening ? 1.5 : 0.6}
+            {/* Speech-to-Text Voice Mic Button */}
+            <button
+              type="button"
               onClick={toggleListening}
               disabled={isLoading}
-              className={`p-2.5 rounded-full transition-all shrink-0 border ${
+              className={`p-2.5 rounded-full transition-all shrink-0 border cursor-pointer ${
                 isListening
                   ? 'bg-rose-500 text-white animate-pulse border-rose-400 shadow-md shadow-rose-500/30'
                   : 'bg-slate-900/90 text-slate-300 hover:text-cyan-400 border-slate-700/80'
@@ -286,19 +285,16 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               title={isListening ? 'Stop recording voice' : 'Speak question using Voice Mic'}
             >
               {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4" />}
-            </SpecularButton>
+            </button>
 
-            {/* Circular Send Specular Button */}
-            <SpecularButton
-              radius={999}
-              lineColor="#38bdf8"
-              baseColor="#0284c7"
-              intensity={1.2}
+            {/* Circular Send Button */}
+            <button
+              type="button"
               onClick={handleSubmit}
               disabled={!input.trim() || isLoading}
-              className={`p-3 rounded-full transition-all shrink-0 border border-cyan-400/40 shadow-lg ${
+              className={`p-3 rounded-full transition-all shrink-0 border cursor-pointer border-cyan-400/40 shadow-lg ${
                 input.trim() && !isLoading
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/30 hover:scale-105'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-cyan-500/30 hover:scale-105 active:scale-95'
                   : 'bg-slate-900 text-slate-600 border-slate-800 cursor-not-allowed'
               }`}
             >
@@ -307,7 +303,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
               ) : (
                 <Send className="w-4 h-4" />
               )}
-            </SpecularButton>
+            </button>
           </div>
         </div>
       </div>
