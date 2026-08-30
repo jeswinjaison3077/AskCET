@@ -60,7 +60,7 @@ const STOP_WORDS = new Set([
 ]);
 
 /**
- * Executes Robust Hybrid Retrieval (Vector Cosine Similarity + Keyword Search)
+ * Executes Robust Topic-Intent Hybrid Retrieval
  */
 export async function searchSimilarChunks(
   queryEmbedding: number[],
@@ -80,8 +80,8 @@ export async function searchSimilarChunks(
       },
     });
 
-    const keywords = queryText
-      .toLowerCase()
+    const qLower = queryText.toLowerCase();
+    const keywords = qLower
       .split(/\s+/)
       .map(w => w.replace(/[^a-z0-9]/g, ''))
       .filter(w => w.length > 2 && !STOP_WORDS.has(w));
@@ -114,6 +114,34 @@ export async function searchSimilarChunks(
       if (keywordHits > 0) {
         finalSimilarity = Math.max(vecSimilarity * 0.4 + keywordScore * 0.6, keywordScore);
       }
+
+      // Topic Intent Boosting
+      let topicBoost = 0;
+      const docTitleLower = chunk.document.title.toLowerCase();
+      const docCategoryLower = chunk.document.category.toLowerCase();
+
+      if (qLower.includes('hostel') || qLower.includes('curfew') || qLower.includes('mess') || qLower.includes('gate') || qLower.includes('warden')) {
+        if (docTitleLower.includes('campus') || docCategoryLower.includes('hostel')) topicBoost += 0.6;
+      }
+      if (qLower.includes('scholarship') || qLower.includes('tfw') || qLower.includes('fee') || qLower.includes('stipend') || qLower.includes('grant')) {
+        if (docTitleLower.includes('admission') || docTitleLower.includes('campus') || docCategoryLower.includes('fees') || docCategoryLower.includes('admissions')) topicBoost += 0.6;
+      }
+      if (qLower.includes('placement') || qLower.includes('recruiter') || qLower.includes('salary') || qLower.includes('package') || qLower.includes('lpa')) {
+        if (docTitleLower.includes('placement') || docCategoryLower.includes('placements')) topicBoost += 0.7;
+      }
+      if (qLower.includes('cse') || qLower.includes('btech') || qLower.includes('curriculum') || qLower.includes('syllabus') || qLower.includes('course')) {
+        if (docTitleLower.includes('curriculum') || docTitleLower.includes('cse')) topicBoost += 0.6;
+      }
+      if (qLower.includes('exam') || qLower.includes('revaluation') || qLower.includes('hall ticket') || qLower.includes('result')) {
+        if (docTitleLower.includes('examination') || docCategoryLower.includes('examinations')) topicBoost += 0.6;
+      }
+
+      // Downweight generic "General" document when a specific topic is queried
+      if (topicBoost > 0 && docTitleLower === 'general') {
+        topicBoost -= 0.4;
+      }
+
+      finalSimilarity += topicBoost;
 
       return {
         chunkId: chunk.id,
