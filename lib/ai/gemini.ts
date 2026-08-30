@@ -6,7 +6,7 @@ export function getApiKey(): string {
 
 export function isValidApiKey(key: string): boolean {
   const cleaned = key.replace(/[\r\n\s]/g, '').trim();
-  return typeof cleaned === 'string' && (cleaned.startsWith('AIzaSy') || cleaned.startsWith('AQ.')) && cleaned.length > 15;
+  return typeof cleaned === 'string' && cleaned.startsWith('AIzaSy') && cleaned.length > 20;
 }
 
 /**
@@ -41,7 +41,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 /**
- * Get configured Gemini Generative Model instance with Google Search Grounding for live web synthesis
+ * Get configured Gemini Generative Model instance
  */
 export function getChatModel() {
   const apiKey = getApiKey();
@@ -50,7 +50,6 @@ export function getChatModel() {
   
   return genAI.getGenerativeModel({
     model: modelName,
-    tools: [{ googleSearch: {} }] as any,
     generationConfig: {
       temperature: 0.3,
       topP: 0.9,

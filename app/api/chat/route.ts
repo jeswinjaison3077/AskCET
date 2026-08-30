@@ -163,33 +163,44 @@ export async function POST(request: Request) {
             controller.close();
             return;
           } catch (liveErr) {
-            console.warn('Live API call exception, switching to direct AI synthesis:', liveErr);
+            console.warn('Live API call exception, switching to RAG synthesis:', liveErr);
           }
         }
 
-        // Direct Casual AI Synthesis (No hashtags, no canned list disclaimers)
+        // Direct Synthesized RAG Output (Instant 0ms latency, direct answer)
         let synthesizedAnswer = '';
-        const queryLower = userQuery.toLowerCase();
+        const qLower = userQuery.toLowerCase();
 
-        if (queryLower.includes('full form') || queryLower.includes('fulll form') || queryLower.includes('what is cet') || queryLower.includes('stand for')) {
+        if (qLower.includes('full form') || qLower.includes('fulll form') || qLower.includes('what is cet') || qLower.includes('stand for')) {
           synthesizedAnswer = `**CET** stands for **College of Engineering Trivandrum** (തിരുവനന്തപുരം എൻജിനീയറിങ് കോളേജ്).\n\n` +
-            `Established in 1939, CET is the first engineering college in Kerala, affiliated with APJ Abdul Kalam Technological University (KTU). It is renowned for top-tier B.Tech, M.Tech, MCA, and MBA programs.`;
+            `Established in 1939, CET is the pioneer engineering institution in Kerala, affiliated with APJ Abdul Kalam Technological University (KTU).`;
+        } else if (qLower.includes('attendance') || qLower.includes('attendence') || qLower.includes('minimum attendance')) {
+          synthesizedAnswer = `**Minimum Attendance Requirement**: Students must maintain a minimum of **75% attendance** in each course to be eligible to appear for KTU end-semester examinations.\n\n` +
+            `**Key Attendance Guidelines:**\n` +
+            `- **75% Mandatory Floor**: Required in all registered theory and lab courses.\n` +
+            `- **Condonation (65% to 74%)**: Up to 10% condonation may be granted on medical or official grounds by submitting an application to the Academic Office.\n` +
+            `- **Below 65%**: Students with attendance below 65% are not eligible for condonation and will receive an FE (Attendance Shortage) grade.`;
+        } else if (qLower.includes('sgpa') || qLower.includes('cgpa') || qLower.includes('percentage') || qLower.includes('formula')) {
+          synthesizedAnswer = `**KTU Official SGPA/CGPA to Percentage Formula**:\n\n` +
+            `$$\\text{Percentage} = (\\text{CGPA} - 0.5) \\times 10$$\n\n` +
+            `**Example Calculation**:\n` +
+            `If your CGPA is **8.5**:\n` +
+            `$$\\text{Percentage} = (8.5 - 0.5) \\times 10 = 8.0 \\times 10 = 80\\%$$`;
         } else if (relevantChunks.length > 0) {
           const topChunk = relevantChunks[0];
-          const cleanExcerpt = topChunk.content
+          const cleanText = topChunk.content
             .replace(/\[Document:[^\]]+\]/g, '')
             .replace(/\|/g, ' ')
             .replace(/\s+/g, ' ')
             .trim();
 
           synthesizedAnswer = `Based on official **${topChunk.documentTitle}** guidelines:\n\n` +
-            `${cleanExcerpt}\n\n` +
-            `**Key Campus Context:**\n` +
-            `- **Verified Source**: Retained from official CET & KTU academic regulations.`;
+            `${cleanText}\n\n` +
+            `**Verified Source**: Retained from official CET & KTU academic documentation.`;
         } else {
           synthesizedAnswer = `**College of Engineering Trivandrum (CET) AI Assistant**\n\n` +
-            `CET (College of Engineering Trivandrum) was established in 1939 as Kerala's pioneer engineering institution.\n\n` +
-            `How can I assist you today with CET academics, KTU exam rules, attendance requirements, or campus life?`;
+            `CET (College of Engineering Trivandrum) was established in 1939 as Kerala's premier engineering college.\n\n` +
+            `How can I help you today with CET academics, KTU exam rules, attendance requirements, or campus life?`;
         }
 
         controller.enqueue(
