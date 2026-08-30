@@ -35,7 +35,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
     };
   }, []);
 
-  const plainText = content ? content.replace(/\*\*/g, '') : '';
+  const plainText = content ? content.replace(/[*#]/g, '') : '';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(plainText);
@@ -73,7 +73,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
       setIsSpeaking(false);
     } else {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(plainText.replace(/[*#]/g, ''));
+      const utterance = new SpeechSynthesisUtterance(plainText);
       utterance.onend = () => setIsSpeaking(false);
       utterance.onerror = () => setIsSpeaking(false);
       window.speechSynthesis.speak(utterance);
@@ -98,19 +98,56 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
   const isUser = role === 'user';
   const hasCitations = !isUser && citations && citations.length > 0;
 
-  // Helper to format bold markdown segments cleanly
+  // Clean math LaTeX text & format inline elements
   const renderFormattedText = (raw: string) => {
     if (!raw) return null;
-    const parts = raw.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, index) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
+
+    // Clean up raw backslash/tab escapes in LaTeX string math
+    let cleaned = raw
+      .replace(/\t\s*ext\{([^}]+)\}/g, '$1')
+      .replace(/\t\s*imes/g, ' × ')
+      .replace(/\\text\{([^}]+)\}/g, '$1')
+      .replace(/\\times/g, ' × ')
+      .replace(/\\%/g, '%')
+      .replace(/\\\$/g, '$');
+
+    // Parse block math $$...$$
+    const mathBlocks = cleaned.split(/(\$\$.*?\$\$)/gs);
+
+    return mathBlocks.map((block, bIdx) => {
+      if (block.startsWith('$$') && block.endsWith('$$')) {
+        const mathContent = block
+          .slice(2, -2)
+          .replace(/\\text\{([^}]+)\}/g, '$1')
+          .replace(/\\times/g, ' × ')
+          .replace(/\\%/g, '%')
+          .trim();
+
         return (
-          <strong key={index} className="font-extrabold text-cyan-600 dark:text-cyan-400 bg-cyan-50/60 dark:bg-cyan-500/10 px-1.5 py-0.5 rounded-md border border-cyan-200/50 dark:border-cyan-500/20 inline-block my-0.5">
-            {part.slice(2, -2)}
-          </strong>
+          <div
+            key={bIdx}
+            className="my-3 p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 font-mono text-sm tracking-wide shadow-inner overflow-x-auto text-center"
+          >
+            <span className="font-extrabold text-cyan-300">📐 {mathContent}</span>
+          </div>
         );
       }
-      return part;
+
+      // Parse bold **...**
+      const boldParts = block.split(/(\*\*.*?\*\*)/g);
+      return boldParts.map((part, pIdx) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return (
+            <strong
+              key={`${bIdx}-${pIdx}`}
+              className="font-extrabold text-cyan-400 bg-cyan-500/10 px-1.5 py-0.5 rounded-md border border-cyan-500/20 inline-block my-0.5"
+            >
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        return part;
+      });
     });
   };
 
@@ -126,18 +163,18 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
         className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
           isUser
             ? 'bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white shadow-cyan-500/25'
-            : 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 border border-slate-200/80 dark:border-slate-800 shadow-xl'
+            : 'bg-[#080d1a] text-cyan-400 border border-cyan-500/30 shadow-xl'
         }`}
       >
-        {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
+        {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5 text-cyan-400" />}
       </div>
 
       {/* Content Bubble Container */}
       <div className={`max-w-[85%] sm:max-w-[80%] flex flex-col gap-2 ${isUser ? 'items-end' : 'items-start'}`}>
         {/* Grounded Confidence Indicator */}
         {hasCitations && (
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 text-[11px] font-extrabold shadow-xs">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 text-[11px] font-extrabold shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Grounded Answer • Verified Match</span>
           </div>
         )}
@@ -147,7 +184,7 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
           className={`px-6 py-5 rounded-[28px] text-[15px] leading-[1.85] tracking-wide ${
             isUser
               ? 'bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 text-white rounded-tr-xs shadow-xl shadow-cyan-500/20 font-semibold'
-              : 'bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 rounded-tl-xs border border-slate-200/80 dark:border-slate-800/90 shadow-2xl backdrop-blur-2xl font-outfit font-medium'
+              : 'bg-[#080d1a]/95 text-slate-100 rounded-tl-xs border border-cyan-500/25 shadow-2xl backdrop-blur-2xl font-medium'
           }`}
         >
           <div className="whitespace-pre-wrap space-y-2">
@@ -157,13 +194,13 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
 
         {/* Verified Sources Collapsible Box */}
         {hasCitations && (
-          <div className="mt-1 w-full bg-slate-50/80 dark:bg-slate-950/80 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-3.5 text-xs text-slate-700 dark:text-slate-300 shadow-xs backdrop-blur-md">
+          <div className="mt-1 w-full bg-[#040711]/80 border border-cyan-500/20 rounded-2xl p-3.5 text-xs text-slate-300 shadow-xs backdrop-blur-md">
             <button
               onClick={() => setShowSources(!showSources)}
-              className="w-full flex items-center justify-between font-bold text-cyan-700 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors"
+              className="w-full flex items-center justify-between font-bold text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <BookOpen className="w-4 h-4 text-cyan-400" />
                 <span>Verified Campus Sources ({citations.length})</span>
               </div>
               {showSources ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -173,23 +210,17 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="flex flex-col gap-2 mt-2.5 pt-2.5 border-t border-slate-200/80 dark:border-slate-800/80"
+                className="flex flex-col gap-2 mt-2.5 pt-2.5 border-t border-cyan-500/20"
               >
                 {citations.map((c, i) => (
-                  <div key={i} className="bg-white/90 dark:bg-slate-900/90 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-start gap-2 shadow-2xs">
-                    <FileText className="w-4 h-4 text-cyan-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-extrabold text-slate-800 dark:text-slate-200 truncate">{c.documentTitle}</span>
-                        <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border border-cyan-200/80 dark:border-cyan-500/20 shrink-0">
-                          Page {c.pageNumber}
-                        </span>
+                  <div key={i} className="bg-[#080d1a] p-3 rounded-xl border border-cyan-500/20 flex items-start gap-2 shadow-2xs">
+                    <FileText className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-extrabold text-white">{c.documentTitle}</div>
+                      <div className="text-[10px] text-cyan-300 font-semibold mb-1">
+                        Category: {c.category} | Page {c.pageNumber}
                       </div>
-                      {c.snippet && (
-                        <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 mt-1 italic leading-relaxed bg-slate-50/80 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60 font-outfit">
-                          "{c.snippet}"
-                        </p>
-                      )}
+                      <div className="text-slate-400 italic text-[11px]">"{c.snippet}"</div>
                     </div>
                   </div>
                 ))}
@@ -198,69 +229,54 @@ export default function MessageItem({ id, role, content, citations, createdAt }:
           </div>
         )}
 
-        {/* Message Toolbar Controls */}
+        {/* Action Controls for Assistant Messages */}
         {!isUser && (
-          <div className="flex items-center gap-2 px-1 text-slate-500 dark:text-slate-400 text-xs font-semibold">
-            {/* Read Aloud Voice Speaker */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleSpeak}
-              className={`flex items-center gap-1.5 transition-colors py-1 px-2.5 rounded-xl ${
-                isSpeaking
-                  ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-500/20 font-bold'
-                  : 'hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
-              }`}
-              title={isSpeaking ? 'Stop reading out loud' : 'Read answer out loud'}
-            >
-              {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-500 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
-              <span>{isSpeaking ? 'Stop Speaking' : 'Read Aloud'}</span>
-            </motion.button>
-
-            {/* Quick Share Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleShare}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
-              title="Share verified answer via WhatsApp / Telegram"
-            >
-              {shared ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />}
-              <span>{shared ? 'Copied Share Link' : 'Share'}</span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="flex items-center gap-1 mt-1 text-slate-400">
+            <button
               onClick={handleCopy}
-              className="flex items-center gap-1.5 hover:text-slate-900 dark:hover:text-white transition-colors py-1 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80"
+              className="p-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition-colors"
+              title="Copy message"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copied ? 'Copied' : 'Copy'}</span>
-            </motion.button>
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            </button>
 
-            {id && (
-              <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-800 pl-2">
-                <button
-                  onClick={() => handleFeedback('UPVOTE')}
-                  className={`p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
-                    feedback === 'UPVOTE' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40' : 'hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title="Helpful response"
-                >
-                  <ThumbsUp className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => handleFeedback('DOWNVOTE')}
-                  className={`p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors ${
-                    feedback === 'DOWNVOTE' ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40' : 'hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                  title="Inaccurate response"
-                >
-                  <ThumbsDown className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
+            <button
+              onClick={toggleSpeak}
+              className="p-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition-colors"
+              title="Read aloud"
+            >
+              {isSpeaking ? <VolumeX className="w-3.5 h-3.5 text-cyan-400 animate-pulse" /> : <Volume2 className="w-3.5 h-3.5" />}
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="p-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition-colors"
+              title="Share response"
+            >
+              {shared ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+            </button>
+
+            <div className="h-3 w-px bg-slate-800 mx-1" />
+
+            <button
+              onClick={() => handleFeedback('UPVOTE')}
+              className={`p-1.5 rounded-lg hover:bg-slate-800 transition-colors ${
+                feedback === 'UPVOTE' ? 'text-emerald-400 bg-emerald-950/50' : 'hover:text-emerald-400'
+              }`}
+              title="Helpful"
+            >
+              <ThumbsUp className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              onClick={() => handleFeedback('DOWNVOTE')}
+              className={`p-1.5 rounded-lg hover:bg-slate-800 transition-colors ${
+                feedback === 'DOWNVOTE' ? 'text-rose-400 bg-rose-950/50' : 'hover:text-rose-400'
+              }`}
+              title="Not helpful"
+            >
+              <ThumbsDown className="w-3.5 h-3.5" />
+            </button>
           </div>
         )}
       </div>

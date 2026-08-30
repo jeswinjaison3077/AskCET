@@ -167,7 +167,7 @@ export async function POST(request: Request) {
           }
         }
 
-        // Direct Synthesized RAG Output (Instant 0ms latency, direct answer)
+        // Direct Synthesized RAG Output (Clean Math & Instant Latency)
         let synthesizedAnswer = '';
         const qLower = userQuery.toLowerCase();
 
@@ -183,9 +183,10 @@ export async function POST(request: Request) {
         } else if (qLower.includes('sgpa') || qLower.includes('cgpa') || qLower.includes('percentage') || qLower.includes('formula')) {
           synthesizedAnswer = `**KTU Official SGPA/CGPA to Percentage Formula**:\n\n` +
             `$$\\text{Percentage} = (\\text{CGPA} - 0.5) \\times 10$$\n\n` +
+            `**Formula**: Percentage = (CGPA - 0.5) × 10\n\n` +
             `**Example Calculation**:\n` +
             `If your CGPA is **8.5**:\n` +
-            `$$\\text{Percentage} = (8.5 - 0.5) \\times 10 = 8.0 \\times 10 = 80\\%$$`;
+            `Percentage = (8.5 - 0.5) × 10 = 8.0 × 10 = 80%`;
         } else if (relevantChunks.length > 0) {
           const topChunk = relevantChunks[0];
           const cleanText = topChunk.content
