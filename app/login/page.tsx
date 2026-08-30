@@ -46,16 +46,10 @@ function AuthForm() {
         throw new Error(data.error || 'Authentication failed.');
       }
 
-      if (data.user?.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/chat');
-      }
-      router.refresh();
+      window.location.href = data.user?.role === 'ADMIN' ? '/admin' : '/chat';
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Error processing request.';
       setError(errorMsg);
-    } finally {
       setLoading(false);
     }
   };
@@ -76,12 +70,10 @@ function AuthForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Google Sign-In failed');
 
-      router.push('/chat');
-      router.refresh();
+      window.location.href = '/chat';
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Google authentication failed.';
       setError(errorMsg);
-    } finally {
       setGoogleLoading(false);
     }
   };
@@ -107,7 +99,7 @@ function AuthForm() {
           {/* Subtle Corner Ambient Gradient */}
           <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-cyan-500/20 via-blue-500/10 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
-          {/* Clean Title Header without icon logo */}
+          {/* Clean Title Header without logo */}
           <div className="text-center mb-6">
             <h2 className="text-2xl font-black tracking-tight text-white">
               {isSignUp ? 'Create AskCET Account' : 'Sign in to AskCET'}
@@ -182,7 +174,7 @@ function AuthForm() {
                   <button
                     type="button"
                     onClick={() => setRole('STUDENT')}
-                    className={`py-2.5 rounded-2xl text-xs font-extrabold border flex items-center justify-center gap-1.5 transition-all ${
+                    className={`py-2.5 rounded-2xl text-xs font-extrabold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       role === 'STUDENT'
                         ? 'bg-cyan-500/25 border-cyan-400 text-cyan-200 shadow-md shadow-cyan-500/10'
                         : 'bg-[#060a17] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
@@ -193,7 +185,7 @@ function AuthForm() {
                   <button
                     type="button"
                     onClick={() => setRole('ADMIN')}
-                    className={`py-2.5 rounded-2xl text-xs font-extrabold border flex items-center justify-center gap-1.5 transition-all ${
+                    className={`py-2.5 rounded-2xl text-xs font-extrabold border flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                       role === 'ADMIN'
                         ? 'bg-indigo-500/25 border-indigo-400 text-indigo-200 shadow-md shadow-indigo-500/10'
                         : 'bg-[#060a17] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
@@ -269,14 +261,14 @@ function AuthForm() {
             {isSignUp ? (
               <>
                 Already have an account?{' '}
-                <button onClick={() => setIsSignUp(false)} className="text-cyan-400 font-extrabold hover:underline">
+                <button onClick={() => setIsSignUp(false)} className="text-cyan-400 font-extrabold hover:underline cursor-pointer">
                   Sign In
                 </button>
               </>
             ) : (
               <>
                 Don't have an account?{' '}
-                <button onClick={() => setIsSignUp(true)} className="text-cyan-400 font-extrabold hover:underline">
+                <button onClick={() => setIsSignUp(true)} className="text-cyan-400 font-extrabold hover:underline cursor-pointer">
                   Sign Up
                 </button>
               </>
