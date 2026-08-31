@@ -134,10 +134,9 @@ export async function POST(request: Request) {
 
         if (hasLiveApiKey) {
           const candidateModels = [
-            'gemini-3.5-flash',
-            'gemini-2.5-flash-lite',
             'gemini-1.5-flash',
             'gemini-1.5-pro',
+            'gemini-2.0-flash-exp',
           ];
 
           for (const modelName of candidateModels) {

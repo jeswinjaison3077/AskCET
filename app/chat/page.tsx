@@ -124,14 +124,15 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollContainerRef = useRef<HTMLDivElement>(null);
+  const latestUserMsgRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToLatestQuery = () => {
+    setTimeout(() => {
+      if (latestUserMsgRef.current) {
+        latestUserMsgRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
 
   useEffect(() => {
     fetchConversations();
@@ -299,6 +300,7 @@ export default function ChatPage() {
     const userMsg: ChatMessage = { role: 'user', content: userText };
     setMessages((prev) => [...prev, userMsg]);
     setIsLoading(true);
+    scrollToLatestQuery();
 
     try {
       const res = await fetch('/api/chat', {
@@ -716,7 +718,15 @@ export default function ChatPage() {
                 </div>
               </div>
             ) : (
-              messages.map((msg, index) => <MessageItem key={index} {...msg} />)
+              messages.map((msg, index) => (
+                <div
+                  key={index}
+                  ref={index === messages.length - 2 || (messages.length === 1 && index === 0) ? latestUserMsgRef : null}
+                  className="scroll-mt-4"
+                >
+                  <MessageItem {...msg} />
+                </div>
+              ))
             )}
 
             {isLoading && (
