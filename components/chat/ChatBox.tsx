@@ -3,6 +3,7 @@
 import { useState, useRef, KeyboardEvent } from 'react';
 import { Send, Loader2, BookOpen, Home, Calendar, CreditCard, Mic, MicOff, Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import BorderGlow from '@/components/animations/BorderGlow';
 
 interface ChatBoxProps {
   onSendMessage: (message: string, language?: string) => void;
@@ -228,8 +229,18 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         </motion.div>
       )}
 
-      {/* Main Glassmorphic Input Container */}
-      <div className="relative bg-[#080d1a]/95 backdrop-blur-2xl rounded-[32px] border border-cyan-500/30 p-3 sm:p-4 shadow-2xl shadow-cyan-950/50 space-y-3">
+      {/* Main Glassmorphic Input Container Wrapped in BorderGlow */}
+      <BorderGlow
+        edgeSensitivity={30}
+        glowColor="190 90 60"
+        backgroundColor="rgba(8, 13, 26, 0.95)"
+        borderRadius={32}
+        glowRadius={35}
+        glowIntensity={1.2}
+        colors={['#38bdf8', '#818cf8', '#c084fc']}
+        className="w-full shadow-2xl shadow-cyan-950/50"
+      >
+        <div className="relative p-3 sm:p-4 space-y-3">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -346,6 +357,7 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           </div>
         </div>
       </div>
+      </BorderGlow>
     </div>
   );
 }
