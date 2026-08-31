@@ -56,9 +56,10 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
   const recognitionRef = useRef<any>(null);
 
-  const toggleListening = () => {
+  const toggleListening = async () => {
     if (typeof window === 'undefined') return;
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -73,12 +74,30 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           recognitionRef.current.stop();
         } catch {}
       }
+      if (mediaStreamRef.current) {
+        try {
+          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        } catch {}
+        mediaStreamRef.current = null;
+      }
       setIsListening(false);
     } else {
       try {
+        // Explicitly request microphone stream upfront to trigger browser permission dialog
+        let stream: MediaStream | null = null;
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamRef.current = stream;
+          } catch (micErr: any) {
+            console.warn('Microphone permission error:', micErr);
+            alert('Microphone permission was denied. Please allow microphone access in your browser settings (click lock icon next to URL).');
+            return;
+          }
+        }
+
         const rec = new SpeechRecognition();
-        // Use continuous = false for better cross-browser reliability (auto-stops when user pauses)
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
         rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
@@ -99,19 +118,38 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
         rec.onerror = (err: any) => {
           console.warn('Speech recognition error:', err.error, err.message);
           if (err.error === 'not-allowed' || err.error === 'permission-denied') {
-            alert('Microphone access was denied. Please allow microphone permissions in your browser settings (click the lock icon next to the URL).');
+            alert('Microphone access was denied. Please allow microphone permissions in your browser settings (click lock icon next to URL).');
+          }
+          if (mediaStreamRef.current) {
+            try {
+              mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+            } catch {}
+            mediaStreamRef.current = null;
           }
           setIsListening(false);
         };
 
         rec.onend = () => {
+          if (mediaStreamRef.current) {
+            try {
+              mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+            } catch {}
+            mediaStreamRef.current = null;
+          }
           setIsListening(false);
         };
 
         recognitionRef.current = rec;
         rec.start();
+        setIsListening(true);
       } catch (err) {
         console.warn('Mic start exception:', err);
+        if (mediaStreamRef.current) {
+          try {
+            mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+          } catch {}
+          mediaStreamRef.current = null;
+        }
         setIsListening(false);
       }
     }
