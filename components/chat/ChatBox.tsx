@@ -59,6 +59,27 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
   const [isListening, setIsListening] = useState(false);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const recognitionRef = useRef<any>(null);
+  const isListeningRef = useRef<boolean>(false);
+  const baseInputRef = useRef<string>('');
+  const finalTranscriptRef = useRef<string>('');
+
+  const stopListeningInternal = () => {
+    isListeningRef.current = false;
+    setIsListening(false);
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+      } catch {}
+      recognitionRef.current = null;
+    }
+    if (mediaStreamRef.current) {
+      try {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      } catch {}
+      mediaStreamRef.current = null;
+    }
+  };
 
   const toggleListening = async () => {
     if (typeof window === 'undefined') return;
@@ -69,22 +90,15 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
       return;
     }
 
-    if (isListening) {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch {}
-      }
-      if (mediaStreamRef.current) {
-        try {
-          mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-        } catch {}
-        mediaStreamRef.current = null;
-      }
-      setIsListening(false);
+    if (isListeningRef.current) {
+      stopListeningInternal();
     } else {
       try {
-        // Explicitly request microphone stream upfront to trigger browser permission dialog
+        // Save base input text so we append speech onto existing text smoothly
+        baseInputRef.current = input;
+        finalTranscriptRef.current = '';
+
+        // Request active audio stream permissions upfront
         let stream: MediaStream | null = null;
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           try {
@@ -97,72 +111,83 @@ export default function ChatBox({ onSendMessage, isLoading }: ChatBoxProps) {
           }
         }
 
-        const rec = new SpeechRecognition();
-        rec.continuous = true;
-        rec.interimResults = true;
-        rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
+        const startRecognitionEngine = () => {
+          try {
+            const rec = new SpeechRecognition();
+            rec.continuous = true;
+            rec.interimResults = true;
+            rec.lang = selectedLanguage === 'Malayalam' ? 'ml-IN' : selectedLanguage === 'Hindi' ? 'hi-IN' : 'en-US';
 
-        rec.onstart = () => {
-          setIsListening(true);
+            rec.onstart = () => {
+              isListeningRef.current = true;
+              setIsListening(true);
+            };
+
+            rec.onresult = (e: any) => {
+              let interimTranscript = '';
+              let newFinalSegment = '';
+
+              for (let i = e.resultIndex; i < e.results.length; ++i) {
+                const transcriptChunk = e.results[i][0].transcript;
+                if (e.results[i].isFinal) {
+                  newFinalSegment += transcriptChunk + ' ';
+                } else {
+                  interimTranscript += transcriptChunk;
+                }
+              }
+
+              if (newFinalSegment) {
+                finalTranscriptRef.current += newFinalSegment;
+              }
+
+              const prefix = baseInputRef.current ? baseInputRef.current.trim() + ' ' : '';
+              const fullSpeechText = (prefix + finalTranscriptRef.current + interimTranscript).trim();
+              if (fullSpeechText) {
+                setInput(fullSpeechText);
+              }
+            };
+
+            rec.onerror = (err: any) => {
+              console.warn('Speech recognition error:', err.error, err.message);
+              if (err.error === 'not-allowed' || err.error === 'permission-denied') {
+                alert('Microphone access was denied. Please allow microphone permissions in your browser settings (click lock icon next to URL).');
+                stopListeningInternal();
+              }
+            };
+
+            rec.onend = () => {
+              // If user is still actively recording, restart recognition to allow continuous long-form speech like ChatGPT
+              if (isListeningRef.current) {
+                try {
+                  startRecognitionEngine();
+                } catch {
+                  stopListeningInternal();
+                }
+              } else {
+                stopListeningInternal();
+              }
+            };
+
+            recognitionRef.current = rec;
+            rec.start();
+          } catch (engineErr) {
+            console.warn('Recognition start exception:', engineErr);
+            stopListeningInternal();
+          }
         };
 
-        rec.onresult = (e: any) => {
-          let liveTranscript = '';
-          for (let i = 0; i < e.results.length; i++) {
-            liveTranscript += e.results[i][0].transcript;
-          }
-          if (liveTranscript) {
-            setInput(liveTranscript);
-          }
-        };
-
-        rec.onerror = (err: any) => {
-          console.warn('Speech recognition error:', err.error, err.message);
-          if (err.error === 'not-allowed' || err.error === 'permission-denied') {
-            alert('Microphone access was denied. Please allow microphone permissions in your browser settings (click lock icon next to URL).');
-          }
-          if (mediaStreamRef.current) {
-            try {
-              mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-            } catch {}
-            mediaStreamRef.current = null;
-          }
-          setIsListening(false);
-        };
-
-        rec.onend = () => {
-          if (mediaStreamRef.current) {
-            try {
-              mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-            } catch {}
-            mediaStreamRef.current = null;
-          }
-          setIsListening(false);
-        };
-
-        recognitionRef.current = rec;
-        rec.start();
-        setIsListening(true);
+        startRecognitionEngine();
       } catch (err) {
         console.warn('Mic start exception:', err);
-        if (mediaStreamRef.current) {
-          try {
-            mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-          } catch {}
-          mediaStreamRef.current = null;
-        }
-        setIsListening(false);
+        stopListeningInternal();
       }
     }
   };
 
   const handleSubmit = () => {
     if (!input.trim() || isLoading) return;
-    if (isListening && recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {}
-      setIsListening(false);
+    if (isListeningRef.current) {
+      stopListeningInternal();
     }
     onSendMessage(input.trim(), selectedLanguage);
     setInput('');
