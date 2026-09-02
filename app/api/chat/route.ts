@@ -96,8 +96,7 @@ export async function POST(request: Request) {
 
         try {
           const queryEmbedding = await generateEmbedding(userQuery);
-          // Retrieve only top 2 most relevant chunks for faster, concise context
-          const searchResults = await searchSimilarChunks(queryEmbedding, 2, 0.35, userQuery);
+          const searchResults = await searchSimilarChunks(queryEmbedding, 5, 0.01, userQuery);
           relevantChunks = searchResults.map(r => ({
             documentTitle: r.documentTitle,
             category: r.category,
@@ -135,19 +134,16 @@ export async function POST(request: Request) {
 
         if (hasLiveApiKey) {
           const candidateModels = [
+            'gemini-3.5-flash',
             'gemini-2.5-flash-lite',
             'gemini-1.5-flash',
-            'gemini-2.0-flash',
             'gemini-1.5-pro',
           ];
 
           for (const modelName of candidateModels) {
             try {
               const genAI = new GoogleGenerativeAI(apiKey);
-              const model = genAI.getGenerativeModel({
-                model: modelName,
-                tools: [{ googleSearch: {} } as any],
-              });
+              const model = genAI.getGenerativeModel({ model: modelName });
               const promptContents: any = imagePart ? [systemPrompt, imagePart] : systemPrompt;
               const result = await model.generateContentStream(promptContents);
               let accumulatedText = '';
